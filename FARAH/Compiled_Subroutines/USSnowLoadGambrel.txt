@@ -1,0 +1,168 @@
+Sub USSnowLoadGambrel()
+    
+    sgmE9 = SPAN 'B1 =
+    sgmE10 = NomMansardGap '??? asked Farhah if this is what is supposed to be here
+    sgmE11 = BayWidth 'L =
+    sgmE12 = WallHeight  'Eave (container) height =
+    sgmE13 = PurlinSpacing 'Upper purlin spacing =
+    wgmE14 = MansardPurlinSpacing   'same here
+    wgmE15 = E12 + (0.5 * (E9 - E10) * Tan(0.5235987756))   'or MansardRise
+    wgmE16 = E15 + 0.5 * E10 * Tan(0.17845329252) 'or heightOA
+    
+    sgmE19 = "I" 'Building Risk Category:
+    sgmE20 = SnowLoad  'Ground Snow load (Pg) in psf
+    sgmE21 = Min((0.13 * sgmE18 + 14), 30) 'Density of snow (g)
+    sgmE22 = TerrainIdx 'Exposure Category (Terrain Type):
+    sgmE23 = "Fully Exposed" 'Exposure condition [Table 7-2] :
+    'Exposure factor (Ce) [Table 7-2] :
+    Select Case TerrainIdx
+      Case 0   'exposure B
+        Select Case sgmE23
+            Case "Fully Exposed": sgmE24 = 0.9
+            Case "Partially Exposed": sgmE24 = 1
+            Case "Sheltered": sgmE24 = 1.2
+        End Select
+      Case 1   'exposure C
+        Select Case sgmE20
+            Case "Fully Exposed": sgmE24 = 0.9
+            Case "Partially Exposed": sgmE24 = 1
+            Case "Sheltered": sgmE24 = 1.1
+        End Select
+      Case 2   'exposure D
+        Select Case sgmE20
+            Case "Fully Exposed": sgmE24 = 0.8
+            Case "Partially Exposed": sgmE24 = 0.9
+            Case "Sheltered": sgmE24 = 1
+        End Select
+      Case Else
+        'Msgmox "Terrain Value " & TerrainIdx & " out of range"
+        Select Case sgmE20
+            Case "Fully Exposed": sgmE24 = 0.8
+            Case "Partially Exposed": sgmE24 = 0.9
+            Case "Sheltered": sgmE24 = 1
+        End Select
+    End Select    'terrain value
+    sgmE25 = "Unheated Structure" 'Thermal condition [Table 7-3] :
+    sgmE26 = 1.2 'Thermal factor (Ct) [Table 7-3] :
+    'Importance factor (Is) [Table 1.5-2] :   =VLOOKUP(E17,T24:U27,2)
+    Select Case sgmE19
+        Case "I": sgmE27 = 0.8
+        Case "II": sgmE27 = 1
+        Case "III": sgmE27 = 1.1
+        Case Else: sgmE27 = 1.2
+    End Select
+
+    sgmE33 = sgmE27 * sgmE20   'Min. load for low slope roofs [Sect 7.3.4] (Pfmin) :
+    sgmE34 = Max(0.7 * sgmE24 * sgmE26 * sgmE27 * sgmE20, sgmE33)
+    sgmE36 = "Slippery"
+    sgmE37 = "Ventilated"
+    sgmE38 = 1
+
+    sgmE40 = sgmE38 * sgmE34
+    sgmE41 = 5.671
+
+    sgmE43 = 0.3 * sgmE40
+    sgmE44 = sgmE40
+    sgmE45 = sgmE10 / 2
+    sgmE46 = 0.43 * ((Max(sgmE45, 20)) ^ 0.333) * ((sgmE20 + 10) ^ 0.25) - 1.5
+
+    sgmE48 = sgmE46 * sgmE21 / Sqr(sgmE41)
+    sgmE49 = Min(2.667 * sgmE46 * Sqr(sgmE41), 0.5 * sgmE10)
+
+    '-Roof load case 1 - Snow @ Wind 0? - Unbalanced
+    sgmF54 = sgmE43
+    sgmF55 = sgmE48 + sgmE40
+    sgmG54 = sgmE13 * sgmF54
+    sgmG55 = sgmE13 * sgmF55
+    '-Roof load case 2 - Snow @ Wind 90? - Balanced
+    sgmF59 = sgmE40
+    sgmF60 = sgmE40
+    sgmG59 = sgmE13 * sgmF59
+    sgmG60 = sgmE13 * sgmF60
+    
+    '*For Lower rafter (q=30?):
+    sgmE64 = 0.7 * sgmE24 * sgmE26 * sgmE27 * sgmE20
+
+    sgmE66 = "Slippery"
+    sgmE67 = "Ventilated"
+    sgmE68 = 0.73
+
+    sgmE70 = sgmE68 * sgmE64
+    sgmE71 = 1.732
+
+    sgmE73 = 0.3 * sgmE70
+    sgmE74 = sgmE70
+    sgmE75 = 0.5 * (sgmE9 - sgmE10)
+    sgmE76 = 0.43 * ((Max(sgmE75, 20)) ^ 0.333) * ((sgmE20 + 10) ^ 0.25) - 1.5
+    
+    sgmE78 = sgmE76 * sgmE21 / Sqr(sgmE71)
+    sgmE79 = Min(2.667 * sgmE76 * Sqr(sgmE71), sgmE75)
+    
+    sgmG78 = sgmE76 * sgmE21 / Sqr(sgmE71)
+    sgmG79 = Min(2.667 * sgmE76 * Sqr(sgmE71), sgmE75)
+    '-Roof load case 1 - Snow @ Wind 0? - Unbalanced
+    sgmF84 = sgmE73
+    sgmF85 = sgmE78 + sgmE70
+
+    sgmG84 = sgmE14 * sgmF84
+    sgmG85 = sgmE14 * sgmF85
+    '-Roof load case 2 - Snow @ Wind 90? - Balanced
+    sgmF89 = sgmE70
+    sgmF90 = sgmE70
+    sgmG89 = sgmE14 * sgmF89
+    sgmG90 = sgmE14 * sgmF90
+    
+    '*Snow Vertical press on eave supports:
+    sgmE97 = 0.5 * (sgmE9 - sgmE10) * sgmE11 / Cos(0.5235987756)
+    sgmE98 = 0.5 * (sgmE10) * sgmE11 / Cos(0.17845329252)
+    sgmE101 = sgmE97 * sgmF84 / 1000
+    sgmE102 = sgmE101 * sgmU98
+    sgmF101 = sgmE98 * sgmF54 / 1000
+    sgmF102 = sgmF101 * sgmU99
+    sgmG101 = sgmE98 * sgmF55 / 1000
+    sgmG102 = sgmG101 * (sgmE9 - sgmU99)
+    sgmH101 = sgmE97 * (sgmE70 + (sgmE79 / (0.5 * (sgmE9 - sgmE10))) * sgmE78) / 1000
+    sgmH102 = sgmH101 * (sgmE9 - sgmU98)
+
+    sgmF104 = sgmE102 + sgmE103 + sgmF102 + sgmF103 + sgmG102 + sgmG103 + sgmH102 + sgmH103
+    sgmK104 = 0.5 * sgmF104 / sgmE9 * 1000
+
+
+    sgmE105 = sgmE101 * (sgmE9 - sgmU98)
+    sgmF105 = sgmF101 * (sgmE9 - sgmU99)
+    sgmG105 = sgmG101 * sgmU99
+    sgmH105 = sgmG101 * sgmU99
+
+    sgmF107 = sgmE105 + sgmF105 + sgmG105 + sgmH105
+    sgmK107 = 0.5 * sgmF107 / sgmE9 * 1000
+
+    '-Roof load case 2 - Snow @ Wind 90? - Balanced
+
+    sgmE112 = sgmE97 * sgmF89 / 1000
+    sgmE113 = sgmE112 * sgmU98
+
+    sgmF112 = sgmE98 * sgmF59 / 1000
+    sgmF113 = sgmF112 * sgmU99
+
+    sgmG112 = sgmE98 * sgmF60 / 1000
+    sgmG113 = sgmG112 * (sgmE9 - sgmU99)
+
+    sgmH112 = sgmE97 * sgmF90 / 1000
+    sgmH113 = sgmH112 * (sgmE9 - sgmU98)
+
+    sgmF115 = sgmE113 + sgmE114 + sgmF113 + sgmF114 + sgmG113 + sgmG114 + sgmH113 + sgmH114
+    sgmK115 = 0.5 * sgmF115 / sgmE9 * 1000
+
+    sgmE116 = sgmE112 * (sgmE9 - sgmU98)
+    sgmF116 = sgmF112 * (sgmE9 - sgmU99)
+    sgmG116 = sgmG112 * sgmU99
+    sgmH116 = sgmH112 * sgmU98
+
+    sgmF118 = sgmE116 + sgmE117 + sgmF116 + sgmF117 + sgmG116 + sgmG117 + sgmH116 + sgmH117
+    sgmK118 = 0.5 * sgmF118 / sgmE9 * 1000
+
+    sgmE122 = Max(sgmK118, sgmK115, sgmK107, sgmK104)
+
+
+End Sub
+

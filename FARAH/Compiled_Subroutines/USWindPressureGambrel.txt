@@ -1,0 +1,363 @@
+Sub USWindPressureGambrel()
+    If OutputCalcs Then Print #1, 1, "USA Gambrel wind prewgmure calculation NEEDS ALTERING FROM GABLE "
+    If OutputCalcs Then Print #1, 1, "Basic Wind Speed selected =  " & Region
+    wgmE9 = SPAN
+    MRL = (SPAN * 0.333) * Cos(60 * DegRad)
+    Mrun = (MRL * Tan(60 * DegRad)) * 2
+    NomMansardGap = SPAN - Mrun
+        'is this supposed to be MansardGap or MansardSpan ?
+    wgmE10 = NomMansardGap 'span of 10deg upper gable
+    wgmE11 = 20 'NomBayWidth
+    wgmE12 = WallHeight
+    wgmE13 = PurlinSpacing  'but we don't know what these are yet
+    wgmE14 = MansardPurlinSpacing   'same here
+    wgmE15 = wgmE12 + (0.5 * (wgmE9 - wgmE10) * Tan(0.5235987756))   'or MansardRise
+    wgmE16 = wgmE15 + 0.5 * wgmE10 * Tan(0.17845329252) 'or heightOA
+    
+    wgmE19 = 1  'risk factor
+    wgmE20 = Val(Region)
+    wgmE21 = 0.85 'Directionality Factor (Kd)
+    wgmE22 = TerCatDescr(TerrainIdx)
+    wgmE23 = 1  '"Topographic factor (Kzt) =1 "
+    If OutputCalcs Then Print #1, 1, "Risk Factor selected =  " & ImportanceDescr(ImportanceIndex)
+    If OutputCalcs Then Print #1, 1, "Topographic factor (Kzt) =1 "
+    If OutputCalcs Then Print #1, 1, "Exposure Category selected =  " & TerCatDescr(TerrainIdx)
+    If OutputCalcs Then Print #1, 1, "Directionality Factor (Kd) = 0.85"
+    wgmE26 = 0.6 * wgmE15
+    Select Case TerrainIdx
+      Case 0   'exposure B
+        wgmU24 = 0.3
+        wgmV24 = 320
+        wgmW24 = 0.333333
+        wgmX24 = 30
+        wgmY24 = 7
+        wgmZ24 = 1200
+      Case 1   'exposure C
+        wgmU24 = 0.2
+        wgmV24 = 500
+        wgmW24 = 0.2
+        wgmX24 = 15
+        wgmY24 = 9.5
+        wgmZ24 = 900
+      Case 2   'exposure D
+        wgmU24 = 0.15
+        wgmV24 = 650
+        wgmW24 = 0.125
+        wgmX24 = 7
+        wgmY24 = 11.5
+        wgmZ24 = 700
+      Case Else
+        AddNotification "USWindPressureGambrel Terrain Value " & TerrainIdx & " out of range"
+        wgmU24 = 0.15
+        wgmV24 = 650
+        wgmW24 = 0.125
+        wgmX24 = 7
+        wgmY24 = 11.5
+        wgmZ24 = 700
+    End Select    'terrain value
+    If wgmE26 > wgmX24 Then wgmT27 = wgmE26 Else wgmT27 = wgmX24
+    wgmE27 = wgmV24 * ((wgmT27 / 33) ^ (wgmW24))
+    wgmE28 = Sqr(1 / (1 + 0.63 * (((wgmE11 + wgmE15) / wgmE27) ^ 0.63)))
+    wgmE29 = wgmU24 * ((33 / wgmE26) ^ (1 / 6))
+    wgmE30 = 3.4
+    wgmE31 = 3.4
+    wgmE33 = 0.925 * (1 + 1.7 * wgmE31 * wgmE29 * wgmE28) / (1 + 1.7 * wgmE30 * wgmE29)
+    wgmE35 = "Open structure"
+    wgmE36 = "CLEAR"
+    wgmE37 = 0  'Internal pressure coeffecient (CGpi) =
+'*For higher rafter (q=10?):
+    wgmE41 = wgmE15
+    wgmE42 = 2.01 * ((15 / wgmZ24) ^ (2 / wgmY24))
+    wgmE43 = 2.01 * ((wgmE41 / wgmZ24) ^ (2 / wgmY24))
+    If wgmE41 < 15 Then wgmE44 = wgmE42 Else wgmE44 = wgmE43
+    wgmE47 = 0.00256 * wgmE44 * wgmE23 * wgmE21 * (wgmE20 ^ 2)
+    Wu = wgmE47
+    WindPressure = Wu   'Ultimate Dynamic Wind Prewgmure
+    ' "Windprewgmure = " & WindPrewgmure
+    
+    'Purlin load
+    'Roof load case 1 - Wind 0? - Case A
+    Select Case wgmE36
+        Case "CLEAR"
+            wgmG53 = 1.1     'Zone 2 for 10deg pitch only !
+            wgmG54 = -0.333  'Zone 3 for 10deg pitch only !
+            wgmG85 = 1.3     '30deg
+            wgmG86 = 0.3   '30deg
+        Case "OBSTRUCTED"
+            wgmG53 = -1.467  'Zone 2 for 10deg pitch only !
+            wgmG54 = -1      'Zone 3 for 10deg pitch only !
+            wgmG85 = -0.7     '30deg
+            wgmG86 = -0.7   '30deg
+    End Select
+    wgmH53 = wgmE47
+    wgmH54 = wgmE47
+    wgmI53 = wgmG53 * wgmH53 * wgmE33
+    wgmI54 = wgmG54 * wgmH54 * wgmE33
+    wgmJ53 = wgmE13 * wgmI53
+    wgmJ54 = wgmE13 * wgmI54
+       
+    '-Roof load case 2 - Wind 0? - Case B
+    Select Case wgmE36
+        Case "CLEAR"
+            wgmG58 = 0.167   'Zone 2 for 10deg pitch only !
+            wgmG59 = -1.167  'Zone 3 for 10deg pitch only !
+            wgmG90 = -0.1     '30deg
+            wgmG91 = -0.9   '30deg
+        Case "OBSTRUCTED"
+            wgmG58 = -0.8    'Zone 2 for 10deg pitch only !
+            wgmG59 = -1.667  'Zone 3 for 10deg pitch only !
+            wgmG90 = -0.2     '30deg
+            wgmG91 = -1.1   '30deg
+    End Select
+    wgmH58 = wgmE47
+    wgmH59 = wgmE47
+    wgmI58 = wgmG58 * wgmH58 * wgmE33
+    wgmI59 = wgmG59 * wgmH59 * wgmE33
+    wgmJ58 = wgmE13 * wgmI58
+    wgmJ59 = wgmE13 * wgmI59
+    
+    '-Roof load case 3 - Wind 90? - Case A
+    Select Case wgmE36
+        Case "CLEAR"
+            wgmG63 = -0.8   'Zone 2 for 10deg pitch only !
+            wgmG64 = -0.6  'Zone 3 for 10deg pitch only !
+            wgmG95 = -0.8     '30deg
+            wgmG96 = -0.6   '30deg
+        Case "OBSTRUCTED"
+            wgmG63 = -1.2    'Zone 2 for 10deg pitch only !
+            wgmG64 = -0.9  'Zone 3 for 10deg pitch only !
+            wgmG95 = 0.5     '30deg
+            wgmG96 = 0.5   '30deg
+    End Select
+    wgmH63 = wgmE47
+    wgmH64 = wgmE47
+    wgmI63 = wgmG63 * wgmH63 * wgmE33
+    wgmI64 = wgmG64 * wgmH64 * wgmE33
+    wgmJ63 = wgmE13 * wgmI63
+    wgmJ64 = wgmE13 * wgmI64
+    
+    '-Roof load case 4 - Wind 90? - Case B
+    Select Case wgmE36
+        Case "CLEAR"    'using lookup line 3 instead of line 4 as in spreadsheet
+            wgmG68 = 0.8   'Zone 2 for 10deg pitch only !
+            wgmG69 = 0.5  'Zone 3 for 10deg pitch only !
+            wgmG100 = 0.8     '30deg
+            wgmG101 = 0.5   '30deg
+        Case "OBSTRUCTED"
+            wgmG68 = 0.5    'Zone 2 for 10deg pitch only !
+            wgmG69 = 0.5  'Zone 3 for 10deg pitch only !
+            wgmG100 = 0.5     '30deg
+            wgmG101 = 0.5   '30deg
+    End Select
+    wgmH68 = wgmE47
+    wgmH69 = wgmE47
+    wgmI68 = wgmG68 * wgmH68 * wgmE33
+    wgmI69 = wgmG69 * wgmH69 * wgmE33
+    wgmJ68 = wgmE13 * wgmI68
+    wgmJ69 = wgmE13 * wgmI69
+    
+'*For Lower rafter (q=30?):
+
+    wgmE73 = 0.5 * (wgmE12 + wgmE15)
+    wgmE74 = 2.01 * ((15 / wgmZ24) ^ (2 / wgmY24))
+    wgmE75 = 2.01 * ((wgmE73 / wgmZ24) ^ (2 / wgmY24))
+    If wgmE73 < 15 Then wgmE76 = wgmE74 Else wgmE76 = wgmE75
+    wgmE79 = 0.00256 * wgmE76 * wgmE23 * wgmE21 * (wgmE20 ^ 2)
+    
+    wgmF85 = wgmE73
+    wgmF86 = wgmE73
+    wgmH85 = wgmE47
+    wgmH86 = wgmE47
+    wgmI85 = wgmG85 * wgmH85 * wgmE33
+    wgmI86 = wgmG86 * wgmH86 * wgmE33
+    wgmJ85 = wgmE14 * wgmI85
+    wgmJ86 = wgmE13 * wgmI86
+    
+    wgmH90 = wgmE47
+    wgmH91 = wgmE47
+    wgmI90 = wgmG90 * wgmH90 * wgmE33
+    wgmI91 = wgmG91 * wgmH91 * wgmE33
+    wgmJ90 = wgmE14 * wgmI90
+    wgmJ91 = wgmE13 * wgmI91
+        
+    wgmH95 = wgmE47
+    wgmH96 = wgmE47
+    wgmI95 = wgmG95 * wgmH95 * wgmE33
+    wgmI96 = wgmG96 * wgmH96 * wgmE33
+    wgmJ95 = wgmE14 * wgmI95
+    wgmJ96 = wgmE13 * wgmI96
+    
+    wgmH100 = wgmE47
+    wgmH101 = wgmE47
+    wgmI100 = wgmG100 * wgmH100 * wgmE33
+    wgmI101 = wgmG101 * wgmH101 * wgmE33
+    wgmJ100 = wgmE14 * wgmI100
+    wgmJ101 = wgmE13 * wgmI101
+    
+'*Wind Vertical Upthrust on eave supports:
+    wgmE108 = 0.5 * (wgmE9 - wgmE10) * wgmE11 / Cos(0.5235987756)
+    wgmE109 = 0.5 * (wgmE10) * wgmE11 / Cos(0.17845329252)
+    
+    wgmU107 = 0.5 * (wgmE15 - wgmE12)
+    wgmU108 = 2 * wgmU107 + 0.5 * (wgmE16 - wgmE15)
+    wgmU109 = 0.25 * (wgmE9 - wgmE10)
+    wgmU110 = 0.25 * ((2 * wgmE9) - wgmE10)
+    
+    '-Roof load case 1 - Wind 0? - Case A
+    
+    wgmE112 = wgmE108 * wgmI85 / 1000
+    wgmE113 = wgmE112 * Cos(30 * Pi / 180) * wgmU109
+    wgmE114 = wgmE112 * Sin(30 * Pi / 180) * wgmU107
+    wgmF112 = wgmE109 * wgmI53 / 1000
+    wgmF113 = wgmF112 * Cos(10 * Pi / 180) * wgmU110
+    wgmF114 = wgmF112 * Sin(10 * Pi / 180) * wgmU108
+    wgmG112 = wgmE109 * wgmI54 / 1000
+    wgmG113 = wgmG112 * Cos(10 * Pi / 180) * (wgmE9 - wgmU110)
+    wgmG114 = 0 - wgmG112 * Sin(10 * Pi / 180) * wgmU108
+    wgmH112 = wgmE108 * wgmI86 / 1000
+    wgmH113 = wgmH112 * Cos(30 * Pi / 180) * (wgmE9 - wgmU109)
+    wgmH114 = 0 - wgmH112 * Sin(30 * Pi / 180) * wgmU107
+    wgmF115 = wgmE113 + wgmE114 + wgmF113 + wgmF114 + wgmG113 + wgmG114 + wgmH113 + wgmH114
+    wgmK115 = 0.5 * wgmF115 / wgmE9 * 1000
+    
+    wgmE116 = wgmE112 * Cos(30 * Pi / 180) * (wgmE9 - wgmU109)
+    wgmE117 = 0 - wgmE112 * Sin(30 * Pi / 180) * wgmU107
+    wgmF116 = wgmF112 * Cos(10 * Pi / 180) * (wgmE9 - wgmU110)
+    wgmF117 = 0 - wgmF112 * Sin(10 * Pi / 180) * wgmU108
+    wgmG116 = wgmG112 * Cos(10 * Pi / 180) * wgmU110
+    wgmG117 = wgmG112 * Sin(10 * Pi / 180) * wgmU108
+    wgmH116 = wgmH112 * Cos(30 * Pi / 180) * wgmU109
+    wgmH117 = wgmH112 * Sin(30 * Pi / 180) * wgmU107
+    wgmF118 = wgmE116 + wgmE117 + wgmF116 + wgmF117 + wgmG116 + wgmG117 + wgmH116 + wgmH117
+    wgmK118 = 0.5 * wgmF118 / wgmE9 * 1000
+    wgmW115 = 2 * wgmK115 + 2 * wgmK118 - 1000 * (wgmE112 + wgmH112) * Cos(30 * Pi / 180) - 1000 * (wgmF112 + wgmG112) * Cos(10 * Pi / 180)
+    '      = 2 *     K115 + 2 *    K118 -1000  * (   E112 +    H112) * COS(30*PI()/180)   -1000*   (   F112 +    G112) * COS(10*PI()/180)
+    '-Roof load case 2 - Wind 0? - Case B
+    
+    wgmE123 = wgmE108 * wgmI90 / 1000
+    wgmE124 = wgmE123 * Cos(30 * Pi / 180) * wgmU109
+    wgmE125 = wgmE123 * Sin(30 * Pi / 180) * wgmU107
+    wgmF123 = wgmE109 * wgmI58 / 1000
+    wgmF124 = wgmF123 * Cos(10 * Pi / 180) * wgmU110
+    wgmF125 = wgmF123 * Sin(10 * Pi / 180) * wgmU108
+    wgmG123 = wgmE109 * wgmI59 / 1000
+    wgmG124 = wgmG123 * Cos(10 * Pi / 180) * (wgmE9 - wgmU110)
+    wgmG125 = 0 - wgmG123 * Sin(10 * Pi / 180) * wgmU108
+    wgmH123 = wgmE108 * wgmI91 / 1000
+    wgmH124 = wgmH123 * Cos(30 * Pi / 180) * (wgmE9 - wgmU109)
+    wgmH125 = 0 - wgmH123 * Sin(30 * Pi / 180) * wgmU107
+    wgmF126 = wgmE124 + wgmE125 + wgmF124 + wgmF125 + wgmG124 + wgmG125 + wgmH124 + wgmH125
+    wgmK126 = 0.5 * wgmF126 / wgmE9 * 1000
+    wgmW126 = 2 * wgmK126 + 2 * wgmK129 - 1000 * (wgmE123 + wgmH123) * Cos(30 * Pi / 180) - 1000 * (wgmF123 + wgmG123) * Cos(10 * Pi / 180)
+    
+    wgmE127 = wgmE123 * Cos(30 * Pi / 180) * (wgmE9 - wgmU109)
+    wgmE128 = 0 - wgmE123 * Sin(30 * Pi / 180) * wgmU107
+    wgmF127 = wgmF123 * Cos(10 * Pi / 180) * (wgmE9 - wgmU110)
+    wgmF128 = 0 - wgmF123 * Sin(10 * Pi / 180) * wgmU108
+    wgmG127 = wgmG123 * Cos(10 * Pi / 180) * wgmU110
+    wgmG128 = wgmG123 * Sin(10 * Pi / 180) * wgmU108
+    wgmH127 = wgmH123 * Cos(30 * Pi / 180) * wgmU109
+    wgmH128 = wgmH123 * Sin(30 * Pi / 180) * wgmU107
+    wgmF129 = wgmE127 + wgmE128 + wgmF127 + wgmF128 + wgmG127 + wgmG128 + wgmH127 + wgmH128
+    wgmK129 = 0.5 * wgmF129 / wgmE9 * 1000
+
+    '-Roof load case 3 - Wind 90? - Case A
+
+    wgmE134 = 0.5 * (wgmE9 - wgmE10) * (wgmE15) / Cos(0.5235987756)
+    wgmE135 = 0.5 * (wgmE10) * wgmE15 / Cos(0.17845329252)
+    wgmE136 = 0.5 * (wgmE9 - wgmE10) * (wgmE11 - wgmE15) / Cos(0.5235987756)
+    wgmE137 = 0.5 * (wgmE10) * (wgmE11 - wgmE15) / Cos(0.17845329252)
+    
+    wgmE140 = wgmE134 * wgmI95 / 1000
+    wgmE141 = wgmE140 * Cos(30 * Pi / 180) * wgmU109
+    wgmE142 = wgmE140 * Sin(30 * Pi / 180) * wgmU107
+    wgmF140 = wgmE135 * wgmI63 / 1000
+    wgmF141 = wgmF140 * Cos(10 * Pi / 180) * wgmU110
+    wgmF142 = wgmF140 * Sin(10 * Pi / 180) * wgmU108
+    wgmG140 = wgmE135 * wgmI63 / 1000
+    wgmG141 = wgmG140 * Cos(10 * Pi / 180) * (wgmE9 - wgmU110)
+    wgmG142 = 0 - wgmG140 * Sin(10 * Pi / 180) * wgmU108
+    wgmH140 = wgmE134 * wgmI95 / 1000
+    wgmH141 = wgmH140 * Cos(30 * Pi / 180) * (wgmE9 - wgmU109)
+    wgmH142 = 0 - wgmH140 * Sin(30 * Pi / 180) * wgmU107
+    wgmF143 = wgmE141 + wgmE142 + wgmF141 + wgmF142 + wgmG141 + wgmG142 + wgmH141 + wgmH142
+    wgmK143 = wgmF143 / wgmE9
+    wgmW143 = 2 * wgmK143 - (wgmE140 + wgmH140) * Cos(30 * Pi / 180) - (wgmF140 + wgmG140) * Cos(10 * Pi / 180)
+             '=2*     K143- (E140    +    H140) * COS(30*PI()/180)   - (   F140 +    G140)  *COS(10*PI()/180)
+    
+    wgmE145 = wgmE136 * wgmI96 / 1000
+    wgmE146 = wgmE145 * Cos(30 * Pi / 180) * wgmU109
+    wgmE147 = wgmE145 * Sin(30 * Pi / 180) * wgmU107
+    wgmF145 = wgmE137 * wgmI64 / 1000
+    wgmF146 = wgmF145 * Cos(10 * Pi / 180) * wgmU110
+    
+    wgmF147 = wgmF145 * Sin(10 * Pi / 180) * wgmU108
+    wgmG145 = wgmE137 * wgmI64 / 1000
+    wgmG146 = wgmG145 * Cos(10 * Pi / 180) * (wgmE9 - wgmU110)
+    wgmG147 = 0 - wgmG145 * Sin(10 * Pi / 180) * wgmU108
+    wgmH145 = wgmE136 * wgmI96 / 1000
+    wgmH146 = wgmH145 * Cos(30 * Pi / 180) * (wgmE9 - wgmU109)
+    wgmH147 = 0 - wgmH145 * Sin(30 * Pi / 180) * wgmU107
+    wgmF148 = wgmE146 + wgmE147 + wgmF146 + wgmF147 + wgmG146 + wgmG147 + wgmH146 + wgmH147
+    wgmK148 = wgmF148 / wgmE9
+    wgmW148 = 2 * wgmK148 - (wgmE145 + wgmH145) * Cos(30 * Pi / 180) - (wgmF145 + wgmG145) * Cos(10 * Pi / 180)
+
+    wgmK151 = ((wgmK143 * (wgmE11 - 0.5 * wgmE15)) + (wgmK148 * 0.5 * (wgmE11 - wgmE15))) / wgmE11 * 1000
+    wgmK153 = ((wgmK148 * 0.5 * (wgmE11 + wgmE15) + 0.5 * wgmK143 * wgmE15)) / wgmE11 * 1000
+
+    '-Roof load case 4 - Wind 90? - Case B
+
+    wgmE157 = wgmE134 * wgmI100 / 1000
+    wgmE158 = wgmE157 * Cos(30 * Pi / 180) * wgmU109
+    wgmE159 = wgmE157 * Sin(30 * Pi / 180) * wgmU107
+    wgmF157 = wgmE135 * wgmI68 / 1000
+    wgmF158 = wgmF157 * Cos(10 * Pi / 180) * wgmU110
+    wgmF159 = wgmF157 * Sin(10 * Pi / 180) * wgmU108
+    wgmG157 = wgmE135 * wgmI68 / 1000
+    wgmG158 = wgmG157 * Cos(10 * Pi / 180) * (wgmE9 - wgmU110)
+    wgmG159 = 0 - wgmG157 * Sin(10 * Pi / 180) * wgmU108
+    wgmH157 = wgmE134 * wgmI100 / 1000
+    wgmH158 = wgmH157 * Cos(30 * Pi / 180) * (wgmE9 - wgmU109)
+    wgmH159 = 0 - wgmH157 * Sin(30 * Pi / 180) * wgmU107
+    wgmF160 = wgmE158 + wgmE159 + wgmF158 + wgmF159 + wgmG158 + wgmG159 + wgmH158 + wgmH159
+    wgmK160 = wgmF160 / wgmE9
+    wgmW160 = 2 * wgmK160 - (wgmE157 + wgmH157) * Cos(30 * Pi / 180) - (wgmF157 + wgmG157) * Cos(10 * Pi / 180)
+    
+    wgmE162 = wgmE136 * wgmI101 / 1000
+    wgmE163 = wgmE162 * Cos(30 * Pi / 180) * wgmU109
+    wgmE164 = wgmE162 * Sin(30 * Pi / 180) * wgmU107
+    wgmF162 = wgmE137 * wgmI69 / 1000
+    wgmF163 = wgmF162 * Cos(10 * Pi / 180) * wgmU110
+    wgmF164 = wgmF162 * Sin(10 * Pi / 180) * wgmU108
+    wgmF165 = wgmF160 / wgmE9
+    wgmG162 = wgmE137 * wgmI69 / 1000
+    wgmG163 = wgmG162 * Cos(10 * Pi / 180) * (wgmE9 - wgmU110)
+    wgmG164 = 0 - wgmG162 * Sin(10 * Pi / 180) * wgmU108
+    wgmH162 = wgmE136 * wgmI101 / 1000
+    wgmH163 = wgmH162 * Cos(30 * Pi / 180) * (wgmE9 - wgmU109)
+    wgmH164 = 0 - wgmH162 * Sin(30 * Pi / 180) * wgmU107
+    wgmF165 = wgmE163 + wgmE164 + wgmF163 + wgmF164 + wgmG163 + wgmG164 + wgmH163 + wgmH164
+    wgmK165 = wgmF165 / wgmE9
+    wgmW165 = 2 * wgmK165 - (wgmE162 + wgmH162) * Cos(30 * Pi / 180) - (wgmF162 + wgmG162) * Cos(10 * Pi / 180)
+    
+    wgmK168 = ((wgmK160 * (wgmE11 - 0.5 * wgmE15)) + (wgmK165 * 0.5 * (wgmE11 - wgmE15))) / wgmE11 * 1000
+    wgmK170 = ((wgmK165 * 0.5 * (wgmE11 + wgmE15) + 0.5 * wgmK160 * wgmE15)) / wgmE11 * 1000
+    
+    wgmE173 = Min(wgmK170, wgmK168, wgmK153, wgmK151, wgmK129, wgmK126, wgmK118, wgmK115)   'Max. Vl. upthrust on rafter support =
+    UpliftAtCorner = 1 - wgmE173
+    
+    wgmE174 = Max(wgmK170, wgmK168, wgmK151, wgmK153, wgmK129, wgmK126, wgmK118, wgmK115)   'Max. Vl. press on rafter support =
+    'the above is Per Bracket not per SQM or SQFt as it is with AU
+    If wgmW115 + wgmW126 + wgmW143 + wgmW148 + wgmW160 + wgmW165 <> 0 Then AddNotification "Uplift calculation is Invalid"
+    UpLift = wgmE173
+    If OutputCalcs Then Print #1, 1, "UpLift = " & UpLift
+    UpLoad = UpLift     '- 3    'factor of 3 deducted for weight of roof when used for footings
+    'can't do the above because value for US is not per sQFt
+    'If OutputCalcs Then Print #1, 1, "Upload = UpLift - 3 =" & UpLoad & "  ie factor of 3 deducted for weight of roof when used for footings"
+    ColumnRoofTrib = SPAN * BayWidth * 0.25 'not used as already taken into account
+    'If OutputCalcs Then Print #1, 1, "Column Tributary area =" & ColumnRoofTrib & " as Span x Bay width / 4"
+    FootingColumnUpload = UpLoad '* ColumnRoofTrib
+    If OutputCalcs Then Print #1, 1, "FootingColumnUpload = Upload " & FootingColumnUpload
+    If OutputCalcs Then Print #1,: Print #1, "End of US Gambrel Wind calcs": Print #1,
+End Sub
+

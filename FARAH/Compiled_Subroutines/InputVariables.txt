@@ -1,0 +1,13 @@
+Input variables.
+
+There will be others needed and used so please just ask me for details of them 
+Do not create or calculate any needed variables since I probably have already done it.
+phil@wattagan.com
+
+SPAN	of whole roof mounting to mounting
+BayWidth	length of one kit
+WallHeight	height of mounting
+PurlinSpacing	between purlins
+heightOA	height to apex
+Region		default wind speed
+TerrainIdx	index of terrain category selection list

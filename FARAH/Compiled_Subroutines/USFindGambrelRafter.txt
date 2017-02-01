@@ -1,0 +1,883 @@
+Sub USFindGambrelRafter()
+Dim NomBayWidth As Single
+NomBayWidth = 20
+'* Design straining actions:
+'1) Dead loads:
+'Rafter self weight =    7.475   lb/ft'  (Auming 12.0x4.0C12 rafter)
+E12 = 7.475   'this can be read from price file using  = itmweight(FrameMtrl(RafterVal).Itm)
+E13 = 1.56    'Purlin Equivalent load =    1.56    psf
+'=Gable_Gambrel_Purlin_Design!E61/Wind_Gambrel!E13
+'just uses fixed values of 6.047/3.88=1.56
+E14 = 1.61253333333333
+    'Gable_Gambrel_Purlin_Design!E102/Wind_Gambrel!E14
+    'using fixed values of 6.047/3.75=1.612533333333333
+E15 = 0.5 * (E13 + E14)
+E17 = 1.14    'PBR Panels unit weight =    1.14    psf   = itmWeight(roofShtItm)
+E19 = E15 + E17
+E21 = E12 + E19 * (0.5 * NomBayWidth)
+
+R18 = 0.577 * (SPAN - NomMansardGap)
+R19 = 0.507 * NomMansardGap
+U12 = -0.5 * R18
+U13 = U12 - 0.173 * R19
+W11 = 0.5 * U12 * R18
+W12 = 0.5 * U12 * R19
+W13 = 0.5 * U13 * R19
+X11 = 0.667 * U12
+X12 = U12 + 0.333 * (U13 - U12)
+X13 = U12 + 0.667 * (U13 - U12)
+Y11 = W11 * X11
+Y12 = W12 * X12
+Y13 = W13 * X13
+Y20 = 2 * (Y11 + Y12 + Y13)
+
+R21 = E21 * (R18 + R19)
+R22 = (0.5 * R21 * (SPAN - NomMansardGap) - I21 - 0.5 * E21 * (R18 ^ 2)) / (0.288 * (SPAN - NomMansardGap))
+R33 = -(Y43 / Y20)
+R34 = 0.5 * (E37 - E40) * R18 + 0.1736 * (E38 - E39) * R19 - R33
+R35 = wgmK115   'Wind_Gambrel!K115
+R36 = wgmK118   'Wind_Gambrel!K118
+R37 = 0 - (-0.985 * (R34) + 0.5 * E37 * R18 + 0.174 * (R36 - E37 * R18))
+R38 = 0 - (0.985 * (R33) + 0.5 * E40 * R18 + 0.174 * (R35 - E40 * R18))
+
+I21 = 0.125 * E21 * R18 ^ 2 - 0.072 * E21 * ((R19 ^ 3 + 2 * R18 ^ 3) / (4 * R18 + 3 * R19))
+I22 = -0.3 * (0.25 * E21 * (R19 ^ 2) + I21)
+I23 = -0.144 * E21 * ((R19 ^ 3 + 2 * R18 ^ 3) / (4 * R18 + 3 * R19))
+
+M21 = -(0.866 * R22 + 0.5 * R21)
+M22 = -(0.985 * R22 + 0.174 * (R21 - E21 * R18))
+E27 = 20 * (0.5 * NomBayWidth)
+I27 = 0.125 * E27 * (R18 ^ 2) - 0.072 * E27 * ((R19 ^ 3 + 2 * R18 ^ 3) / (4 * R18 + 3 * R19))
+I28 = -0.3 * (0.25 * E27 * (R19 ^ 2) + I27)
+I29 = 0.144 * E27 * ((R19 ^ 3 + 2 * R18 ^ 3) / (4 * R18 + 3 * R19))
+    'Gable_Gambrel_Purlin_Design!E68=fixed value of 20 so not referenced
+R27 = E27 * (R18 + R19)
+R28 = (0.5 * R27 * (SPAN - NomMansardGap) - I27 - 0.5 * E27 * (R18 ^ 2)) / (0.288 * (SPAN - NomMansardGap))
+M27 = -(0.866 * R28 + 0.5 * R27)
+M28 = -(0.985 * R28 + 0.174 * (R27 - E27 * R18))
+
+'-Roof load case 1 - Wind 0? - Case A
+E37 = wgmI85 * 0.5 * NomBayWidth
+E38 = wgmI53 * 0.5 * NomBayWidth
+E39 = wgmI54 * 0.5 * NomBayWidth
+E40 = wgmI86 * 0.5 * NomBayWidth
+
+U36 = 0.5 * R35 * SPAN - E40 * R18 * (0.217 * (SPAN + NomMansardGap) + 0.125 * R18 + 0.087 * R19) - 0.5 * E39 * (R19 ^ 2)
+U37 = R35 * 0.5 * (SPAN - NomMansardGap) - 0.5 * E40 * (R18 ^ 2)
+U38 = 0.5 * (E37 - E40) * R18 + 0.1736 * (E38 - E39) * R19
+U35 = 0.5 * R36 * (SPAN - NomMansardGap) + 0.5 * U38 * R18 - 0.5 * E37 * (R18 ^ 2)
+
+W34 = (E37 * R18 ^ 3) / 12
+W35 = 0.5 * U35 * R18
+W36 = 0.5 * U35 * R19
+W37 = E38 * (R19 ^ 3) / 12
+W38 = U36 * R19
+W39 = E39 * (R19 ^ 3) / 12
+W40 = 0.5 * U37 * R19
+W41 = 0.5 * U37 * R18
+W42 = E40 * (R18 ^ 3) / 12
+
+X34 = 0.5 * U12
+X35 = 0.667 * U12
+X36 = U12 + 0.333 * (U13 - U12)
+X37 = U12 + 0.5 * (U13 - U12)
+X38 = U12 + 0.667 * (U13 - U12)
+X39 = U12 + 0.5 * (U13 - U12)
+X40 = U12 + 0.333 * (U13 - U12)
+X41 = 0.667 * U12
+X42 = 0.5 * U12
+
+Y34 = W34 * X34
+Y35 = W35 * X35
+Y36 = W36 * X36
+Y37 = W37 * X37
+Y38 = W38 * X38
+Y69 = W39 * X39
+Y40 = W40 * X40
+Y41 = W41 * X41
+Y42 = W42 * X42
+
+I35 = 0.125 * E37 * (R18 ^ 2) + 0.5 * (U35 + R33 * U12)
+I36 = U36 + R33 * U13
+I37 = U37 + R33 * U12
+
+M35 = -(0.5 * R36 - 0.866 * R34)
+M36 = Min(R37, R38)
+M37 = -(0.5 * R35 + 0.866 * R33)
+
+'-Roof load case 2 - Wind 0? - Case B
+E48 = wgmI90 * 0.5 * NomBayWidth
+E49 = wgmI58 * 0.5 * NomBayWidth
+E50 = wgmI59 * 0.5 * NomBayWidth
+E51 = wgmI91 * 0.5 * NomBayWidth
+
+I46 = 0.125 * E48 * (R18 ^ 2) + 0.5 * (U46 + R44 * U12)
+I47 = U47 + R44 * U13
+I48 = U48 + R44 * U12
+M46 = -(0.5 * R47 - 0.866 * R45)
+M47 = Min(R48, R49)
+M48 = -(0.5 * R46 + 0.866 * R44)
+R46 = wgmK126
+R47 = wgmK129
+
+U47 = 0.5 * R46 * SPAN - E51 * R18 * (0.217 * (SPAN + NomMansardGap) + 0.125 * R18 + 0.087 * R19) - 0.5 * E50 * (R19 ^ 2)
+U48 = R46 * 0.5 * (SPAN - NomMansardGap) - 0.5 * E51 * (R18 ^ 2)
+U49 = 0.5 * (E48 - E51) * R18 + 0.1736 * (E49 - E50) * R19
+U46 = 0.5 * R47 * (SPAN - NomMansardGap) + 0.5 * U49 * R18 - 0.5 * E48 * (R18 ^ 2)
+
+W45 = (E48 * R18 ^ 3) / 12
+W46 = 0.5 * U46 * R18
+W47 = 0.5 * U46 * R19
+W48 = E49 * (R19 ^ 3) / 12
+W49 = U47 * R19
+W50 = E50 * (R19 ^ 3) / 12
+W51 = 0.5 * U48 * R19
+W52 = 0.5 * U48 * R18
+W53 = E51 * (R18 ^ 3) / 12
+
+X45 = 0.5 * U12
+X46 = 0.667 * U12
+X47 = U12 + 0.333 * (U13 - U12)
+X48 = U12 + 0.5 * (U13 - U12)
+X49 = U12 + 0.667 * (U13 - U12)
+X50 = U12 + 0.5 * (U13 - U12)
+X51 = U12 + 0.333 * (U13 - U12)
+X52 = 0.667 * U12
+X53 = 0.5 * U12
+
+Y45 = W45 * X45
+Y46 = W46 * X46
+Y47 = W47 * X47
+Y48 = W48 * X48
+Y49 = W49 * X49
+Y50 = W50 * X50
+Y51 = W51 * X51
+Y52 = W52 * X52
+Y53 = W53 * X53
+
+Y54 = Y45 + Y46 + Y47 + Y48 + Y49 + Y50 + Y51 + Y52 + Y53
+
+R44 = -(Y54 / Y20)
+R45 = 0.5 * (E48 - E51) * R18 + 0.1736 * (E49 - E50) * R19 - R44
+R48 = -(-0.985 * (R45) + 0.5 * E48 * R18 + 0.174 * (R47 - E48 * R18))
+R49 = -(0.985 * (R44) + 0.5 * E51 * R18 + 0.174 * (R46 - E51 * R18))
+
+U36 = 0.5 * R35 * SPAN - E40 * R18 * (0.217 * (SPAN + NomMansardGap) + 0.125 * R18 + 0.087 * R19) - 0.5 * E39 * (R19 ^ 2)
+U37 = R35 * 0.5 * (SPAN - NomMansardGap) - 0.5 * E40 * (R18 ^ 2)
+U38 = 0.5 * (E37 - E40) * R18 + 0.1736 * (E38 - E39) * R19
+U35 = 0.5 * R36 * (SPAN - NomMansardGap) + 0.5 * U38 * R18 - 0.5 * E37 * (R18 ^ 2)
+
+'-Roof load case 3 - Wind 90? - Case A
+
+E59 = wgmI95 * 0.5 * NomBayWidth
+E60 = wgmI63 * 0.5 * NomBayWidth
+E61 = wgmI63 * 0.5 * NomBayWidth
+E62 = wgmI95 * 0.5 * NomBayWidth
+
+I57 = 0.125 * E59 * (R18 ^ 2) - 0.06755 * E59 * ((R19 ^ 3 + 2 * R18 ^ 3) / (4 * R18 + 3 * R19))
+I58 = -0.4 * (0.25 * E59 * (R19 ^ 2) + I57)
+I59 = -0.1351 * E59 * ((R19 ^ 3 + 2 * R18 ^ 3) / (4 * R18 + 3 * R19))
+
+R57 = wgmK151
+R58 = (0.5 * R57 * (SPAN - NomMansardGap) - I57 - 0.5 * E59 * (R18 ^ 2)) / (0.288 * (SPAN - NomMansardGap))
+
+M57 = -(0.866 * R58 + 0.5 * R57)
+M58 = -(0.985 * (R58 + E59 * 0.5 * R18) + 0.174 * (R57 - E59 * 0.866 * R18))
+
+'-Roof load case 4 - Wind 90? - Case B
+E69 = wgmI100 * 0.5 * NomBayWidth
+E70 = wgmI68 * 0.5 * NomBayWidth
+E71 = wgmI68 * 0.5 * NomBayWidth
+E72 = wgmI100 * 0.5 * NomBayWidth
+
+I67 = 0.125 * E69 * (R18 ^ 2) - 0.06755 * E69 * ((R19 ^ 3 + 2 * R18 ^ 3) / (4 * R18 + 3 * R19))
+I68 = -0.4 * (0.25 * E69 * (R19 ^ 2) + I67)
+I69 = -0.1351 * E69 * ((R19 ^ 3 + 2 * R18 ^ 3) / (4 * R18 + 3 * R19))
+
+M67 = -(0.866 * R68 + 0.5 * R67)
+M68 = -(0.985 * (R68 + E69 * 0.5 * R18) + 0.174 * (R67 - E69 * 0.866 * R18))
+
+R67 = wgmK168
+R68 = (0.5 * R67 * (SPAN - NomMansardGap) - I67 - 0.5 * E69 * (R18 ^ 2)) / (0.288 * (SPAN - NomMansardGap))
+
+'4) Snow loads:
+'-Roof load case 1 - Snow @ Wind 0? - Unbalanced
+E80 = sgmF84 * 0.5 * NomBayWidth
+E81 = sgmF54 * 0.5 * NomBayWidth
+E82 = (sgmE40 + ((2 * sgmE49 / sgmE10) * sgmE48)) * 0.5 * NomBayWidth
+E83 = (sgmE70 + (sgmE79 / (0.5 * (sgmE9 - sgmE10))) * sgmE78) * 0.5 * NomBayWidth
+I78 = 0.125 * E80 * (R18 ^ 2) + 0.5 * (U78 + R76 * U12)
+R78 = sgmK104
+R79 = sgmK107
+R80 = -(-0.985 * (R77) + 0.174 * (R79 - E80 * R18))
+R81 = -(0.985 * (R76) + 0.174 * (R78 - E83 * R18))
+'      =-(0.985*(R76)  +0.174*(  R78-  E83 *$R$18))
+U78 = 0.5 * R79 * (SPAN - NomMansardGap) - 0.433 * E80 * (R18 ^ 2)
+U79 = 0.5 * R78 * SPAN - 0.25 * E83 * R18 * (SPAN + NomMansardGap) - 0.5 * E82 * (R19 ^ 2)
+U80 = R78 * 0.5 * (SPAN - NomMansardGap) - 0.433 * E83 * (R18 ^ 2)
+
+W77 = (E80 * R18 ^ 3) / 12
+W78 = 0.5 * U78 * R18
+W79 = 0.5 * U78 * R19
+W80 = E81 * (R19 ^ 3) / 12
+W81 = U79 * R19
+W82 = E82 * (R19 ^ 3) / 12
+W83 = 0.5 * U80 * R19
+W84 = 0.5 * U80 * R18
+W85 = E83 * (R18 ^ 3) / 12
+
+X77 = 0.5 * U12
+X78 = 0.667 * U12
+X79 = U12 + 0.333 * (U13 - U12)
+X80 = U12 + 0.5 * (U13 - U12)
+X81 = U12 + 0.667 * (U13 - U12)
+X82 = U12 + 0.5 * (U13 - U12)
+X83 = U12 + 0.333 * (U13 - U12)
+X84 = 0.667 * U12
+X85 = 0.5 * U12
+
+Y77 = W77 * X77
+Y78 = W78 * X78
+Y79 = W79 * X79
+Y80 = W80 * X80
+Y81 = W81 * X81
+Y82 = W82 * X82
+Y83 = W83 * X83
+Y84 = W84 * X84
+Y85 = W85 * X85
+
+Y86 = Y77 + Y78 + Y79 + Y80 + Y81 + Y82 + Y83 + Y84 + Y85
+
+R76 = -(Y86 / Y20)
+R77 = -R76
+I79 = U79 + R76 * U13
+I80 = U80 + R76 * U12
+M78 = -(0.5 * R79 - 0.866 * R77)
+M79 = Min(R80, R81)
+M80 = -(0.5 * R78 + 0.866 * R76)
+
+'-Roof load case 2 - Snow @ Wind 90? - Balanced
+E91 = sgmF89 * 0.5 * NomBayWidth
+E92 = sgmF59 * 0.5 * NomBayWidth
+E93 = sgmF60 * 0.5 * NomBayWidth
+E94 = sgmF90 * 0.5 * NomBayWidth
+I89 = 0.125 * E91 * (R18 ^ 2) + 0.5 * (U89 + R87 * U12)
+I90 = U90 + R87 * U13
+I91 = U91 + R87 * U12
+M89 = -(0.5 * R90 - 0.866 * R88)
+M90 = -(-0.985 * (R88) + 0.174 * (R90 - E91 * R18))
+    
+R89 = sgmK115
+R90 = sgmK118
+R91 = -(-0.985 * (R88) + 0.174 * (R90 - E91 * R18))
+R92 = -(0.985 * (R87) + 0.174 * (R89 - E94 * R18))
+U89 = 0.5 * R90 * (SPAN - NomMansardGap) - 0.433 * E91 * (R18 ^ 2)
+U90 = 0.5 * R89 * SPAN - 0.25 * E94 * R18 * (SPAN + NomMansardGap) - 0.5 * E93 * (R19 ^ 2)
+U91 = R89 * 0.5 * (SPAN - NomMansardGap) - 0.433 * E94 * (R18 ^ 2)
+
+W88 = (E91 * R18 ^ 3) / 12
+W89 = 0.5 * U89 * R18
+W90 = 0.5 * U89 * R19
+W91 = E92 * (R19 ^ 3) / 12
+W92 = U90 * R19
+W93 = E93 * (R19 ^ 3) / 12
+W94 = 0.5 * U91 * R19
+W95 = 0.5 * U91 * R18
+W96 = E94 * (R18 ^ 3) / 12
+
+X88 = 0.5 * U12
+X89 = 0.667 * U12
+X90 = U12 + 0.333 * (U13 - U12)
+X91 = U12 + 0.5 * (U13 - U12)
+X92 = U12 + 0.667 * (U13 - U12)
+X93 = U12 + 0.5 * (U13 - U12)
+X94 = U12 + 0.333 * (U13 - U12)
+X95 = 0.667 * U12
+X96 = 0.5 * U12
+
+Y88 = W88 * X88
+Y89 = W89 * X89
+Y90 = W90 * X90
+Y91 = W91 * X91
+Y92 = W92 * X92
+Y93 = W93 * X93
+Y94 = W94 * X94
+Y95 = W95 * X95
+Y96 = W96 * X96
+
+Y97 = Y88 + Y89 + Y90 + Y91 + Y92 + Y93 + Y94 + Y95 + Y96
+    
+R87 = -(Y97 / Y20)
+R88 = -R87
+
+'DISCLAIMER: THE PROFILE SIZING ESTABLISHED WITHIN THIS SPREADSHEET IS FOR FINANCIAL ESTIMATION PURPOSES ONLY. THE KIT SHOULD BE STRUCTURALY ANALYSED
+
+'* Design  Combinations:
+E103 = 0.012 * (I21 + I27)
+E104 = (M21 + M27) * 0.001
+E105 = (I22 + I28) * 0.012
+E106 = (M22 + M28) * 0.001
+F103 = 0.012 * (I21 + I78)
+F104 = 0.001 * (M21 + M78)
+F105 = 0.012 * (I22 + I79)
+F106 = 0.001 * (M22 + M79)
+F107 = 0.012 * (I23 + I80)
+F108 = 0.001 * (M21 + M80)
+F109 = 0.012 * (I21 + I89)
+F110 = 0.001 * (M21 + M89)
+F111 = 0.012 * (I21 + I90)
+F112 = 0.001 * (M22 + M90)
+G103 = 0.012 * (I21 + I35)
+G104 = 0.001 * (M21 + M35)
+G104 = 0.012 * (I22 + I36)
+G106 = 0.001 * (M22 + M36)
+G107 = 0.012 * (I23 + I37)
+G108 = 0.001 * (M21 + M37)
+G109 = 0.012 * (I21 + I46)
+G110 = 0.001 * (M21 + M46)
+G111 = 0.012 * (I22 + I47)
+G112 = 0.001 * (M22 + M47)
+G113 = 0.012 * (I23 + I48)
+G114 = 0.001 * (M21 + M48)
+G115 = 0.012 * (I21 + I57)
+G116 = 0.001 * (M21 + M57)
+G117 = 0.012 * (I22 + I58)
+G118 = 0.001 * (M22 + M57)
+G119 = 0.012 * (I21 + I67)
+G120 = 0.001 * (M21 + M67)
+G121 = 0.012 * (I22 + I68)
+G122 = 0.001 * (M22 + M68)
+
+H103 = 0.012 * (I21 + 0.75 * I35 + 0.75 * I27)
+H104 = 0.001 * (M21 + 0.75 * M35 + 0.75 * M27)
+H105 = 0.012 * (I22 + 0.75 * I36 + 0.75 * I28)
+H106 = 0.001 * (M22 + 0.75 * M36 + 0.75 * M28)
+H107 = 0.012 * (I23 + 0.75 * I37 + 0.75 * I29)
+H108 = 0.001 * (M21 + 0.75 * M37 + 0.75 * M27)
+H109 = 0.012 * (I21 + 0.75 * I46 + 0.75 * I27)
+H110 = 0.001 * (M21 + 0.75 * M46 + 0.75 * M27)
+H111 = 0.012 * (I22 + 0.75 * I47 + 0.75 * I28)
+H112 = 0.001 * (M21 + 0.75 * M47 + 0.75 * M27)
+H113 = 0.012 * (I23 + 0.75 * I48 + 0.75 * I29)
+H114 = 0.001 * (M21 + 0.75 * M48 + 0.75 * M27)
+H115 = 0.012 * (I21 + 0.75 * I57 + 0.75 * I27)
+H116 = 0.001 * (M21 + 0.75 * M57 + 0.75 * M27)
+H117 = 0.012 * (I22 + 0.75 * I58 + 0.75 * I28)
+H118 = 0.001 * (M22 + 0.75 * M58 + 0.75 * M28)
+H119 = 0.012 * (I21 + 0.75 * I67 + 0.75 * I27)
+H120 = 0.001 * (M21 + 0.75 * M67 + 0.75 * M27)
+H121 = 0.012 * (I22 + 0.75 * I68 + 0.75 * I28)
+H122 = 0.001 * (M22 + 0.75 * M68 + 0.75 * M28)
+
+I103 = 0.012 * (I21 + 0.75 * I35 + 0.75 * I78)
+I104 = 0.001 * (M21 + 0.75 * M35 + 0.75 * M78)
+I105 = 0.012 * (I22 + 0.75 * I36 + 0.75 * I68)
+I106 = 0.001 * (M22 + 0.75 * M36 + 0.75 * M79)
+I107 = 0.012 * (I23 + 0.75 * I37 + 0.75 * I80)
+I108 = 0.001 * (M21 + 0.75 * M37 + 0.75 * M80)
+I109 = 0.012 * (I21 + 0.75 * I46 + 0.75 * I78)
+I110 = 0.001 * (M21 + 0.75 * M46 + 0.75 * M78)
+I111 = 0.012 * (I22 + 0.75 * I47 + 0.75 * I79)
+I112 = 0.001 * (M22 + 0.75 * M47 + 0.75 * M79)
+I113 = 0.012 * (I23 + 0.75 * I48 + 0.75 * I80)
+I114 = 0.001 * (M21 + 0.75 * M48 + 0.75 * M80)
+I115 = 0.012 * (I21 + 0.75 * I57 + 0.75 * I89)
+I116 = 0.001 * (M21 + 0.75 * M57 + 0.75 * M89)
+I117 = 0.012 * (I22 + 0.75 * I58 + 0.75 * I90)
+I118 = 0.001 * (M21 + 0.75 * M57 + 0.75 * M89)
+I119 = 0.012 * (I21 + 0.75 * I67 + 0.75 * I89)
+I120 = 0.001 * (M21 + 0.75 * M67 + 0.75 * M89)
+I121 = 0.012 * (I22 + 0.75 * I68 + 0.75 * I90)
+I122 = 0.001 * (M22 + 0.75 * M68 + 0.75 * M90)
+
+'* Stress Ratios:
+'8.0x4.0C14
+C128 = 9
+maxval = 0
+If E104 < 0 Then thisval = 0.0857 * Abs(E104) + 0.0116 * Abs(E103): If thisval > maxval Then maxval = thisval
+If E104 < 0 Then thisval = 0.0569 * Abs(E104) + 0.0134 * Abs(E103): If thisval > maxval Then maxval = thisval
+If E106 < 0 Then thisval = 0.0857 * Abs(E106) + 0.0116 * Abs(E105): If thisval > maxval Then maxval = thisval
+If E106 < 0 Then thisval = 0.0569 * Abs(E106) + 0.0134 * Abs(E105): If thisval > maxval Then maxval = thisval
+
+If F104 < 0 Then thisval = 0.0857 * Abs(F104) + 0.0116 * Abs(F103): If thisval > maxval Then maxval = thisval
+If F104 < 0 Then thisval = 0.0569 * Abs(F104) + 0.0134 * Abs(F103): If thisval > maxval Then maxval = thisval
+If F106 < 0 Then thisval = 0.0857 * Abs(F106) + 0.0116 * Abs(F105): If thisval > maxval Then maxval = thisval
+If F106 < 0 Then thisval = 0.0569 * Abs(F106) + 0.0134 * Abs(F105): If thisval > maxval Then maxval = thisval
+If F108 < 0 Then thisval = 0.0857 * Abs(F108) + 0.0116 * Abs(F107): If thisval > maxval Then maxval = thisval
+If F108 < 0 Then thisval = 0.0569 * Abs(F108) + 0.0134 * Abs(F107): If thisval > maxval Then maxval = thisval
+If F110 < 0 Then thisval = 0.0857 * Abs(F110) + 0.0116 * Abs(F109): If thisval > maxval Then maxval = thisval
+If F110 < 0 Then thisval = 0.0569 * Abs(F110) + 0.0134 * Abs(F109): If thisval > maxval Then maxval = thisval
+If F112 < 0 Then thisval = 0.0857 * Abs(F112) + 0.0116 * Abs(F111): If thisval > maxval Then maxval = thisval
+If F112 < 0 Then thisval = 0.0569 * Abs(F112) + 0.0134 * Abs(F111): If thisval > maxval Then maxval = thisval
+
+If G104 < 0 Then thisval = 0.0857 * Abs(G104) + 0.0116 * Abs(G103): If thisval > maxval Then maxval = thisval
+If G104 < 0 Then thisval = 0.0569 * Abs(G104) + 0.0134 * Abs(G103): If thisval > maxval Then maxval = thisval
+If G106 < 0 Then thisval = 0.0857 * Abs(G106) + 0.0116 * Abs(G105): If thisval > maxval Then maxval = thisval
+If G106 < 0 Then thisval = 0.0569 * Abs(G106) + 0.0134 * Abs(G105): If thisval > maxval Then maxval = thisval
+If G108 < 0 Then thisval = 0.0857 * Abs(G108) + 0.0116 * Abs(G107): If thisval > maxval Then maxval = thisval
+If G108 < 0 Then thisval = 0.0569 * Abs(G108) + 0.0134 * Abs(G107): If thisval > maxval Then maxval = thisval
+If G110 < 0 Then thisval = 0.0857 * Abs(G110) + 0.0116 * Abs(G109): If thisval > maxval Then maxval = thisval
+If G110 < 0 Then thisval = 0.0569 * Abs(G110) + 0.0134 * Abs(G109): If thisval > maxval Then maxval = thisval
+If G112 < 0 Then thisval = 0.0857 * Abs(G112) + 0.0116 * Abs(G111): If thisval > maxval Then maxval = thisval
+If G112 < 0 Then thisval = 0.0569 * Abs(G112) + 0.0134 * Abs(G111): If thisval > maxval Then maxval = thisval
+If G114 < 0 Then thisval = 0.0857 * Abs(G114) + 0.0116 * Abs(G113): If thisval > maxval Then maxval = thisval
+If G114 < 0 Then thisval = 0.0569 * Abs(G114) + 0.0134 * Abs(G113): If thisval > maxval Then maxval = thisval
+If G116 < 0 Then thisval = 0.0857 * Abs(G116) + 0.0116 * Abs(G115): If thisval > maxval Then maxval = thisval
+If G116 < 0 Then thisval = 0.0569 * Abs(G116) + 0.0134 * Abs(G115): If thisval > maxval Then maxval = thisval
+If G118 < 0 Then thisval = 0.0857 * Abs(G118) + 0.0116 * Abs(G117): If thisval > maxval Then maxval = thisval
+If G118 < 0 Then thisval = 0.0569 * Abs(G118) + 0.0134 * Abs(G117): If thisval > maxval Then maxval = thisval
+If G120 < 0 Then thisval = 0.0857 * Abs(G120) + 0.0116 * Abs(G119): If thisval > maxval Then maxval = thisval
+If G120 < 0 Then thisval = 0.0569 * Abs(G120) + 0.0134 * Abs(G119): If thisval > maxval Then maxval = thisval
+If G122 < 0 Then thisval = 0.0857 * Abs(G122) + 0.0116 * Abs(G121): If thisval > maxval Then maxval = thisval
+If G122 < 0 Then thisval = 0.0569 * Abs(G122) + 0.0134 * Abs(G121): If thisval > maxval Then maxval = thisval
+
+If H104 < 0 Then thisval = 0.0857 * Abs(H104) + 0.0116 * Abs(H103): If thisval > maxval Then maxval = thisval
+If H104 < 0 Then thisval = 0.0569 * Abs(H104) + 0.0134 * Abs(H103): If thisval > maxval Then maxval = thisval
+If H106 < 0 Then thisval = 0.0857 * Abs(H106) + 0.0116 * Abs(H105): If thisval > maxval Then maxval = thisval
+If H106 < 0 Then thisval = 0.0569 * Abs(H106) + 0.0134 * Abs(H105): If thisval > maxval Then maxval = thisval
+If H108 < 0 Then thisval = 0.0857 * Abs(H108) + 0.0116 * Abs(H107): If thisval > maxval Then maxval = thisval
+If H108 < 0 Then thisval = 0.0569 * Abs(H108) + 0.0134 * Abs(H107): If thisval > maxval Then maxval = thisval
+If H110 < 0 Then thisval = 0.0857 * Abs(H110) + 0.0116 * Abs(H109): If thisval > maxval Then maxval = thisval
+If H110 < 0 Then thisval = 0.0569 * Abs(H110) + 0.0134 * Abs(H109): If thisval > maxval Then maxval = thisval
+If H112 < 0 Then thisval = 0.0857 * Abs(H112) + 0.0116 * Abs(H111): If thisval > maxval Then maxval = thisval
+If H112 < 0 Then thisval = 0.0569 * Abs(H112) + 0.0134 * Abs(H111): If thisval > maxval Then maxval = thisval
+If H114 < 0 Then thisval = 0.0857 * Abs(H114) + 0.0116 * Abs(H113): If thisval > maxval Then maxval = thisval
+If H114 < 0 Then thisval = 0.0569 * Abs(H114) + 0.0134 * Abs(H113): If thisval > maxval Then maxval = thisval
+If H116 < 0 Then thisval = 0.0857 * Abs(H116) + 0.0116 * Abs(H115): If thisval > maxval Then maxval = thisval
+If H116 < 0 Then thisval = 0.0569 * Abs(H116) + 0.0134 * Abs(H115): If thisval > maxval Then maxval = thisval
+If H118 < 0 Then thisval = 0.0857 * Abs(H118) + 0.0116 * Abs(H117): If thisval > maxval Then maxval = thisval
+If H118 < 0 Then thisval = 0.0569 * Abs(H118) + 0.0134 * Abs(H117): If thisval > maxval Then maxval = thisval
+If H120 < 0 Then thisval = 0.0857 * Abs(H120) + 0.0116 * Abs(H119): If thisval > maxval Then maxval = thisval
+If H120 < 0 Then thisval = 0.0569 * Abs(H120) + 0.0134 * Abs(H119): If thisval > maxval Then maxval = thisval
+If H122 < 0 Then thisval = 0.0857 * Abs(H122) + 0.0116 * Abs(H121): If thisval > maxval Then maxval = thisval
+If H122 < 0 Then thisval = 0.0569 * Abs(H122) + 0.0134 * Abs(H121): If thisval > maxval Then maxval = thisval
+
+If I104 < 0 Then thisval = 0.0857 * Abs(I104) + 0.0116 * Abs(I103): If thisval > maxval Then maxval = thisval
+If I104 < 0 Then thisval = 0.0569 * Abs(I104) + 0.0134 * Abs(I103): If thisval > maxval Then maxval = thisval
+If I106 < 0 Then thisval = 0.0857 * Abs(I106) + 0.0116 * Abs(I105): If thisval > maxval Then maxval = thisval
+If I106 < 0 Then thisval = 0.0569 * Abs(I106) + 0.0134 * Abs(I105): If thisval > maxval Then maxval = thisval
+If I108 < 0 Then thisval = 0.0857 * Abs(I108) + 0.0116 * Abs(I107): If thisval > maxval Then maxval = thisval
+If I108 < 0 Then thisval = 0.0569 * Abs(I108) + 0.0134 * Abs(I107): If thisval > maxval Then maxval = thisval
+If I110 < 0 Then thisval = 0.0857 * Abs(I110) + 0.0116 * Abs(I109): If thisval > maxval Then maxval = thisval
+If I110 < 0 Then thisval = 0.0569 * Abs(I110) + 0.0134 * Abs(I109): If thisval > maxval Then maxval = thisval
+If I112 < 0 Then thisval = 0.0857 * Abs(I112) + 0.0116 * Abs(I111): If thisval > maxval Then maxval = thisval
+If I112 < 0 Then thisval = 0.0569 * Abs(I112) + 0.0134 * Abs(I111): If thisval > maxval Then maxval = thisval
+If I114 < 0 Then thisval = 0.0857 * Abs(I114) + 0.0116 * Abs(I113): If thisval > maxval Then maxval = thisval
+If I114 < 0 Then thisval = 0.0569 * Abs(I114) + 0.0134 * Abs(I113): If thisval > maxval Then maxval = thisval
+If I116 < 0 Then thisval = 0.0857 * Abs(I116) + 0.0116 * Abs(I115): If thisval > maxval Then maxval = thisval
+If I116 < 0 Then thisval = 0.0569 * Abs(I116) + 0.0134 * Abs(I115): If thisval > maxval Then maxval = thisval
+If I118 < 0 Then thisval = 0.0857 * Abs(I118) + 0.0116 * Abs(I117): If thisval > maxval Then maxval = thisval
+If I118 < 0 Then thisval = 0.0569 * Abs(I118) + 0.0134 * Abs(I117): If thisval > maxval Then maxval = thisval
+If I120 < 0 Then thisval = 0.0857 * Abs(I120) + 0.0116 * Abs(I119): If thisval > maxval Then maxval = thisval
+If I120 < 0 Then thisval = 0.0569 * Abs(I120) + 0.0134 * Abs(I119): If thisval > maxval Then maxval = thisval
+If I122 < 0 Then thisval = 0.0857 * Abs(I122) + 0.0116 * Abs(I121): If thisval > maxval Then maxval = thisval
+If I122 < 0 Then thisval = 0.0569 * Abs(I122) + 0.0134 * Abs(I121): If thisval > maxval Then maxval = thisval
+
+I148 = maxval
+
+'12.0x4.0C14
+C150 = 14
+maxval = 0
+
+If E104 < 0 Then thisval = 0.0641 * Abs(E104) + 0.0079 * Abs(E103): If thisval > maxval Then maxval = thisval
+If E104 < 0 Then thisval = 0.0641 * Abs(E104) + 0.0093 * Abs(E103): If thisval > maxval Then maxval = thisval
+If E106 < 0 Then thisval = 0.0641 * Abs(E106) + 0.0079 * Abs(E105): If thisval > maxval Then maxval = thisval
+If E106 < 0 Then thisval = 0.0641 * Abs(E106) + 0.0093 * Abs(E105): If thisval > maxval Then maxval = thisval
+
+If F104 < 0 Then thisval = 0.0641 * Abs(F104) + 0.0079 * Abs(F103): If thisval > maxval Then maxval = thisval
+If F104 < 0 Then thisval = 0.0641 * Abs(F104) + 0.0093 * Abs(F103): If thisval > maxval Then maxval = thisval
+If F106 < 0 Then thisval = 0.0641 * Abs(F106) + 0.0079 * Abs(F105): If thisval > maxval Then maxval = thisval
+If F106 < 0 Then thisval = 0.0641 * Abs(F106) + 0.0093 * Abs(F105): If thisval > maxval Then maxval = thisval
+If F108 < 0 Then thisval = 0.0641 * Abs(F108) + 0.0079 * Abs(F107): If thisval > maxval Then maxval = thisval
+If F108 < 0 Then thisval = 0.0641 * Abs(F108) + 0.0093 * Abs(F107): If thisval > maxval Then maxval = thisval
+If F110 < 0 Then thisval = 0.0641 * Abs(F110) + 0.0079 * Abs(F109): If thisval > maxval Then maxval = thisval
+If F110 < 0 Then thisval = 0.0641 * Abs(F110) + 0.0093 * Abs(F109): If thisval > maxval Then maxval = thisval
+If F112 < 0 Then thisval = 0.0641 * Abs(F112) + 0.0079 * Abs(F111): If thisval > maxval Then maxval = thisval
+If F112 < 0 Then thisval = 0.0641 * Abs(F112) + 0.0093 * Abs(F111): If thisval > maxval Then maxval = thisval
+
+If G104 < 0 Then thisval = 0.0641 * Abs(G104) + 0.0079 * Abs(G103): If thisval > maxval Then maxval = thisval
+If G104 < 0 Then thisval = 0.0641 * Abs(G104) + 0.0093 * Abs(G103): If thisval > maxval Then maxval = thisval
+If G106 < 0 Then thisval = 0.0641 * Abs(G106) + 0.0079 * Abs(G105): If thisval > maxval Then maxval = thisval
+If G106 < 0 Then thisval = 0.0641 * Abs(G106) + 0.0093 * Abs(G105): If thisval > maxval Then maxval = thisval
+If G108 < 0 Then thisval = 0.0641 * Abs(G108) + 0.0079 * Abs(G107): If thisval > maxval Then maxval = thisval
+If G108 < 0 Then thisval = 0.0641 * Abs(G108) + 0.0093 * Abs(G107): If thisval > maxval Then maxval = thisval
+If G110 < 0 Then thisval = 0.0641 * Abs(G110) + 0.0079 * Abs(G109): If thisval > maxval Then maxval = thisval
+If G110 < 0 Then thisval = 0.0641 * Abs(G110) + 0.0093 * Abs(G109): If thisval > maxval Then maxval = thisval
+If G112 < 0 Then thisval = 0.0641 * Abs(G112) + 0.0079 * Abs(G111): If thisval > maxval Then maxval = thisval
+If G112 < 0 Then thisval = 0.0641 * Abs(G112) + 0.0093 * Abs(G111): If thisval > maxval Then maxval = thisval
+If G114 < 0 Then thisval = 0.0641 * Abs(G114) + 0.0079 * Abs(G113): If thisval > maxval Then maxval = thisval
+If G114 < 0 Then thisval = 0.0641 * Abs(G114) + 0.0093 * Abs(G113): If thisval > maxval Then maxval = thisval
+If G116 < 0 Then thisval = 0.0641 * Abs(G116) + 0.0079 * Abs(G115): If thisval > maxval Then maxval = thisval
+If G116 < 0 Then thisval = 0.0641 * Abs(G116) + 0.0093 * Abs(G115): If thisval > maxval Then maxval = thisval
+If G118 < 0 Then thisval = 0.0641 * Abs(G118) + 0.0079 * Abs(G117): If thisval > maxval Then maxval = thisval
+If G118 < 0 Then thisval = 0.0641 * Abs(G118) + 0.0093 * Abs(G117): If thisval > maxval Then maxval = thisval
+If G120 < 0 Then thisval = 0.0641 * Abs(G120) + 0.0079 * Abs(G119): If thisval > maxval Then maxval = thisval
+If G120 < 0 Then thisval = 0.0641 * Abs(G120) + 0.0093 * Abs(G119): If thisval > maxval Then maxval = thisval
+If G122 < 0 Then thisval = 0.0641 * Abs(G122) + 0.0079 * Abs(G121): If thisval > maxval Then maxval = thisval
+If G122 < 0 Then thisval = 0.0641 * Abs(G122) + 0.0093 * Abs(G121): If thisval > maxval Then maxval = thisval
+
+If H104 < 0 Then thisval = 0.0641 * Abs(H104) + 0.0079 * Abs(H103): If thisval > maxval Then maxval = thisval
+If H104 < 0 Then thisval = 0.0641 * Abs(H104) + 0.0093 * Abs(H103): If thisval > maxval Then maxval = thisval
+If H106 < 0 Then thisval = 0.0641 * Abs(H106) + 0.0079 * Abs(H105): If thisval > maxval Then maxval = thisval
+If H106 < 0 Then thisval = 0.0641 * Abs(H106) + 0.0093 * Abs(H105): If thisval > maxval Then maxval = thisval
+If H108 < 0 Then thisval = 0.0641 * Abs(H108) + 0.0079 * Abs(H107): If thisval > maxval Then maxval = thisval
+If H108 < 0 Then thisval = 0.0641 * Abs(H108) + 0.0093 * Abs(H107): If thisval > maxval Then maxval = thisval
+If H110 < 0 Then thisval = 0.0641 * Abs(H110) + 0.0079 * Abs(H109): If thisval > maxval Then maxval = thisval
+If H110 < 0 Then thisval = 0.0641 * Abs(H110) + 0.0093 * Abs(H109): If thisval > maxval Then maxval = thisval
+If H112 < 0 Then thisval = 0.0641 * Abs(H112) + 0.0079 * Abs(H111): If thisval > maxval Then maxval = thisval
+If H112 < 0 Then thisval = 0.0641 * Abs(H112) + 0.0093 * Abs(H111): If thisval > maxval Then maxval = thisval
+If H114 < 0 Then thisval = 0.0641 * Abs(H114) + 0.0079 * Abs(H113): If thisval > maxval Then maxval = thisval
+If H114 < 0 Then thisval = 0.0641 * Abs(H114) + 0.0093 * Abs(H113): If thisval > maxval Then maxval = thisval
+If H116 < 0 Then thisval = 0.0641 * Abs(H116) + 0.0079 * Abs(H115): If thisval > maxval Then maxval = thisval
+If H116 < 0 Then thisval = 0.0641 * Abs(H116) + 0.0093 * Abs(H115): If thisval > maxval Then maxval = thisval
+If H118 < 0 Then thisval = 0.0641 * Abs(H118) + 0.0079 * Abs(H117): If thisval > maxval Then maxval = thisval
+If H118 < 0 Then thisval = 0.0641 * Abs(H118) + 0.0093 * Abs(H117): If thisval > maxval Then maxval = thisval
+If H120 < 0 Then thisval = 0.0641 * Abs(H120) + 0.0079 * Abs(H119): If thisval > maxval Then maxval = thisval
+If H120 < 0 Then thisval = 0.0641 * Abs(H120) + 0.0093 * Abs(H119): If thisval > maxval Then maxval = thisval
+If H122 < 0 Then thisval = 0.0641 * Abs(H122) + 0.0079 * Abs(H121): If thisval > maxval Then maxval = thisval
+If H122 < 0 Then thisval = 0.0641 * Abs(H122) + 0.0093 * Abs(H121): If thisval > maxval Then maxval = thisval
+
+If I104 < 0 Then thisval = 0.0641 * Abs(I104) + 0.0079 * Abs(I103): If thisval > maxval Then maxval = thisval
+If I104 < 0 Then thisval = 0.0641 * Abs(I104) + 0.0093 * Abs(I103): If thisval > maxval Then maxval = thisval
+If I106 < 0 Then thisval = 0.0641 * Abs(I106) + 0.0079 * Abs(I105): If thisval > maxval Then maxval = thisval
+If I106 < 0 Then thisval = 0.0641 * Abs(I106) + 0.0093 * Abs(I105): If thisval > maxval Then maxval = thisval
+If I108 < 0 Then thisval = 0.0641 * Abs(I108) + 0.0079 * Abs(I107): If thisval > maxval Then maxval = thisval
+If I108 < 0 Then thisval = 0.0641 * Abs(I108) + 0.0093 * Abs(I107): If thisval > maxval Then maxval = thisval
+If I110 < 0 Then thisval = 0.0641 * Abs(I110) + 0.0079 * Abs(I109): If thisval > maxval Then maxval = thisval
+If I110 < 0 Then thisval = 0.0641 * Abs(I110) + 0.0093 * Abs(I109): If thisval > maxval Then maxval = thisval
+If I112 < 0 Then thisval = 0.0641 * Abs(I112) + 0.0079 * Abs(I111): If thisval > maxval Then maxval = thisval
+If I112 < 0 Then thisval = 0.0641 * Abs(I112) + 0.0093 * Abs(I111): If thisval > maxval Then maxval = thisval
+If I114 < 0 Then thisval = 0.0641 * Abs(I114) + 0.0079 * Abs(I113): If thisval > maxval Then maxval = thisval
+If I114 < 0 Then thisval = 0.0641 * Abs(I114) + 0.0093 * Abs(I113): If thisval > maxval Then maxval = thisval
+If I116 < 0 Then thisval = 0.0641 * Abs(I116) + 0.0079 * Abs(I115): If thisval > maxval Then maxval = thisval
+If I116 < 0 Then thisval = 0.0641 * Abs(I116) + 0.0093 * Abs(I115): If thisval > maxval Then maxval = thisval
+If I118 < 0 Then thisval = 0.0641 * Abs(I118) + 0.0079 * Abs(I117): If thisval > maxval Then maxval = thisval
+If I118 < 0 Then thisval = 0.0641 * Abs(I118) + 0.0093 * Abs(I117): If thisval > maxval Then maxval = thisval
+If I120 < 0 Then thisval = 0.0641 * Abs(I120) + 0.0079 * Abs(I119): If thisval > maxval Then maxval = thisval
+If I120 < 0 Then thisval = 0.0641 * Abs(I120) + 0.0093 * Abs(I119): If thisval > maxval Then maxval = thisval
+If I122 < 0 Then thisval = 0.0641 * Abs(I122) + 0.0079 * Abs(I121): If thisval > maxval Then maxval = thisval
+If I122 < 0 Then thisval = 0.0641 * Abs(I122) + 0.0093 * Abs(I121): If thisval > maxval Then maxval = thisval
+
+I170 = maxval
+
+' "8.0x4.0C12"
+C172 = 10
+maxval = 0
+If E104 < 0 Then thisval = 0.0539 * Abs(E104) + 0.0064 * Abs(E103): If thisval > maxval Then maxval = thisval
+If E104 < 0 Then thisval = 0.0284 * Abs(E104) + 0.0075 * Abs(E103): If thisval > maxval Then maxval = thisval
+If E106 < 0 Then thisval = 0.0539 * Abs(E106) + 0.0064 * Abs(E105): If thisval > maxval Then maxval = thisval
+If E106 < 0 Then thisval = 0.0284 * Abs(E106) + 0.0075 * Abs(E105): If thisval > maxval Then maxval = thisval
+If F104 < 0 Then thisval = 0.0539 * Abs(F104) + 0.0064 * Abs(F103): If thisval > maxval Then maxval = thisval
+If F104 < 0 Then thisval = 0.0284 * Abs(F104) + 0.0075 * Abs(F103): If thisval > maxval Then maxval = thisval
+If F106 < 0 Then thisval = 0.0539 * Abs(F106) + 0.0064 * Abs(F105): If thisval > maxval Then maxval = thisval
+If F106 < 0 Then thisval = 0.0284 * Abs(F106) + 0.0075 * Abs(F105): If thisval > maxval Then maxval = thisval
+If F108 < 0 Then thisval = 0.0539 * Abs(F108) + 0.0064 * Abs(F107): If thisval > maxval Then maxval = thisval
+If F108 < 0 Then thisval = 0.0284 * Abs(F108) + 0.0075 * Abs(F107): If thisval > maxval Then maxval = thisval
+If F110 < 0 Then thisval = 0.0539 * Abs(F110) + 0.0064 * Abs(F109): If thisval > maxval Then maxval = thisval
+If F110 < 0 Then thisval = 0.0284 * Abs(F110) + 0.0075 * Abs(F109): If thisval > maxval Then maxval = thisval
+If F112 < 0 Then thisval = 0.0539 * Abs(F112) + 0.0064 * Abs(F111): If thisval > maxval Then maxval = thisval
+If F112 < 0 Then thisval = 0.0284 * Abs(F112) + 0.0075 * Abs(F111): If thisval > maxval Then maxval = thisval
+If G104 < 0 Then thisval = 0.0539 * Abs(G104) + 0.0064 * Abs(G103): If thisval > maxval Then maxval = thisval
+If G104 < 0 Then thisval = 0.0284 * Abs(G104) + 0.0075 * Abs(G103): If thisval > maxval Then maxval = thisval
+If G106 < 0 Then thisval = 0.0539 * Abs(G106) + 0.0064 * Abs(G105): If thisval > maxval Then maxval = thisval
+If G106 < 0 Then thisval = 0.0284 * Abs(G106) + 0.0075 * Abs(G105): If thisval > maxval Then maxval = thisval
+If G108 < 0 Then thisval = 0.0539 * Abs(G108) + 0.0064 * Abs(G107): If thisval > maxval Then maxval = thisval
+If G108 < 0 Then thisval = 0.0284 * Abs(G108) + 0.0075 * Abs(G107): If thisval > maxval Then maxval = thisval
+If G110 < 0 Then thisval = 0.0539 * Abs(G110) + 0.0064 * Abs(G109): If thisval > maxval Then maxval = thisval
+If G110 < 0 Then thisval = 0.0284 * Abs(G110) + 0.0075 * Abs(G109): If thisval > maxval Then maxval = thisval
+If G112 < 0 Then thisval = 0.0539 * Abs(G112) + 0.0064 * Abs(G111): If thisval > maxval Then maxval = thisval
+If G112 < 0 Then thisval = 0.0284 * Abs(G112) + 0.0075 * Abs(G111): If thisval > maxval Then maxval = thisval
+If G114 < 0 Then thisval = 0.0539 * Abs(G114) + 0.0064 * Abs(G113): If thisval > maxval Then maxval = thisval
+If G114 < 0 Then thisval = 0.0284 * Abs(G114) + 0.0075 * Abs(G113): If thisval > maxval Then maxval = thisval
+If G116 < 0 Then thisval = 0.0539 * Abs(G116) + 0.0064 * Abs(G115): If thisval > maxval Then maxval = thisval
+If G116 < 0 Then thisval = 0.0284 * Abs(G116) + 0.0075 * Abs(G115): If thisval > maxval Then maxval = thisval
+If G118 < 0 Then thisval = 0.0539 * Abs(G118) + 0.0064 * Abs(G117): If thisval > maxval Then maxval = thisval
+If G118 < 0 Then thisval = 0.0284 * Abs(G118) + 0.0075 * Abs(G117): If thisval > maxval Then maxval = thisval
+If G120 < 0 Then thisval = 0.0539 * Abs(G120) + 0.0064 * Abs(G119): If thisval > maxval Then maxval = thisval
+If G120 < 0 Then thisval = 0.0284 * Abs(G120) + 0.0075 * Abs(G119): If thisval > maxval Then maxval = thisval
+If G122 < 0 Then thisval = 0.0539 * Abs(G122) + 0.0064 * Abs(G121): If thisval > maxval Then maxval = thisval
+If G122 < 0 Then thisval = 0.0284 * Abs(G122) + 0.0075 * Abs(G121): If thisval > maxval Then maxval = thisval
+If H104 < 0 Then thisval = 0.0539 * Abs(H104) + 0.0064 * Abs(H103): If thisval > maxval Then maxval = thisval
+If H104 < 0 Then thisval = 0.0284 * Abs(H104) + 0.0075 * Abs(H103): If thisval > maxval Then maxval = thisval
+If H106 < 0 Then thisval = 0.0539 * Abs(H106) + 0.0064 * Abs(H105): If thisval > maxval Then maxval = thisval
+If H106 < 0 Then thisval = 0.0284 * Abs(H106) + 0.0075 * Abs(H105): If thisval > maxval Then maxval = thisval
+If H108 < 0 Then thisval = 0.0539 * Abs(H108) + 0.0064 * Abs(H107): If thisval > maxval Then maxval = thisval
+If H108 < 0 Then thisval = 0.0284 * Abs(H108) + 0.0075 * Abs(H107): If thisval > maxval Then maxval = thisval
+If H110 < 0 Then thisval = 0.0539 * Abs(H110) + 0.0064 * Abs(H109): If thisval > maxval Then maxval = thisval
+If H110 < 0 Then thisval = 0.0284 * Abs(H110) + 0.0075 * Abs(H109): If thisval > maxval Then maxval = thisval
+If H112 < 0 Then thisval = 0.0539 * Abs(H112) + 0.0064 * Abs(H111): If thisval > maxval Then maxval = thisval
+If H112 < 0 Then thisval = 0.0284 * Abs(H112) + 0.0075 * Abs(H111): If thisval > maxval Then maxval = thisval
+If H114 < 0 Then thisval = 0.0539 * Abs(H114) + 0.0064 * Abs(H113): If thisval > maxval Then maxval = thisval
+If H114 < 0 Then thisval = 0.0284 * Abs(H114) + 0.0075 * Abs(H113): If thisval > maxval Then maxval = thisval
+If H116 < 0 Then thisval = 0.0539 * Abs(H116) + 0.0064 * Abs(H115): If thisval > maxval Then maxval = thisval
+If H116 < 0 Then thisval = 0.0284 * Abs(H116) + 0.0075 * Abs(H115): If thisval > maxval Then maxval = thisval
+If H118 < 0 Then thisval = 0.0539 * Abs(H118) + 0.0064 * Abs(H117): If thisval > maxval Then maxval = thisval
+If H118 < 0 Then thisval = 0.0284 * Abs(H118) + 0.0075 * Abs(H117): If thisval > maxval Then maxval = thisval
+If H120 < 0 Then thisval = 0.0539 * Abs(H120) + 0.0064 * Abs(H119): If thisval > maxval Then maxval = thisval
+If H120 < 0 Then thisval = 0.0284 * Abs(H120) + 0.0075 * Abs(H119): If thisval > maxval Then maxval = thisval
+If H122 < 0 Then thisval = 0.0539 * Abs(H122) + 0.0064 * Abs(H121): If thisval > maxval Then maxval = thisval
+If H122 < 0 Then thisval = 0.0284 * Abs(H122) + 0.0075 * Abs(H121): If thisval > maxval Then maxval = thisval
+If I104 < 0 Then thisval = 0.0539 * Abs(I104) + 0.0064 * Abs(I103): If thisval > maxval Then maxval = thisval
+If I104 < 0 Then thisval = 0.0284 * Abs(I104) + 0.0075 * Abs(I103): If thisval > maxval Then maxval = thisval
+If I106 < 0 Then thisval = 0.0539 * Abs(I106) + 0.0064 * Abs(I105): If thisval > maxval Then maxval = thisval
+If I106 < 0 Then thisval = 0.0284 * Abs(I106) + 0.0075 * Abs(I105): If thisval > maxval Then maxval = thisval
+If I108 < 0 Then thisval = 0.0539 * Abs(I108) + 0.0064 * Abs(I107): If thisval > maxval Then maxval = thisval
+If I108 < 0 Then thisval = 0.0284 * Abs(I108) + 0.0075 * Abs(I107): If thisval > maxval Then maxval = thisval
+If I110 < 0 Then thisval = 0.0539 * Abs(I110) + 0.0064 * Abs(I109): If thisval > maxval Then maxval = thisval
+If I110 < 0 Then thisval = 0.0284 * Abs(I110) + 0.0075 * Abs(I109): If thisval > maxval Then maxval = thisval
+If I112 < 0 Then thisval = 0.0539 * Abs(I112) + 0.0064 * Abs(I111): If thisval > maxval Then maxval = thisval
+If I112 < 0 Then thisval = 0.0284 * Abs(I112) + 0.0075 * Abs(I111): If thisval > maxval Then maxval = thisval
+If I114 < 0 Then thisval = 0.0539 * Abs(I114) + 0.0064 * Abs(I113): If thisval > maxval Then maxval = thisval
+If I114 < 0 Then thisval = 0.0284 * Abs(I114) + 0.0075 * Abs(I113): If thisval > maxval Then maxval = thisval
+If I116 < 0 Then thisval = 0.0539 * Abs(I116) + 0.0064 * Abs(I115): If thisval > maxval Then maxval = thisval
+If I116 < 0 Then thisval = 0.0284 * Abs(I116) + 0.0075 * Abs(I115): If thisval > maxval Then maxval = thisval
+If I118 < 0 Then thisval = 0.0539 * Abs(I118) + 0.0064 * Abs(I117): If thisval > maxval Then maxval = thisval
+If I118 < 0 Then thisval = 0.0284 * Abs(I118) + 0.0075 * Abs(I117): If thisval > maxval Then maxval = thisval
+If I120 < 0 Then thisval = 0.0539 * Abs(I120) + 0.0064 * Abs(I119): If thisval > maxval Then maxval = thisval
+If I120 < 0 Then thisval = 0.0284 * Abs(I120) + 0.0075 * Abs(I119): If thisval > maxval Then maxval = thisval
+If I122 < 0 Then thisval = 0.0539 * Abs(I122) + 0.0064 * Abs(I121): If thisval > maxval Then maxval = thisval
+If I122 < 0 Then thisval = 0.0284 * Abs(I122) + 0.0075 * Abs(I121): If thisval > maxval Then maxval = thisval
+
+I192 = maxval
+
+'"12.0x4.0C12"
+C194 = 15
+maxval = 0
+
+If E104 < 0 Then thisval = 0.0455 * Abs(E104) + 0.0043 * Abs(E103): If thisval > maxval Then maxval = thisval
+If E104 < 0 Then thisval = 0.0297 * Abs(E104) + 0.005 * Abs(E103): If thisval > maxval Then maxval = thisval
+If E106 < 0 Then thisval = 0.0455 * Abs(E106) + 0.0043 * Abs(E105): If thisval > maxval Then maxval = thisval
+If E106 < 0 Then thisval = 0.0297 * Abs(E106) + 0.005 * Abs(E105): If thisval > maxval Then maxval = thisval
+If F104 < 0 Then thisval = 0.0455 * Abs(F104) + 0.0043 * Abs(F103): If thisval > maxval Then maxval = thisval
+If F104 < 0 Then thisval = 0.0297 * Abs(F104) + 0.005 * Abs(F103): If thisval > maxval Then maxval = thisval
+If F106 < 0 Then thisval = 0.0455 * Abs(F106) + 0.0043 * Abs(F105): If thisval > maxval Then maxval = thisval
+If F106 < 0 Then thisval = 0.0297 * Abs(F106) + 0.005 * Abs(F105): If thisval > maxval Then maxval = thisval
+If F108 < 0 Then thisval = 0.0455 * Abs(F108) + 0.0043 * Abs(F107): If thisval > maxval Then maxval = thisval
+If F108 < 0 Then thisval = 0.0297 * Abs(F108) + 0.005 * Abs(F107): If thisval > maxval Then maxval = thisval
+If F110 < 0 Then thisval = 0.0455 * Abs(F110) + 0.0043 * Abs(F109): If thisval > maxval Then maxval = thisval
+If F110 < 0 Then thisval = 0.0297 * Abs(F110) + 0.005 * Abs(F109): If thisval > maxval Then maxval = thisval
+If F112 < 0 Then thisval = 0.0455 * Abs(F112) + 0.0043 * Abs(F111): If thisval > maxval Then maxval = thisval
+If F112 < 0 Then thisval = 0.0297 * Abs(F112) + 0.005 * Abs(F111): If thisval > maxval Then maxval = thisval
+If G104 < 0 Then thisval = 0.0455 * Abs(G104) + 0.0043 * Abs(G103): If thisval > maxval Then maxval = thisval
+If G104 < 0 Then thisval = 0.0297 * Abs(G104) + 0.005 * Abs(G103): If thisval > maxval Then maxval = thisval
+If G106 < 0 Then thisval = 0.0455 * Abs(G106) + 0.0043 * Abs(G105): If thisval > maxval Then maxval = thisval
+If G106 < 0 Then thisval = 0.0297 * Abs(G106) + 0.005 * Abs(G105): If thisval > maxval Then maxval = thisval
+If G108 < 0 Then thisval = 0.0455 * Abs(G108) + 0.0043 * Abs(G107): If thisval > maxval Then maxval = thisval
+If G108 < 0 Then thisval = 0.0297 * Abs(G108) + 0.005 * Abs(G107): If thisval > maxval Then maxval = thisval
+If G110 < 0 Then thisval = 0.0455 * Abs(G110) + 0.0043 * Abs(G109): If thisval > maxval Then maxval = thisval
+If G110 < 0 Then thisval = 0.0297 * Abs(G110) + 0.005 * Abs(G109): If thisval > maxval Then maxval = thisval
+If G112 < 0 Then thisval = 0.0455 * Abs(G112) + 0.0043 * Abs(G111): If thisval > maxval Then maxval = thisval
+If G112 < 0 Then thisval = 0.0297 * Abs(G112) + 0.005 * Abs(G111): If thisval > maxval Then maxval = thisval
+If G114 < 0 Then thisval = 0.0455 * Abs(G114) + 0.0043 * Abs(G113): If thisval > maxval Then maxval = thisval
+If G114 < 0 Then thisval = 0.0297 * Abs(G114) + 0.005 * Abs(G113): If thisval > maxval Then maxval = thisval
+If G116 < 0 Then thisval = 0.0455 * Abs(G116) + 0.0043 * Abs(G115): If thisval > maxval Then maxval = thisval
+If G116 < 0 Then thisval = 0.0297 * Abs(G116) + 0.005 * Abs(G115): If thisval > maxval Then maxval = thisval
+If G118 < 0 Then thisval = 0.0455 * Abs(G118) + 0.0043 * Abs(G117): If thisval > maxval Then maxval = thisval
+If G118 < 0 Then thisval = 0.0297 * Abs(G118) + 0.005 * Abs(G117): If thisval > maxval Then maxval = thisval
+If G120 < 0 Then thisval = 0.0455 * Abs(G120) + 0.0043 * Abs(G119): If thisval > maxval Then maxval = thisval
+If G120 < 0 Then thisval = 0.0297 * Abs(G120) + 0.005 * Abs(G119): If thisval > maxval Then maxval = thisval
+If G122 < 0 Then thisval = 0.0455 * Abs(G122) + 0.0043 * Abs(G121): If thisval > maxval Then maxval = thisval
+If G122 < 0 Then thisval = 0.0297 * Abs(G122) + 0.005 * Abs(G121): If thisval > maxval Then maxval = thisval
+If H104 < 0 Then thisval = 0.0455 * Abs(H104) + 0.0043 * Abs(H103): If thisval > maxval Then maxval = thisval
+If H104 < 0 Then thisval = 0.0297 * Abs(H104) + 0.005 * Abs(H103): If thisval > maxval Then maxval = thisval
+If H106 < 0 Then thisval = 0.0455 * Abs(H106) + 0.0043 * Abs(H105): If thisval > maxval Then maxval = thisval
+If H106 < 0 Then thisval = 0.0297 * Abs(H106) + 0.005 * Abs(H105): If thisval > maxval Then maxval = thisval
+If H108 < 0 Then thisval = 0.0455 * Abs(H108) + 0.0043 * Abs(H107): If thisval > maxval Then maxval = thisval
+If H108 < 0 Then thisval = 0.0297 * Abs(H108) + 0.005 * Abs(H107): If thisval > maxval Then maxval = thisval
+If H110 < 0 Then thisval = 0.0455 * Abs(H110) + 0.0043 * Abs(H109): If thisval > maxval Then maxval = thisval
+If H110 < 0 Then thisval = 0.0297 * Abs(H110) + 0.005 * Abs(H109): If thisval > maxval Then maxval = thisval
+If H112 < 0 Then thisval = 0.0455 * Abs(H112) + 0.0043 * Abs(H111): If thisval > maxval Then maxval = thisval
+If H112 < 0 Then thisval = 0.0297 * Abs(H112) + 0.005 * Abs(H111): If thisval > maxval Then maxval = thisval
+If H114 < 0 Then thisval = 0.0455 * Abs(H114) + 0.0043 * Abs(H113): If thisval > maxval Then maxval = thisval
+If H114 < 0 Then thisval = 0.0297 * Abs(H114) + 0.005 * Abs(H113): If thisval > maxval Then maxval = thisval
+If H116 < 0 Then thisval = 0.0455 * Abs(H116) + 0.0043 * Abs(H115): If thisval > maxval Then maxval = thisval
+If H116 < 0 Then thisval = 0.0297 * Abs(H116) + 0.005 * Abs(H115): If thisval > maxval Then maxval = thisval
+If H118 < 0 Then thisval = 0.0455 * Abs(H118) + 0.0043 * Abs(H117): If thisval > maxval Then maxval = thisval
+If H118 < 0 Then thisval = 0.0297 * Abs(H118) + 0.005 * Abs(H117): If thisval > maxval Then maxval = thisval
+If H120 < 0 Then thisval = 0.0455 * Abs(H120) + 0.0043 * Abs(H119): If thisval > maxval Then maxval = thisval
+If H120 < 0 Then thisval = 0.0297 * Abs(H120) + 0.005 * Abs(H119): If thisval > maxval Then maxval = thisval
+If H122 < 0 Then thisval = 0.0455 * Abs(H122) + 0.0043 * Abs(H121): If thisval > maxval Then maxval = thisval
+If H122 < 0 Then thisval = 0.0297 * Abs(H122) + 0.005 * Abs(H121): If thisval > maxval Then maxval = thisval
+If I104 < 0 Then thisval = 0.0455 * Abs(I104) + 0.0043 * Abs(I103): If thisval > maxval Then maxval = thisval
+If I104 < 0 Then thisval = 0.0297 * Abs(I104) + 0.005 * Abs(I103): If thisval > maxval Then maxval = thisval
+If I106 < 0 Then thisval = 0.0455 * Abs(I106) + 0.0043 * Abs(I105): If thisval > maxval Then maxval = thisval
+If I106 < 0 Then thisval = 0.0297 * Abs(I106) + 0.005 * Abs(I105): If thisval > maxval Then maxval = thisval
+If I108 < 0 Then thisval = 0.0455 * Abs(I108) + 0.0043 * Abs(I107): If thisval > maxval Then maxval = thisval
+If I108 < 0 Then thisval = 0.0297 * Abs(I108) + 0.005 * Abs(I107): If thisval > maxval Then maxval = thisval
+If I110 < 0 Then thisval = 0.0455 * Abs(I110) + 0.0043 * Abs(I109): If thisval > maxval Then maxval = thisval
+If I110 < 0 Then thisval = 0.0297 * Abs(I110) + 0.005 * Abs(I109): If thisval > maxval Then maxval = thisval
+If I112 < 0 Then thisval = 0.0455 * Abs(I112) + 0.0043 * Abs(I111): If thisval > maxval Then maxval = thisval
+If I112 < 0 Then thisval = 0.0297 * Abs(I112) + 0.005 * Abs(I111): If thisval > maxval Then maxval = thisval
+If I114 < 0 Then thisval = 0.0455 * Abs(I114) + 0.0043 * Abs(I113): If thisval > maxval Then maxval = thisval
+If I114 < 0 Then thisval = 0.0297 * Abs(I114) + 0.005 * Abs(I113): If thisval > maxval Then maxval = thisval
+If I116 < 0 Then thisval = 0.0455 * Abs(I116) + 0.0043 * Abs(I115): If thisval > maxval Then maxval = thisval
+If I116 < 0 Then thisval = 0.0297 * Abs(I116) + 0.005 * Abs(I115): If thisval > maxval Then maxval = thisval
+If I118 < 0 Then thisval = 0.0455 * Abs(I118) + 0.0043 * Abs(I117): If thisval > maxval Then maxval = thisval
+If I118 < 0 Then thisval = 0.0297 * Abs(I118) + 0.005 * Abs(I117): If thisval > maxval Then maxval = thisval
+If I120 < 0 Then thisval = 0.0455 * Abs(I120) + 0.0043 * Abs(I119): If thisval > maxval Then maxval = thisval
+If I120 < 0 Then thisval = 0.0297 * Abs(I120) + 0.005 * Abs(I119): If thisval > maxval Then maxval = thisval
+If I122 < 0 Then thisval = 0.0455 * Abs(I122) + 0.0043 * Abs(I121): If thisval > maxval Then maxval = thisval
+If I122 < 0 Then thisval = 0.0297 * Abs(I122) + 0.005 * Abs(I121): If thisval > maxval Then maxval = thisval
+
+I214 = maxval
+
+'* Preliminary Rafter Profile selection :
+'=IF(I148<=1,C128,IF(I170<=1,C150,IF(I192<=1,C172,IF(I214<=1.02,C194,"Kit unavailable"))))
+If I148 <= 1 Then
+    E217 = C128         '8x14
+ElseIf I192 <= 1 Then
+    E217 = C172         '8x12
+ElseIf I170 <= 1 Then
+    E217 = C150         '12x14
+ElseIf I214 <= 1.02 Then
+    E217 = C194         '12x12
+Else
+    E217 = "All Rafters Failed"
+End If
+'see E217
+
+ApexBrace = False
+'ValidS = False"INVALID"
+ProfileFound = False: CertifiedProfile = False
+If E217 = "All Rafters Failed" Then
+    E262 = "Failed"    '"Kit unavailable. Rafter failed"
+    RafterInVal = 6
+    'ValidS = False
+Else
+    E262 = "OK"
+    RafterInVal = E217
+    ProfileFound = True
+    CertifiedProfile = True
+    'ValidS = True
+End If
+
+'see "Rafter is " & E262 & nl & " ie " & FrameMtrl(RafterInVal).Mtrl & nl & "ApexBrace=" & ApexBrace
+
+
+'Close #1
+Results = ""
+If ProfileFound Then
+    FoundPitch = 0
+    FoundSpan = SPAN
+    FoundStubs = False
+    If FoundSpan - SPAN <= 0 Then
+        spanVar = 0
+    Else
+        spanVar = 100 / (SPAN / (FoundSpan - SPAN))
+    End If
+    FoundCap = BCapability
+    If FoundCap < WindSpeedReq And FoundCap >= WindSpeedReqLe5 Then 'using 5% overload
+        capVar = 1 - (WindSpeedReqLe5 / WindSpeedReq)
+        capVar = 100 / (WindSpeedReq / (FoundCap - WindSpeedReq))
+    ElseIf FoundCap - WindSpeedReq <= 0 Then
+        capVar = 0
+    Else
+        capVar = 100 / (WindSpeedReq / (FoundCap - WindSpeedReq))
+    End If
+    Con.DebugOutput Format$(capVar, "000#.#00")
+    'see Format$(capVar, "000#.#00")
+    
+    HoistedLoadFound = 0 'BHoistedLoad
+    
+    'Results = Results & "Span =     " & Tabb & Format$(SPAN, "##0.0#") & Tabb & " >= " & Tabb & BSpan & Tabb & Format$(spanVar, "##0") & "%" & vbCrLf
+    'Results = Results & Tabb & Tabb & "Sought" & Tabb & "  v" & Tabb & "Found" & Tabb & "Variation" & vbCrLf
+    'Results = Results & "WallHeight= " & Tabb & Format$(WallHeight, "##0.0#") & Tabb & " >= " & Tabb & BHeight & Tabb & Format$(heightVar, "##0") & "%" & vbCrLf
+    'Results = Results & "Roof " & Pitchs(RoofStyleIdx).Descr & Tabb & RoofStyleIdx & Tabb & "  = " & Tabb & BPitch & vbCrLf
+    'Results = Results & "Profile Found. " ' & wc & vbCrLf & BldRs.Fields("BDescription").Value
+    'FoundDescription = BDescription
+    'set these values because profile is Found
+    ' "Setting Mullions per end MullionInVal =" & MullionInVal
+    MullionsPerEndIntIn = 0 'BMullions
+    'If MullionsPerEndIntIn < 0 Then MullionsPerEndIntIn = olceil(SPAN / NomBayWidth, 0, "InitMulions")
+    'If MullionsPerEndIntIn > 4 Then MullionsPerEndIntIn = 4
+    '    If OutputCalcs Then Print #1, MullionsPerEndInt & " End-wall mullions of " & MullionInS '& vbCrLf & "Put an overide here !", 16
+    
+    If RafterInVal <= 0 Or RafterInVal > MaxFrameMtrls Then AddNotification "Rafter material is invalid": RafterInVal = 6 ': ValidS = "INVALID": Exit Sub
+        If OutputCalcs Then Print #1, "Rafter = " & FrameMtrl(RafterInVal).Mtrl & " on line " & rLine
+    
+    ColumnInVal = 7 'BColumn
+    MullionInVal = 7 'BMullion
+    KneeBraceInVal = 0 'BKneeBrace
+    ApexBraceInVal = 0: ApexBracesInt = 0
+    'BApexBrace = 10
+Else    'profile not found
+    CertifiedProfile = False
+    FoundSpan = SPAN: spanVar = 100
+    FoundHeight = WallHeight: heightVar = 100
+    FoundStubs = False
+    FoundNomBayWidth = SearchNomBayWidth ': NomBayWidthVar = 0
+    spanVar = 0: heightVar = 0: NomBayWidthVar = 0
+    FoundCap = 0: capVar = 100
+    FoundDescription = "Profile NOT Found * "
+    'set these values to DEFAULTS because profile is NOT Found
+    RafterInVal = 6: If OutputCalcs Then Print #1, "Rafter = 2 x " & FrameMtrl(RafterInVal).Mtrl
+    MullionInVal = 4: If OutputCalcs Then Print #1, "Mullion = 1 x " & FrameMtrl(ColumnInVal).Mtrl
+    ApexBraceInVal = 6: If OutputCalcs Then Print #1, "Apex Brace = 2 x " & FrameMtrl(ApexBraceInVal).Mtrl
+    ApexBracesInt = sideBays * 2
+    HoistedLoadFound = 0
+    ValidS = "INVALID"
+End If
+
+    'olAddNotification "User overide prevented Apex Brace"
+ApexBraceInVal = 0: ApexBracesInt = 0
+
+If CertifiedProfile Then
+    If OutputCalcs Then Print #1, "Certified profile found"
+Else
+    If OutputCalcs Then Print #1, "Profile found is Un Certified"
+End If
+
+ApexBraceVal = ApexBraceInVal
+ApexBraceItm = FrameMtrl(ApexBraceVal).Itm
+ApexBraceLth = SPAN / 3
+ApexBraceDescS = itmdescr(ApexBraceItm)
+ApexBraceS = ""
+ApexBrace = itmprice(ApexBraceItm)
+ApexBraceC = 0
+ApexBraceHeight = UnderApexHeight - ((ApexBraceLth / 2) * vertRiseM)
+
+Results = Results & FoundDescription & vbCrLf
+Results = Results & Tabb & Tabb & "Sought" & Tabb & "  v" & Tabb & "Found" & Tabb & "Variation" & vbCrLf & vbCrLf
+Results = Results & "Span       " & Tabb & Format$(SPAN, "##0.0#") & Tabb & " >= " & Tabb & BSpan & Tabb & Format$(spanVar, "##0") & "%" & vbCrLf
+Results = Results & "Pitch " & Pitchs(RoofStyleIdx).Descr & Tabb & RoofStyleIdx & Tabb & "  = " & Tabb & BPitch & vbCrLf
+Results = Results & "Using Stubs " & FoundStubs & vbCrLf
+Results = Results & "Capability " & Tabb & Format$(WindSpeedReq, "##0.0#") & Tabb & " >= " & Tabb & FoundCap & Tabb & Format$(capVar, "##0") & "%" & vbCrLf
+'see Results
+If OutputCalcs Then Print #1,
+If OutputCalcs Then Print #1, "Gambrel rafter selection completed"
+If OutputCalcs Then Print #1,
+If OutputCalcs Then Print #1, Results
+
+variations:
+heightVar = 0
+allVar = spanVar + capVar
+Msg = "Span " & SPAN & Tabb & FoundSpan & Tabb & spanVar & nl
+'Msg = Msg & "Height " & WallHeight & Tabb & FoundHeight & Tabb & heightVar & NL
+Msg = Msg & "Cap " & WindSpeedReq & Tabb & FoundCap & Tabb & capVar & nl
+Msg = Msg & "All " & allVar
+If spanVar > 50 Then spanVarColour = RGB(0, 200, 0) Else spanVarColour = RGB(0, spanVar * 5, 0)
+If heightVar > 50 Then heightVarColour = RGB(0, 200, 0) Else heightVarColour = RGB(0, heightVar * 4, 0)
+If capVar > 50 Then
+    capVarColour = RGB(200, 0, 0)
+ElseIf capVar < 0 Then
+    capVarColour = RGB(-capVar * 50, 0, 0)
+Else
+    capVarColour = RGB(0, capVar * 5, 0)
+End If
+If allVar > 100 Then allVarColour = RGB(250, 0, 0) Else allVarColour = RGB(Abs(allVar) * 2, 0, 0)
+'see Msg
+
+'SpanVars set here
+If OutputCalcs Then Print #1,
+If OutputCalcs Then Print #1, "End of load Gambrel rafter calcs"
+Close #1
+' "See ProfileLookup.txt"
+
+'needs USA version of this
+GetFootingDetails FootingType   'this came to Wintrang from USA
+
+EOFUSFindGambrelRafter:
+Exit Sub
+
+End Sub
+
