@@ -1,5 +1,10 @@
 ﻿Module Module1
+    Sub Main()
 
+        Console.WriteLine("test")
+
+
+    End Sub
     Sub USFindGableRafter_30()
         On Error GoTo 0
 
@@ -881,5 +886,413 @@ EOFUSFindGableRafter:
         Exit Sub
 
     End Sub
+
+
+    Sub USWindPressureGable()
+        'If OutputCalcs Then Print #1, "USA Gable wind prewgbure calculation"
+        'If OutputCalcs Then Print #1, "Basic Wind Speed selected =  " & Region
+        Console.WriteLine("Enter SPAN:")
+        Dim SPAN = Console.ReadLine()
+        Console.WriteLine("EnterNomBayWidth:")
+        Dim NomBayWidth = Console.ReadLine()
+
+        Dim wgbE9 = SPAN
+        Dim wgbE10 = NomBayWidth
+        Dim wgbE11 = 8.5
+        Dim wgbE12 = 3.88
+        Dim wgbE13 = wgbE11 + 0.5 * wgbE9 * Math.Tan(0.5235987756)
+        'see "wgbE13=" & wgbE13 & " V heightoa=" & heightOA
+        Dim wgbE17 = 110
+        'If OutputCalcs Then Print #1, "Exposure Category selected =  " & TerCatDescr(TerrainIdx)
+        'If OutputCalcs Then Print #1, "Directionality Factor (Kd) = 0.85"
+        Dim wgbE18 = 0.85 'Directionality Factor (Kd)
+        Dim wgbE19 = "B"
+        'If OutputCalcs Then Print #1, "Risk Factor selected =  " & ImportanceDescr(ImportanceIndex)
+        'If OutputCalcs Then Print #1, "Topographic factor (Kzt) =1 "
+        Dim wgbE20 = 1
+        Dim wgbE23 = (wgbE11 + wgbE13) * 0.6 * 0.5
+        Dim wgbU21, wgbV21, wgbW21, wgbX21, wgbY21, wgbZ21
+
+        Select Case wgbE19
+            Case "B"   'exposure B
+                wgbU21 = 0.3
+                wgbV21 = 320
+                wgbW21 = 0.333333
+                wgbX21 = 30
+                wgbY21 = 7
+                wgbZ21 = 1200
+            Case "C"   'exposure C
+                wgbU21 = 0.2
+                wgbV21 = 500
+                wgbW21 = 0.2
+                wgbX21 = 15
+                wgbY21 = 9.5
+                wgbZ21 = 900
+            Case "D"   'exposure D
+                wgbU21 = 0.15
+                wgbV21 = 650
+                wgbW21 = 0.125
+                wgbX21 = 7
+                wgbY21 = 11.5
+                wgbZ21 = 700
+            Case Else
+                ' "Terrain Value " & TerrainIdx & " out of range"
+                wgbU21 = 0.15
+                wgbV21 = 650
+                wgbW21 = 0.125
+                wgbX21 = 7
+                wgbY21 = 11.5
+                wgbZ21 = 700
+        End Select    'terrain value
+        Dim wgbT24
+        If wgbE23 > wgbX21 Then wgbT24 = wgbE23 Else wgbT24 = wgbX21
+
+        Dim wgbE24 = wgbV21 * ((wgbT24 / 33) ^ (wgbW21))
+        Dim wgbE25 = Math.Sqrt(1 / (1 + 0.63 * (((wgbE10 + wgbE11) / wgbE24) ^ 0.63)))
+        Dim wgbE26 = wgbU21 * ((33 / wgbE23) ^ (1 / 6))
+        Dim wgbE27 = 3.4
+        Dim wgbE28 = 3.4
+        Dim wgbE30 = 0.925 * (1 + 1.7 * wgbE28 * wgbE26 * wgbE25) / (1 + 1.7 * wgbE27 * wgbE26)
+
+        'Awgbumed
+        'Enclosure clawgbification :  Open structure
+        'Wind flow   Clear
+        'Internal prewgbure coeffecient (CGpi) =  0.00
+
+        Dim wgbE38 = 0.5 * (wgbE11 + wgbE13)
+        Dim wgbE39 = 2.01 * ((15 / wgbZ21) ^ (2 / wgbY21))
+        Dim wgbE40 = 2.01 * ((wgbE38 / wgbZ21) ^ (2 / wgbY21))
+        Dim wgbE41
+        If wgbE38 < 15 Then
+            wgbE41 = wgbE39
+        Else
+            wgbE41 = wgbE40
+        End If
+
+        'Velocity Prewgbure (qh):
+        Dim wgbE44 = 0.00256 * wgbE41 * wgbE20 * wgbE18 * (wgbE17 ^ 2)
+        '=0.00256    *  E41   *   E20  *  E18     *(E17^2)
+        'qh = 0.00256*Kz*Kzt*Kd*(V^2) =
+        Dim Wu = wgbE44
+        WindPrewgbure = Wu   'Ultimate Dynamic Wind Prewgbure
+        ' "Windprewgbure = " & WindPrewgbure
+
+        'Purlin load
+        'Roof load case 1 - Wind 0? - Case A
+        Dim wgbE33 = "CLEAR"
+        Dim wgbG50, wgbG51
+        Select Case wgbE33
+            Case "CLEAR"
+                wgbG50 = 1.1     'Zone 2 for 30deg pitch only !
+                wgbG51 = -0.333  'Zone 3 for 30deg pitch only !
+            Case "OBSTRUCTED"
+                wgbG50 = -1.467  'Zone 2 for 30deg pitch only !
+                wgbG51 = -1      'Zone 3 for 30deg pitch only !
+        End Select
+        Dim wgbF50 = wgbE38
+        Dim wgbF51 = wgbE38
+        Dim wgbH50 = wgbE44
+        Dim wgbH51 = wgbE44
+        Dim wgbI50 = wgbG50 * wgbH50 * wgbE30 : Dim Wind_GableI50 = wgbI50
+        '=$G$50*$H$50*$E$30
+        Dim wgbI51 = wgbG51 * wgbH51 * wgbE30 : Dim Wind_GableI51 = wgbI51
+        Dim wgbJ50 = wgbE12 * wgbI50
+        Dim wgbJ51 = wgbE12 * wgbI51
+
+        ' "Purlin load (lb/ft') = " & wgbJ50
+        'multiply this by length of purlin ie baywidth to get equally distributed load per purlin
+
+        '-Roof load case 2 - Wind 0? - Case B
+        Dim wgbG55, wgbG56
+        Select Case wgbE33
+            Case "CLEAR"
+                wgbG55 = 0.167   'Zone 2 for 10deg pitch only !
+                wgbG56 = -1.167  'Zone 3 for 10deg pitch only !
+            Case "OBSTRUCTED"
+                wgbG55 = -0.8    'Zone 2 for 10deg pitch only !
+                wgbG56 = -1.667  'Zone 3 for 10deg pitch only !
+        End Select
+        Dim wgbF55 = wgbE38
+        Dim wgbF56 = wgbE38
+        Dim wgbH55 = wgbE44
+        Dim wgbH56 = wgbE44
+        Dim wgbI55 = wgbG55 * wgbH55 * wgbE30 : Dim Wind_GableI55 = wgbI55
+        Dim wgbI56 = wgbG56 * wgbH56 * wgbE30 : Dim Wind_GableI56 = wgbI56
+        Dim wgbJ55 = wgbE12 * wgbI55
+        Dim wgbJ56 = wgbE12 * wgbI56
+
+        '-Roof load case 3 - Wind 90? - Case A
+        Dim wgbG60, wgbG61
+        Select Case wgbE33
+            Case "CLEAR"
+                wgbG60 = -0.8
+                wgbG61 = -0.6
+            Case "OBSTRUCTED"
+                wgbG60 = -1.2
+                wgbG61 = -0.9
+        End Select
+        Dim wgbF60 = wgbE38
+        Dim wgbF61 = wgbE38
+        Dim wgbH60 = wgbE44
+        Dim wgbH61 = wgbE44
+        Dim wgbI60 = wgbG60 * wgbH60 * wgbE30 : Dim Wind_GableI60 = wgbI60
+        Dim wgbI61 = wgbG61 * wgbH61 * wgbE30 : Dim Wind_GableI61 = wgbI61
+        Dim wgbJ60 = wgbE12 * wgbI60
+        Dim wgbJ61 = wgbE12 * wgbI61
+
+        '-Roof load case 4 - Wind 90? - Case B
+        Dim wgbG65, wgbG66
+        Select Case wgbE33
+            Case "CLEAR"
+                wgbG65 = 0.8
+                wgbG66 = 0.5
+            Case "OBSTRUCTED"
+                wgbG65 = 0.5
+                wgbG66 = 0.5
+        End Select
+        Dim wgbF65 = wgbE38
+        Dim wgbF66 = wgbE38
+        Dim wgbH65 = wgbE44
+        Dim wgbH66 = wgbE44
+        Dim wgbI65 = wgbG65 * wgbH65 * wgbE30 : Dim Wind_GableI65 = wgbI65
+        '      =$G$65 * $H$65 * $E$30
+        Dim wgbI66 = wgbG66 * wgbH66 * wgbE30
+        Dim wgbJ65 = wgbE12 * wgbI65
+        Dim wgbJ66 = wgbE12 * wgbI66
+
+
+        'Uplift for footings
+        Dim wgbE75 = 0.5 * wgbE9 * wgbE10 / Math.Cos(0.5235987756) 'Zones 2 & 3 surface area
+
+
+        Dim wgbU73 = 0.5 * (wgbE13 - wgbE11)
+        Dim wgbU75 = 0.25 * (wgbE9)
+
+        '-Roof load case 1 - Wind 0? - Case A
+        'zone 2 and 3
+        Dim wgbF78 = wgbE75 * wgbI50 / 1000 'Total Net force (Kips) Zone 2
+        Dim wgbG78 = wgbE75 * wgbI51 / 1000 'Total Net force (Kips) Zone 3
+        Dim wgbF79 = wgbF78 * Math.Cos(30 * Math.PI / 180) * wgbU75    'Moment @ axis A (kips.ft) [Vl. forces] Zone 2
+        Dim wgbG79 = wgbG78 * Math.Cos(30 * Math.PI / 180) * (wgbE9 - wgbU75) 'Moment @ axis A (kips.ft) [Vl. forces] Zone 3
+        Dim wgbF80 = wgbF78 * Math.Sin(30 * Math.PI / 180) * wgbU73 '[Hz. forces] Zone 2
+        Dim wgbG80 = -wgbG78 * Math.Sin(30 * Math.PI / 180) * wgbU73 '[Hz. forces] Zone 3
+        Dim wgbF81 = wgbF79 + wgbG79 + wgbF80 + wgbG80
+        Dim wgbF82 = wgbF78 * Math.Cos(30 * Math.PI / 180) * (wgbE9 - wgbU75) 'Moment @ axis B (kips.ft)        [Vl. forces]
+        Dim wgbG82 = wgbG78 * Math.Cos(30 * Math.PI / 180) * wgbU75
+        Dim wgbF83 = -wgbF78 * Math.Sin(30 * Math.PI / 180) * wgbU73 '[Hz. forces]
+        Dim wgbG83 = wgbG78 * Math.Sin(30 * Math.PI / 180) * wgbU73
+        Dim wgbF84 = wgbF82 + wgbF83 + wgbG82 + wgbG83
+        Dim wgbK81 = 0.5 * wgbF81 / wgbE9 * 1000 : Dim Wind_GableK81 = wgbK81    'RB1
+        Dim wgbK84 = 0.5 * wgbF84 / wgbE9 * 1000 : Dim Wind_GableK84 = wgbK84 'RA1
+        ' "Ra1=" & wgbK84
+
+        'Now do all this again for 3 more cases
+
+        '-Roof load case 2 - Wind 0? - Case B
+        'zone 2 and 3
+        Dim wgbF89 = wgbE75 * wgbI55 / 1000 'Total Net force (Kips) Zone 2
+        Dim wgbG89 = wgbE75 * wgbI56 / 1000 'Total Net force (Kips) Zone 3
+        Dim wgbF90 = wgbF89 * Math.Cos(30 * Math.PI / 180) * wgbU75    'Moment @ axis A (kips.ft) [Vl. forces] Zone 2
+        Dim wgbG90 = wgbG89 * Math.Cos(30 * Math.PI / 180) * (wgbE9 - wgbU75) 'Moment @ axis A (kips.ft) [Vl. forces] Zone 3
+        Dim wgbF91 = wgbF89 * Math.Sin(30 * Math.PI / 180) * wgbU73 '[Hz. forces] Zone 2
+        Dim wgbG91 = -wgbG89 * Math.Sin(30 * Math.PI / 180) * wgbU73 '[Hz. forces] Zone 3
+        Dim wgbF92 = wgbF90 + wgbG90 + wgbF91 + wgbG91
+        Dim wgbF93 = wgbF89 * Math.Cos(30 * Math.PI / 180) * (wgbE9 - wgbU75) 'Moment @ axis B (kips.ft)        [Vl. forces]
+        Dim wgbG93 = wgbG89 * Math.Cos(30 * Math.PI / 180) * wgbU75
+        Dim wgbF94 = -wgbF89 * Math.Sin(30 * Math.PI / 180) * wgbU73 '[Hz. forces]
+        Dim wgbG94 = wgbG89 * Math.Sin(30 * Math.PI / 180) * wgbU73
+        Dim wgbF95 = wgbF93 + wgbF94 + wgbG93 + wgbG94
+        Dim wgbK92 = 0.5 * wgbF92 / wgbE9 * 1000 : Dim Wind_GableK92 = wgbK92 'RB2
+        Dim wgbK95 = 0.5 * wgbF95 / wgbE9 * 1000 : Dim Wind_GableK95 = wgbK95 'RA2
+        ' "Ra2=" & wgbK95
+
+        '-Roof load case 3 - Wind 90? - Case A
+        'zone 1-2 and 1-3
+        Dim wgbE101 = 0.25 * wgbE9 * (wgbE11 + wgbE13) / Math.Cos(0.5235987756)            'Zones 1-2 & 1-3 surface area =
+        Dim wgbE103 = 0.5 * wgbE9 * (wgbE10 - 0.5 * (wgbE11 + wgbE13)) / Math.Cos(0.5235987756)  'Zones 2-2 & 2-3 surface area =
+
+        Dim wgbF106 = wgbE101 * wgbI60 / 1000 'Total Net force (Kips) Zone 1-2
+        Dim wgbG106 = wgbE101 * wgbI60 / 1000 'Total Net force (Kips) Zone 1-3
+        Dim wgbF107 = wgbF106 * Math.Cos(30 * Math.PI / 180) * wgbU75    'Moment @ axis A (kips.ft) [Vl. forces] Zone 1-2
+        Dim wgbG107 = wgbG106 * Math.Cos(30 * Math.PI / 180) * (wgbE9 - wgbU75) 'Moment @ axis A (kips.ft) [Vl. forces] Zone 1-3
+        Dim wgbF108 = wgbF106 * Math.Sin(30 * Math.PI / 180) * wgbU73 '[Hz. forces] Zone 1-2
+        Dim wgbG108 = -wgbG106 * Math.Sin(30 * Math.PI / 180) * wgbU73 '[Hz. forces] Zone 1-3
+        Dim wgbF109 = wgbF107 + wgbG107 + wgbF108 + wgbG108
+
+        Dim wgbF111 = wgbE103 * wgbI61 / 1000  'Total Net force (Kips)
+        Dim wgbG111 = wgbE103 * wgbI61 / 1000
+        Dim wgbF112 = wgbF111 * Math.Cos(30 * Math.PI / 180) * wgbU75  'Moment @ axis A or B (kips.ft)  [Vl. forces]
+        Dim wgbG112 = wgbG111 * Math.Cos(30 * Math.PI / 180) * (wgbE9 - wgbU75)
+        Dim wgbF113 = wgbF111 * Math.Sin(30 * Math.PI / 180) * wgbU73    '[Hz. forces]
+        Dim wgbG113 = -wgbG111 * Math.Sin(30 * Math.PI / 180) * wgbU73    '[Hz. forces]
+        Dim wgbF114 = wgbF112 + wgbF113 + wgbG112 + wgbG113
+        Dim wgbK109 = wgbF109 / wgbE9 'R1 =
+        Dim wgbK114 = wgbF114 / wgbE9 'R2 =
+        Dim wgbK117 = ((wgbK109 * (wgbE10 - 0.5 * wgbE11)) + (wgbK114 * 0.5 * (wgbE10 - wgbE11))) / wgbE10 * 1000 'R1AB =
+        Dim wgbK119 = ((wgbK114 * 0.5 * (wgbE10 + wgbE11) + 0.5 * wgbK109 * wgbE11)) / wgbE10 * 1000            'R2AB =
+        ' "R2AB case3=" & wgbK119
+
+        '-Roof load case 4 - Wind 90? - Case B
+        'zone 1-2 and 1-3
+        Dim wgbF123 = wgbE101 * wgbI65 / 1000 'Total Net force (Kips) Zone 1-2
+        Dim wgbG123 = wgbE101 * wgbI65 / 1000  'Total Net force (Kips) Zone 1-3    '?? Should use I66 ?
+        Dim wgbF124 = wgbF123 * Math.Cos(30 * Math.PI / 180) * wgbU75    'Moment @ axis A (kips.ft) [Vl. forces] Zone 1-2
+        Dim wgbG124 = wgbG123 * Math.Cos(30 * Math.PI / 180) * (wgbE9 - wgbU75) 'Moment @ axis A (kips.ft) [Vl. forces] Zone 1-3
+        Dim wgbF125 = wgbF123 * Math.Sin(30 * Math.PI / 180) * wgbU73 '[Hz. forces] Zone 1-2
+        Dim wgbG125 = -wgbG123 * Math.Sin(30 * Math.PI / 180) * wgbU73 '[Hz. forces] Zone 1-3
+        Dim wgbF126 = wgbF124 + wgbG124 + wgbF125 + wgbG125
+
+        Dim wgbF128 = wgbE103 * wgbI61 / 1000  'Total Net force (Kips)
+        Dim wgbG128 = wgbE103 * wgbI61 / 1000
+        Dim wgbF129 = wgbF128 * Math.Cos(30 * Math.PI / 180) * wgbU75  'Moment @ axis A or B (kips.ft)  [Vl. forces]
+        Dim wgbG129 = wgbG128 * Math.Cos(30 * Math.PI / 180) * (wgbE9 - wgbU75)
+        Dim wgbF130 = wgbF128 * Math.Sin(30 * Math.PI / 180) * wgbU73    '[Hz. forces]
+        Dim wgbG130 = wgbG128 * Math.Sin(30 * Math.PI / 180) * wgbU73    '[Hz. forces]
+        Dim wgbF131 = wgbF129 + wgbF130 + wgbG129 + wgbG130
+        Dim wgbK126 = wgbF126 / wgbE9 'R1 =
+        Dim wgbK131 = wgbF131 / wgbE9 'R2 =
+        Dim wgbK134 = ((wgbK126 * (wgbE10 - 0.5 * wgbE11)) + (wgbK114 * 0.5 * (wgbE10 - wgbE11))) / wgbE10 * 1000 'R1AB =
+        Dim wgbK136 = ((wgbK131 * 0.5 * (wgbE10 + wgbE11) + 0.5 * wgbK126 * wgbE11)) / wgbE10 * 1000            'R2AB =
+        ' "R2AB case 4=" & wgbK136
+
+        Dim wgbE138 = Math.Min(wgbK136, wgbK134, wgbK119, wgbK117, wgbK95, wgbK92, wgbK84, wgbK81)    'Max. Vl. upthrust on rafter support
+        Dim UpliftAtCorner = 1 - wgbE138
+        '=MIN(K136     ,K134,   K119,   K117,   K95,   K92,   K84,   K81)
+        Dim wgbE139 = Math.Max(wgbK136, wgbK134, wgbK119, wgbK117, wgbK95, wgbK92, wgbK84, wgbK81)    'Max. Vl. down prewgb on rafter support
+        ' "wgbE138=" & wgbE138
+        Dim UpLift = wgbE138
+        If OutputCalcs Then Print #1, "UpLift = WindPrewgbure * 0.9 giving " & UpLift
+        Dim UpLoad = UpLift - 3    'factor of 3 deducted for weight of roof when used for footings
+        If OutputCalcs Then Print #1, "Upload = UpLift - 3 =" & UpLoad & "  ie factor of 3 deducted for weight of roof when used for footings"
+        Dim ColumnRoofTrib = SPAN * BayWidth * 0.25
+        If OutputCalcs Then Print #1, "Column Tributary area =" & ColumnRoofTrib & " as Span x Bay width / 4"
+        Dim FootingColumnUpload = UpLoad * ColumnRoofTrib
+        If OutputCalcs Then Print #1, "FootingColumnUpload = Upload * ColumnRoofTrib = " & FootingColumnUpload
+
+End Sub
+
+
+    Sub USSnowLoadGable()
+        'AddNotification "No US Gable snow load yet"
+        Console.WriteLine("Enter SPAN:")
+        Dim SPAN = Console.ReadLine()
+        Console.WriteLine("EnterNomBayWidth:")
+        Dim NomBayWidth = Console.ReadLine()
+
+        Dim sgbE10 = SPAN 'B1 =
+        Dim sgbE11 = NomBayWidth 'L =
+        Dim sgbE12 = 3.88  'Eave (container) height =
+        Dim sgbE13 = sgbE11 + 0.5 * SPAN * Math.Tan(0.5235987756)
+        'Dim sgbE14 = heightOA 'Apex height =
+
+        Dim sgbE16 = "I" 'Building Risk Category:
+        Dim sgbE17 = 20  'Ground Snow load (Pg) in psf
+        Dim sgbE18 = Math.Min((0.13 * sgbE17 + 14), 30) 'Density of snow (g)
+        Dim sgbE19 = "B" 'Exposure Category (Terrain Type):
+        Dim sgbE20 = "Fully Exposed" 'Exposure condition [Table 7-2] :
+        'Exposure factor (Ce) [Table 7-2] :
+        Dim sgbE21
+
+        Select Case sgbE19
+            Case "B"   'exposure B
+                Select Case sgbE20
+                    Case "Fully Exposed" : sgbE21 = 0.9
+                    Case "Partially Exposed" : sgbE21 = 1
+                    Case "Sheltered" : sgbE21 = 1.2
+                End Select
+            Case "C"   'exposure C
+                Select Case sgbE20
+                    Case "Fully Exposed" : sgbE21 = 0.9
+                    Case "Partially Exposed" : sgbE21 = 1
+                    Case "Sheltered" : sgbE21 = 1.1
+                End Select
+            Case "D"   'exposure D
+                Select Case sgbE20
+                    Case "Fully Exposed" : sgbE21 = 0.8
+                    Case "Partially Exposed" : sgbE21 = 0.9
+                    Case "Sheltered" : sgbE21 = 1
+                End Select
+            Case Else
+                'see "Terrain Value " & TerrainIdx & " out of range"
+                Select Case sgbE20
+                    Case "Fully Exposed" : sgbE21 = 0.8
+                    Case "Partially Exposed" : sgbE21 = 0.9
+                    Case "Sheltered" : sgbE21 = 1
+                End Select
+        End Select    'terrain value
+        Dim sgbE22 = "Unheated Structure" 'Thermal condition [Table 7-3] :
+        Dim sgbE23 = 1.2 'Thermal factor (Ct) [Table 7-3] :
+        'Importance factor (Is) [Table 1.5-2] :   =VLOOKUP(E17,T24:U27,2)
+        Dim sgbE24
+        Select Case sgbE16
+            Case "I" : sgbE24 = 0.8
+            Case "II" : sgbE24 = 1
+            Case "III" : sgbE24 = 1.1
+            Case Else : sgbE24 = 1.2
+        End Select
+
+        Dim sgbE30 = sgbE24 * sgbE17   'Min. load for low slope roofs [Sect 7.3.4] (Pfmin) :
+        Dim sgbE31 = 0.7 * sgbE21 * sgbE23 * sgbE24 * sgbE17 'Flat roof snow load [Sect 7.3.4] (Pf) :
+        'Cold roof Snow factor (Ct>1.0)
+        Dim sgbE33 = "Slippery"  'Roof surface type
+        Dim sgbE34 = "Ventilated" 'Ventilation
+        Dim sgbE35 = 0.73 'Roof slope factor [Fig 7-2c (dashed line)] (Cs):
+        Dim sgbE37 = sgbE35 * sgbE31 'Balanced sloped snow load (Ps):
+        Dim sgbE38 = 1.732   'Slope of roof = 1/tan(10?) :
+        Dim sgbE40 = 0.3 * sgbE37 'Unbalanced Load(ps)(windward):
+        Dim sgbE41 = sgbE37 'Unbalanced Load(ps)(leeward):
+        Dim sgbE42 = SPAN / 2 'Length of eave to ridge for drift height:
+        Dim sgbE43 = 0.43 * ((Math.Max(sgbE42, 20)) ^ 0.333) * ((sgbE17 + 10) ^ 0.25) - 1.5 'Drift Height(hdr):
+        Dim sgbE45 = sgbE43 * sgbE18 / Math.Sqrt(sgbE38) 'rectangular surcharge(leeward):
+        Dim sgbE46 = Math.Min(2.667 * sgbE43 * Math.Sqrt(sgbE38), 0.5 * SPAN) 'Length of rectangular surcharge :
+        '-Roof load case 1 - Snow @ Wind 0? - Unbalanced
+        Dim sgbF51 = sgbE40
+        Dim sgbF52 = sgbE45 + sgbE37
+        Dim sgbF56 = sgbE37
+        Dim sgbF57 = sgbE37
+
+        Dim sgbG51 = sgbE12 * sgbF51
+        Dim sgbG52 = sgbE13 * sgbF52
+        '-Roof load case 2 - Snow @ Wind 90? - Balanced
+        Dim sgbG56 = sgbE12 * sgbF56
+        Dim sgbG57 = sgbE12 * sgbF57
+        '*Snow Vertical presgb on eave supports:
+
+        '-Roof load case 1 - Snow @ Wind 0? - Unbalanced
+        Dim sgbE66 = 0.5 * (SPAN) * sgbE10 / Math.Cos(0.5235987756) 'Zones 2 & 3 surface area =
+        Dim sgbU67 = 0.25 * SPAN
+        'Zone#2
+        Dim sgbF69 = sgbE66 * sgbF51 / 1000
+        Dim sgbF70 = sgbF69 * sgbU67
+        'Zone#3
+        Dim sgbG69 = sgbE66 * sgbF52 / 1000
+        Dim sgbG70 = sgbG69 * (SPAN - sgbU67)
+
+        Dim sgbF72 = sgbE70 + sgbH71
+        Dim sgbK73 = sgbF69 * (SPAN - sgbU67)
+        Dim sgbK72 = 0.5 * sgbF72 / SPAN * 1000
+
+        sgbG73 = sgbG69 * sgbU67
+        sgbF75 = sgbE73 + sgbH74
+        sgbK75 = 0.5 * sgbF75 / SPAN * 1000
+
+        '-Roof load case 2 - Snow @ Wind 90? - Balanced
+        'Zone#2
+        sgbF80 = sgbE66 * sgbF56 / 1000
+        sgbF81 = sgbF80 * sgbU67
+        'Zone#3
+        sgbG80 = sgbE66 * sgbF57 / 1000
+        sgbG81 = G80 * (SPAN - sgbU67)
+        sgbF83 = sgbF81 + sgbF82 + sgbG81 + sgbG82
+        sgbK83 = 0.5 * sgbF83 / SPAN * 1000
+        sgbF84 = sgbF80 * (SPAN - sgbU67)
+        sgbG84 = sgbG80 * sgbU67
+        sgbF86 = sgbF84 + sgbF85 + sgbG84 + sgbG85
+        sgbK86 = 0.5 * sgbF86 / SPAN * 1000
+        span1 = Max(sgbK87, sgbK84, sgbK76, sgbK73) 'Max. Vl. presgb on rafter support =
+        span0 = Max(sgbK86, sgbK83, sgbK75, sgbK72)
+
+    End Sub
+
 
 End Module
