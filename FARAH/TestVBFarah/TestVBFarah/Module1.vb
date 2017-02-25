@@ -34,10 +34,8 @@ Module Module1
         On Error GoTo 0
 
         'SetQz
-        Console.WriteLine("Enter SPAN:")
-        SPAN = Console.ReadLine()
-        Console.WriteLine("EnterNomBayWidth:")
-        NomBayWidth = Console.ReadLine()
+        SPAN = 35
+        NomBayWidth = 20
         '* Design straining actions:
         '1) Dead loads:
         'Rafter self weight =    7.475   lb/ft'  (Auming 12.0x4.0C12 rafter)
@@ -70,7 +68,7 @@ Module Module1
         I32 = 0.5 * I33 + E34 * ((0.5 * SPAN / 0.866) ^ 2) / 8   'Mw0A1  uses I33 from above hence out of order
         I34 = 0.5 * I33 + E35 * ((0.5 * SPAN / 0.866) ^ 2) / 8   'Mw0A3 =
         Q32 = ((0.5 * Wind_GableK84 * SPAN) - (I33) - (0.5 * E34 * ((0.5 * SPAN / 0.866) ^ 2))) / (0.2886 * SPAN)
-        Q34 = ((0.5 * Wind_GableK81 * SPAN) - (I33) - (0.5 * E35 * ((0.5 * SPAN / 0.866) ^ 2))) / (0.2886 * SPAN)
+        Q34 = ((0.5 * Wind_GableK81 * SPAN) - (I33) - (0.5 * E35 * ((0.5 * SPAN / 0.866) ^ 2))) / (0.2866 * SPAN)
         M32 = -0.866 * Q32 - 0.5774 * Wind_GableK84    'Nw0A1 =
         M34 = -0.866 * Q34 - 0.5774 * Wind_GableK81    'Nw0A3 =
         M33 = Math.Min(M32, M34)   'Nw0A2 =
@@ -102,14 +100,14 @@ Module Module1
         '4) Snow loads:
         '-Roof load case 1 - Snow @ Wind 0? - Unbalanced
         E67 = Snow_GableF51 * (0.5 * NomBayWidth)
-        E68 = (Snow_GableE41 + (Snow_GableE45) * (2 * Snow_GableE46 / NomBayWidth)) * (0.5 * SPAN)
+        E68 = (Snow_GableE41 + (Snow_GableE45) * (2 * Snow_GableE46 / SPAN)) * (0.5 * NomBayWidth)
 
         I66 = -((SPAN ^ 2) * (E67 + E68)) / 64
         I65 = 0.5 * I66 + E67 * ((0.5 * SPAN) ^ 2) / 8
         I67 = 0.5 * I66 + E68 * ((0.5 * SPAN) ^ 2) / 8
 
         Q65 = ((0.5 * Snow_GableK75 * SPAN) - (I66) - (0.5 * E67 * ((0.5 * SPAN / 0.866) ^ 2))) / (0.2887 * SPAN)
-        Q67 = ((0.5 * Snow_GableK72 * SPAN) - (I66) - (0.5 * E68 * ((0.5 * SPAN) ^ 2 / 0.866))) / (0.2887 * SPAN)
+        Q67 = ((0.5 * Snow_GableK72 * SPAN) - (I66) - (0.5 * E68 * ((0.5 * SPAN) ^ 2 / 0.886))) / (0.2887 * SPAN)
 
         M65 = -0.866 * Q65 - 0.5774 * Snow_GableK75
         M67 = -0.866 * Q67 - 0.5774 * Snow_GableK72
@@ -217,99 +215,99 @@ Module Module1
         maxval = 0
         thisval = 0
 
-        If E86 < 0 Then thisval = 0.1239 * Math.Abs(E86) + 0.0125 * Math.Abs(E85) : If thisval > maxval Then maxval = thisval
-        If F86 < 0 Then thisval = 0.1239 * Math.Abs(F86) + 0.0125 * Math.Abs(F85) : If thisval > maxval Then maxval = thisval
-        If G86 < 0 Then thisval = 0.1239 * Math.Abs(G86) + 0.0125 * Math.Abs(G85) : If thisval > maxval Then maxval = thisval
-        If H86 < 0 Then thisval = 0.1239 * Math.Abs(H86) + 0.0125 * Math.Abs(H85) : If thisval > maxval Then maxval = thisval
-        If I86 < 0 Then thisval = 0.1239 * Math.Abs(I86) + 0.0125 * Math.Abs(I85) : If thisval > maxval Then maxval = thisval
+        If E86 < 0 Then thisval = 0.1239 * Math.Abs(E86) + 0.0125 * Math.Abs(E85) : E110 = thisval : If thisval > maxval Then maxval = thisval
+        If F86 < 0 Then thisval = 0.1239 * Math.Abs(F86) + 0.0125 * Math.Abs(F85) : F110 = thisval : If thisval > maxval Then maxval = thisval
+        If G86 < 0 Then thisval = 0.1239 * Math.Abs(G86) + 0.0125 * Math.Abs(G85) : G110 = thisval : If thisval > maxval Then maxval = thisval
+        If H86 < 0 Then thisval = 0.1239 * Math.Abs(H86) + 0.0125 * Math.Abs(H85) : H110 = thisval : If thisval > maxval Then maxval = thisval
+        If I86 < 0 Then thisval = 0.1239 * Math.Abs(I86) + 0.0125 * Math.Abs(I85) : I110 = thisval : If thisval > maxval Then maxval = thisval
 
-        If E86 < 0 Then thisval = 0.0536 * Math.Abs(E86) + 0.0145 * Math.Abs(E85) : If thisval > maxval Then maxval = thisval
-        If F86 < 0 Then thisval = 0.0536 * Math.Abs(F86) + 0.0145 * Math.Abs(F85) : If thisval > maxval Then maxval = thisval
-        If G86 < 0 Then thisval = 0.0536 * Math.Abs(G86) + 0.0145 * Math.Abs(G85) : If thisval > maxval Then maxval = thisval
-        If H86 < 0 Then thisval = 0.0536 * Math.Abs(H86) + 0.0145 * Math.Abs(H85) : If thisval > maxval Then maxval = thisval
-        If I86 < 0 Then thisval = 0.0536 * Math.Abs(I86) + 0.0145 * Math.Abs(I85) : If thisval > maxval Then maxval = thisval
+        If E86 < 0 Then thisval = 0.0536 * Math.Abs(E86) + 0.0145 * Math.Abs(E85) : E111 = thisval : If thisval > maxval Then maxval = thisval
+        If F86 < 0 Then thisval = 0.0536 * Math.Abs(F86) + 0.0145 * Math.Abs(F85) : F111 = thisval : If thisval > maxval Then maxval = thisval
+        If G86 < 0 Then thisval = 0.0536 * Math.Abs(G86) + 0.0145 * Math.Abs(G85) : G111 = thisval : If thisval > maxval Then maxval = thisval
+        If H86 < 0 Then thisval = 0.0536 * Math.Abs(H86) + 0.0145 * Math.Abs(H85) : H111 = thisval : If thisval > maxval Then maxval = thisval
+        If I86 < 0 Then thisval = 0.0536 * Math.Abs(I86) + 0.0145 * Math.Abs(I85) : I111 = thisval : If thisval > maxval Then maxval = thisval
 
-        If E88 < 0 Then thisval = 0.1239 * Math.Abs(E88) + 0.0125 * Math.Abs(E87) : If thisval > maxval Then maxval = thisval
-        If F88 < 0 Then thisval = 0.1239 * Math.Abs(F88) + 0.0125 * Math.Abs(F87) : If thisval > maxval Then maxval = thisval
-        If G88 < 0 Then thisval = 0.1239 * Math.Abs(G88) + 0.0125 * Math.Abs(G87) : If thisval > maxval Then maxval = thisval
-        If H88 < 0 Then thisval = 0.1239 * Math.Abs(H88) + 0.0125 * Math.Abs(H87) : If thisval > maxval Then maxval = thisval
-        If I88 < 0 Then thisval = 0.1239 * Math.Abs(I88) + 0.0125 * Math.Abs(I87) : If thisval > maxval Then maxval = thisval
+        If E88 < 0 Then thisval = 0.1239 * Math.Abs(E88) + 0.0125 * Math.Abs(E87) : E112 = thisval : If thisval > maxval Then maxval = thisval
+        If F88 < 0 Then thisval = 0.1239 * Math.Abs(F88) + 0.0125 * Math.Abs(F87) : F112 = thisval : If thisval > maxval Then maxval = thisval
+        If G88 < 0 Then thisval = 0.1239 * Math.Abs(G88) + 0.0125 * Math.Abs(G87) : G112 = thisval : If thisval > maxval Then maxval = thisval
+        If H88 < 0 Then thisval = 0.1239 * Math.Abs(H88) + 0.0125 * Math.Abs(H87) : H112 = thisval : If thisval > maxval Then maxval = thisval
+        If I88 < 0 Then thisval = 0.1239 * Math.Abs(I88) + 0.0125 * Math.Abs(I87) : I112 = thisval : If thisval > maxval Then maxval = thisval
 
-        If E88 < 0 Then thisval = 0.0536 * Math.Abs(E88) + 0.0145 * Math.Abs(E87) : If thisval > maxval Then maxval = thisval
-        If F88 < 0 Then thisval = 0.0536 * Math.Abs(F88) + 0.0145 * Math.Abs(F87) : If thisval > maxval Then maxval = thisval
-        If G88 < 0 Then thisval = 0.0536 * Math.Abs(G88) + 0.0145 * Math.Abs(G87) : If thisval > maxval Then maxval = thisval
-        If H88 < 0 Then thisval = 0.0536 * Math.Abs(H88) + 0.0145 * Math.Abs(H87) : If thisval > maxval Then maxval = thisval
-        If I88 < 0 Then thisval = 0.0536 * Math.Abs(I88) + 0.0145 * Math.Abs(I87) : If thisval > maxval Then maxval = thisval
+        If E88 < 0 Then thisval = 0.0536 * Math.Abs(E88) + 0.0145 * Math.Abs(E87) : E113 = thisval : If thisval > maxval Then maxval = thisval
+        If F88 < 0 Then thisval = 0.0536 * Math.Abs(F88) + 0.0145 * Math.Abs(F87) : F113 = thisval : If thisval > maxval Then maxval = thisval
+        If G88 < 0 Then thisval = 0.0536 * Math.Abs(G88) + 0.0145 * Math.Abs(G87) : G113 = thisval : If thisval > maxval Then maxval = thisval
+        If H88 < 0 Then thisval = 0.0536 * Math.Abs(H88) + 0.0145 * Math.Abs(H87) : H113 = thisval : If thisval > maxval Then maxval = thisval
+        If I88 < 0 Then thisval = 0.0536 * Math.Abs(I88) + 0.0145 * Math.Abs(I87) : I113 = thisval : If thisval > maxval Then maxval = thisval
 
-        If F90 < 0 Then thisval = 0.1239 * Math.Abs(F90) + 0.0125 * Math.Abs(F89) : If thisval > maxval Then maxval = thisval
-        If G90 < 0 Then thisval = 0.1239 * Math.Abs(G90) + 0.0125 * Math.Abs(G89) : If thisval > maxval Then maxval = thisval
-        If H90 < 0 Then thisval = 0.1239 * Math.Abs(H90) + 0.0125 * Math.Abs(H89) : If thisval > maxval Then maxval = thisval
-        If I90 < 0 Then thisval = 0.1239 * Math.Abs(I90) + 0.0125 * Math.Abs(I89) : If thisval > maxval Then maxval = thisval
+        If F90 < 0 Then thisval = 0.1239 * Math.Abs(F90) + 0.0125 * Math.Abs(F89) : F114 = thisval : If thisval > maxval Then maxval = thisval
+        If G90 < 0 Then thisval = 0.1239 * Math.Abs(G90) + 0.0125 * Math.Abs(G89) : G114 = thisval : If thisval > maxval Then maxval = thisval
+        If H90 < 0 Then thisval = 0.1239 * Math.Abs(H90) + 0.0125 * Math.Abs(H89) : H114 = thisval : If thisval > maxval Then maxval = thisval
+        If I90 < 0 Then thisval = 0.1239 * Math.Abs(I90) + 0.0125 * Math.Abs(I89) : I114 = thisval : If thisval > maxval Then maxval = thisval
 
-        If F90 < 0 Then thisval = 0.0536 * Math.Abs(F90) + 0.0145 * Math.Abs(F89) : If thisval > maxval Then maxval = thisval
-        If G90 < 0 Then thisval = 0.0536 * Math.Abs(G90) + 0.0145 * Math.Abs(G89) : If thisval > maxval Then maxval = thisval
-        If H90 < 0 Then thisval = 0.0536 * Math.Abs(H90) + 0.0145 * Math.Abs(H89) : If thisval > maxval Then maxval = thisval
-        If I90 < 0 Then thisval = 0.0536 * Math.Abs(I90) + 0.0145 * Math.Abs(I89) : If thisval > maxval Then maxval = thisval
+        If F90 < 0 Then thisval = 0.0536 * Math.Abs(F90) + 0.0145 * Math.Abs(F89) : F115 = thisval : If thisval > maxval Then maxval = thisval
+        If G90 < 0 Then thisval = 0.0536 * Math.Abs(G90) + 0.0145 * Math.Abs(G89) : G115 = thisval : If thisval > maxval Then maxval = thisval
+        If H90 < 0 Then thisval = 0.0536 * Math.Abs(H90) + 0.0145 * Math.Abs(H89) : H115 = thisval : If thisval > maxval Then maxval = thisval
+        If I90 < 0 Then thisval = 0.0536 * Math.Abs(I90) + 0.0145 * Math.Abs(I89) : I115 = thisval If thisval > maxval Then maxval = thisval
 
-        If F92 < 0 Then thisval = 0.1239 * Math.Abs(F92) + 0.0125 * Math.Abs(F91) : If thisval > maxval Then maxval = thisval
-        If G92 < 0 Then thisval = 0.1239 * Math.Abs(G92) + 0.0125 * Math.Abs(G91) : If thisval > maxval Then maxval = thisval
-        If H92 < 0 Then thisval = 0.1239 * Math.Abs(H92) + 0.0125 * Math.Abs(H91) : If thisval > maxval Then maxval = thisval
-        If I92 < 0 Then thisval = 0.1239 * Math.Abs(I92) + 0.0125 * Math.Abs(I91) : If thisval > maxval Then maxval = thisval
+        If F92 < 0 Then thisval = 0.1239 * Math.Abs(F92) + 0.0125 * Math.Abs(F91) : F116 = thisval : If thisval > maxval Then maxval = thisval
+        If G92 < 0 Then thisval = 0.1239 * Math.Abs(G92) + 0.0125 * Math.Abs(G91) : G116 = thisval : If thisval > maxval Then maxval = thisval
+        If H92 < 0 Then thisval = 0.1239 * Math.Abs(H92) + 0.0125 * Math.Abs(H91) : H116 = thisval : If thisval > maxval Then maxval = thisval
+        If I92 < 0 Then thisval = 0.1239 * Math.Abs(I92) + 0.0125 * Math.Abs(I91) : I116 = thisval : If thisval > maxval Then maxval = thisval
 
-        If F92 < 0 Then thisval = 0.0536 * Math.Abs(F92) + 0.0145 * Math.Abs(F91) : If thisval > maxval Then maxval = thisval
-        If G92 < 0 Then thisval = 0.0536 * Math.Abs(G92) + 0.0145 * Math.Abs(G91) : If thisval > maxval Then maxval = thisval
-        If H92 < 0 Then thisval = 0.0536 * Math.Abs(H92) + 0.0145 * Math.Abs(H91) : If thisval > maxval Then maxval = thisval
-        If I92 < 0 Then thisval = 0.0536 * Math.Abs(I92) + 0.0145 * Math.Abs(I91) : If thisval > maxval Then maxval = thisval
+        If F92 < 0 Then thisval = 0.0536 * Math.Abs(F92) + 0.0145 * Math.Abs(F91) : F117 = thisval : If thisval > maxval Then maxval = thisval
+        If G92 < 0 Then thisval = 0.0536 * Math.Abs(G92) + 0.0145 * Math.Abs(G91) : G117 = thisval : If thisval > maxval Then maxval = thisval
+        If H92 < 0 Then thisval = 0.0536 * Math.Abs(H92) + 0.0145 * Math.Abs(H91) : H117 = thisval : If thisval > maxval Then maxval = thisval
+        If I92 < 0 Then thisval = 0.0536 * Math.Abs(I92) + 0.0145 * Math.Abs(I91) : I117 = thisval : If thisval > maxval Then maxval = thisval
 
-        If F94 < 0 Then thisval = 0.1239 * Math.Abs(F94) + 0.0125 * Math.Abs(F93) : If thisval > maxval Then maxval = thisval
-        If G94 < 0 Then thisval = 0.1239 * Math.Abs(G94) + 0.0125 * Math.Abs(G93) : If thisval > maxval Then maxval = thisval
-        If H94 < 0 Then thisval = 0.1239 * Math.Abs(H94) + 0.0125 * Math.Abs(H93) : If thisval > maxval Then maxval = thisval
-        If I94 < 0 Then thisval = 0.1239 * Math.Abs(I94) + 0.0125 * Math.Abs(I93) : If thisval > maxval Then maxval = thisval
+        If F94 < 0 Then thisval = 0.1239 * Math.Abs(F94) + 0.0125 * Math.Abs(F93) : F118 = thisval : If thisval > maxval Then maxval = thisval
+        If G94 < 0 Then thisval = 0.1239 * Math.Abs(G94) + 0.0125 * Math.Abs(G93) : G118 = thisval : If thisval > maxval Then maxval = thisval
+        If H94 < 0 Then thisval = 0.1239 * Math.Abs(H94) + 0.0125 * Math.Abs(H93) : H118 = thisval : If thisval > maxval Then maxval = thisval
+        If I94 < 0 Then thisval = 0.1239 * Math.Abs(I94) + 0.0125 * Math.Abs(I93) : I118 = thisval : If thisval > maxval Then maxval = thisval
 
-        If F94 < 0 Then thisval = 0.0536 * Math.Abs(F94) + 0.0145 * Math.Abs(F93) : If thisval > maxval Then maxval = thisval
-        If G94 < 0 Then thisval = 0.0536 * Math.Abs(G94) + 0.0145 * Math.Abs(G93) : If thisval > maxval Then maxval = thisval
-        If H94 < 0 Then thisval = 0.0536 * Math.Abs(H94) + 0.0145 * Math.Abs(H93) : If thisval > maxval Then maxval = thisval
-        If I94 < 0 Then thisval = 0.0536 * Math.Abs(I94) + 0.0145 * Math.Abs(I93) : If thisval > maxval Then maxval = thisval
+        If F94 < 0 Then thisval = 0.0536 * Math.Abs(F94) + 0.0145 * Math.Abs(F93) : F119 = thisval : If thisval > maxval Then maxval = thisval
+        If G94 < 0 Then thisval = 0.0536 * Math.Abs(G94) + 0.0145 * Math.Abs(G93) : G119 = thisval : If thisval > maxval Then maxval = thisval
+        If H94 < 0 Then thisval = 0.0536 * Math.Abs(H94) + 0.0145 * Math.Abs(H93) : H119 = thisval : If thisval > maxval Then maxval = thisval
+        If I94 < 0 Then thisval = 0.0536 * Math.Abs(I94) + 0.0145 * Math.Abs(I93) : I119 = thisval : If thisval > maxval Then maxval = thisval
 
-        If G96 < 0 Then thisval = 0.1239 * Math.Abs(G96) + 0.0125 * Math.Abs(G95) : If thisval > maxval Then maxval = thisval
-        If H96 < 0 Then thisval = 0.1239 * Math.Abs(H96) + 0.0125 * Math.Abs(H95) : If thisval > maxval Then maxval = thisval
-        If I96 < 0 Then thisval = 0.1239 * Math.Abs(I96) + 0.0125 * Math.Abs(I95) : If thisval > maxval Then maxval = thisval
+        If G96 < 0 Then thisval = 0.1239 * Math.Abs(G96) + 0.0125 * Math.Abs(G95) : G120 = thisval : If thisval > maxval Then maxval = thisval
+        If H96 < 0 Then thisval = 0.1239 * Math.Abs(H96) + 0.0125 * Math.Abs(H95) : H120 = thisval : If thisval > maxval Then maxval = thisval
+        If I96 < 0 Then thisval = 0.1239 * Math.Abs(I96) + 0.0125 * Math.Abs(I95) : I120 = thisval : If thisval > maxval Then maxval = thisval
 
-        If G96 < 0 Then thisval = 0.0536 * Math.Abs(G96) + 0.0145 * Math.Abs(G95) : If thisval > maxval Then maxval = thisval
-        If H96 < 0 Then thisval = 0.0536 * Math.Abs(H96) + 0.0145 * Math.Abs(H95) : If thisval > maxval Then maxval = thisval
-        If I96 < 0 Then thisval = 0.0536 * Math.Abs(I96) + 0.0145 * Math.Abs(I95) : If thisval > maxval Then maxval = thisval
+        If G96 < 0 Then thisval = 0.0536 * Math.Abs(G96) + 0.0145 * Math.Abs(G95) : G121 = thisval : If thisval > maxval Then maxval = thisval
+        If H96 < 0 Then thisval = 0.0536 * Math.Abs(H96) + 0.0145 * Math.Abs(H95) : H121 = thisval : If thisval > maxval Then maxval = thisval
+        If I96 < 0 Then thisval = 0.0536 * Math.Abs(I96) + 0.0145 * Math.Abs(I95) : I121 = thisval : If thisval > maxval Then maxval = thisval
 
-        If G98 < 0 Then thisval = 0.1239 * Math.Abs(G98) + 0.0125 * Math.Abs(G97) : If thisval > maxval Then maxval = thisval
-        If H98 < 0 Then thisval = 0.1239 * Math.Abs(H98) + 0.0125 * Math.Abs(H97) : If thisval > maxval Then maxval = thisval
-        If I98 < 0 Then thisval = 0.1239 * Math.Abs(I98) + 0.0125 * Math.Abs(I97) : If thisval > maxval Then maxval = thisval
+        If G98 < 0 Then thisval = 0.1239 * Math.Abs(G98) + 0.0125 * Math.Abs(G97) : G122 = thisval : If thisval > maxval Then maxval = thisval
+        If H98 < 0 Then thisval = 0.1239 * Math.Abs(H98) + 0.0125 * Math.Abs(H97) : H122 = thisval : If thisval > maxval Then maxval = thisval
+        If I98 < 0 Then thisval = 0.1239 * Math.Abs(I98) + 0.0125 * Math.Abs(I97) : I122 = thisval : If thisval > maxval Then maxval = thisval
 
-        If G98 < 0 Then thisval = 0.0536 * Math.Abs(G98) + 0.0145 * Math.Abs(G97) : If thisval > maxval Then maxval = thisval
-        If H98 < 0 Then thisval = 0.0536 * Math.Abs(H98) + 0.0145 * Math.Abs(H97) : If thisval > maxval Then maxval = thisval
-        If I98 < 0 Then thisval = 0.0536 * Math.Abs(I98) + 0.0145 * Math.Abs(I97) : If thisval > maxval Then maxval = thisval
+        If G98 < 0 Then thisval = 0.0536 * Math.Abs(G98) + 0.0145 * Math.Abs(G97) : G123 = thisval : If thisval > maxval Then maxval = thisval
+        If H98 < 0 Then thisval = 0.0536 * Math.Abs(H98) + 0.0145 * Math.Abs(H97) : H123 = thisval : If thisval > maxval Then maxval = thisval
+        If I98 < 0 Then thisval = 0.0536 * Math.Abs(I98) + 0.0145 * Math.Abs(I97) : I123 = thisval : If thisval > maxval Then maxval = thisval
 
-        If G100 < 0 Then thisval = 0.1239 * Math.Abs(G100) + 0.0125 * Math.Abs(G99) : If thisval > maxval Then maxval = thisval
-        If H100 < 0 Then thisval = 0.1239 * Math.Abs(H100) + 0.0125 * Math.Abs(H99) : If thisval > maxval Then maxval = thisval
-        If I100 < 0 Then thisval = 0.1239 * Math.Abs(I100) + 0.0125 * Math.Abs(I99) : If thisval > maxval Then maxval = thisval
+        If G100 < 0 Then thisval = 0.1239 * Math.Abs(G100) + 0.0125 * Math.Abs(G99) : G124 = thisval : If thisval > maxval Then maxval = thisval
+        If H100 < 0 Then thisval = 0.1239 * Math.Abs(H100) + 0.0125 * Math.Abs(H99) : H124 = thisval : If thisval > maxval Then maxval = thisval
+        If I100 < 0 Then thisval = 0.1239 * Math.Abs(I100) + 0.0125 * Math.Abs(I99) : I124 = thisval : If thisval > maxval Then maxval = thisval
 
-        If G100 < 0 Then thisval = 0.0536 * Math.Abs(G100) + 0.0145 * Math.Abs(G99) : If thisval > maxval Then maxval = thisval
-        If H100 < 0 Then thisval = 0.0536 * Math.Abs(H100) + 0.0145 * Math.Abs(H99) : If thisval > maxval Then maxval = thisval
-        If I100 < 0 Then thisval = 0.0536 * Math.Abs(I100) + 0.0145 * Math.Abs(I99) : If thisval > maxval Then maxval = thisval
+        If G100 < 0 Then thisval = 0.0536 * Math.Abs(G100) + 0.0145 * Math.Abs(G99) : G125 = thisval : If thisval > maxval Then maxval = thisval
+        If H100 < 0 Then thisval = 0.0536 * Math.Abs(H100) + 0.0145 * Math.Abs(H99) : H125 = thisval : If thisval > maxval Then maxval = thisval
+        If I100 < 0 Then thisval = 0.0536 * Math.Abs(I100) + 0.0145 * Math.Abs(I99) : I125 = thisval : If thisval > maxval Then maxval = thisval
 
-        If G102 < 0 Then thisval = 0.1239 * Math.Abs(G102) + 0.0125 * Math.Abs(G101) : If thisval > maxval Then maxval = thisval
-        If H102 < 0 Then thisval = 0.1239 * Math.Abs(H102) + 0.0125 * Math.Abs(H101) : If thisval > maxval Then maxval = thisval
-        If I102 < 0 Then thisval = 0.1239 * Math.Abs(I102) + 0.0125 * Math.Abs(I101) : If thisval > maxval Then maxval = thisval
+        If G102 < 0 Then thisval = 0.1239 * Math.Abs(G102) + 0.0125 * Math.Abs(G101) : G126 = thisval : If thisval > maxval Then maxval = thisval
+        If H102 < 0 Then thisval = 0.1239 * Math.Abs(H102) + 0.0125 * Math.Abs(H101) : H126 = thisval : If thisval > maxval Then maxval = thisval
+        If I102 < 0 Then thisval = 0.1239 * Math.Abs(I102) + 0.0125 * Math.Abs(I101) : I126 = thisval : If thisval > maxval Then maxval = thisval
 
-        If G102 < 0 Then thisval = 0.0536 * Math.Abs(G102) + 0.0145 * Math.Abs(G101) : If thisval > maxval Then maxval = thisval
-        If H102 < 0 Then thisval = 0.0536 * Math.Abs(H102) + 0.0145 * Math.Abs(H101) : If thisval > maxval Then maxval = thisval
-        If I102 < 0 Then thisval = 0.0536 * Math.Abs(I102) + 0.0145 * Math.Abs(I101) : If thisval > maxval Then maxval = thisval
+        If G102 < 0 Then thisval = 0.0536 * Math.Abs(G102) + 0.0145 * Math.Abs(G101) : G127 = thisval : If thisval > maxval Then maxval = thisval
+        If H102 < 0 Then thisval = 0.0536 * Math.Abs(H102) + 0.0145 * Math.Abs(H101) : H127 = thisval : If thisval > maxval Then maxval = thisval
+        If I102 < 0 Then thisval = 0.0536 * Math.Abs(I102) + 0.0145 * Math.Abs(I101) : I127 = thisval : If thisval > maxval Then maxval = thisval
 
-        If G104 < 0 Then thisval = 0.1239 * Math.Abs(G104) + 0.0125 * Math.Abs(G103) : If thisval > maxval Then maxval = thisval
-        If H104 < 0 Then thisval = 0.1239 * Math.Abs(H104) + 0.0125 * Math.Abs(H103) : If thisval > maxval Then maxval = thisval
-        If I104 < 0 Then thisval = 0.1239 * Math.Abs(I104) + 0.0125 * Math.Abs(I103) : If thisval > maxval Then maxval = thisval
+        If G104 < 0 Then thisval = 0.1239 * Math.Abs(G104) + 0.0125 * Math.Abs(G103) : G128 = thisval : If thisval > maxval Then maxval = thisval
+        If H104 < 0 Then thisval = 0.1239 * Math.Abs(H104) + 0.0125 * Math.Abs(H103) : H128 = thisval : If thisval > maxval Then maxval = thisval
+        If I104 < 0 Then thisval = 0.1239 * Math.Abs(I104) + 0.0125 * Math.Abs(I103) : I128 = thisval : If thisval > maxval Then maxval = thisval
 
-        If G104 < 0 Then thisval = 0.0536 * Math.Abs(G104) + 0.0145 * Math.Abs(G103) : If thisval > maxval Then maxval = thisval
-        If H104 < 0 Then thisval = 0.0536 * Math.Abs(H104) + 0.0145 * Math.Abs(H103) : If thisval > maxval Then maxval = thisval
-        If I104 < 0 Then thisval = 0.0536 * Math.Abs(I104) + 0.0145 * Math.Abs(I103) : If thisval > maxval Then maxval = thisval
+        If G104 < 0 Then thisval = 0.0536 * Math.Abs(G104) + 0.0145 * Math.Abs(G103) : G129 = thisval : If thisval > maxval Then maxval = thisval
+        If H104 < 0 Then thisval = 0.0536 * Math.Abs(H104) + 0.0145 * Math.Abs(H103) : H129 = thisval : If thisval > maxval Then maxval = thisval
+        If I104 < 0 Then thisval = 0.0536 * Math.Abs(I104) + 0.0145 * Math.Abs(I103) : I129 = thisval : If thisval > maxval Then maxval = thisval
 
         I130 = maxval
         '"Checked up to here"
@@ -317,297 +315,296 @@ Module Module1
         'C132 = "12.0x4.0C14"
         C132 = 14
         maxval = 0
-        If E86 < 0 Then thisval = 0.1072 * Math.Abs(E86) + 0.0089 * Math.Abs(E85) : If thisval > maxval Then maxval = thisval
-        '=IF(E86<0,               0.1072 * ABS(E86) + 0.0089  *ABS(E85),0)
-        If F86 < 0 Then thisval = 0.1072 * Math.Abs(F86) + 0.0089 * Math.Abs(F85) : If thisval > maxval Then maxval = thisval
-        If G86 < 0 Then thisval = 0.1072 * Math.Abs(G86) + 0.0089 * Math.Abs(G85) : If thisval > maxval Then maxval = thisval
-        If H86 < 0 Then thisval = 0.1072 * Math.Abs(H86) + 0.0089 * Math.Abs(H85) : If thisval > maxval Then maxval = thisval
-        If I86 < 0 Then thisval = 0.1072 * Math.Abs(I86) + 0.0089 * Math.Abs(I85) : If thisval > maxval Then maxval = thisval
+        If E86 < 0 Then thisval = 0.1072 * Math.Abs(E86) + 0.0089 * Math.Abs(E85) : E132 = thisval : If thisval > maxval Then maxval = thisval
+        If F86 < 0 Then thisval = 0.1072 * Math.Abs(F86) + 0.0089 * Math.Abs(F85) : F132 = thisval : If thisval > maxval Then maxval = thisval
+        If G86 < 0 Then thisval = 0.1072 * Math.Abs(G86) + 0.0089 * Math.Abs(G85) : G132 = thisval : If thisval > maxval Then maxval = thisval
+        If H86 < 0 Then thisval = 0.1072 * Math.Abs(H86) + 0.0089 * Math.Abs(H85) : H132 = thisval : If thisval > maxval Then maxval = thisval
+        If I86 < 0 Then thisval = 0.1072 * Math.Abs(I86) + 0.0089 * Math.Abs(I85) : I132 = thisval : If thisval > maxval Then maxval = thisval
 
-        If E86 < 0 Then thisval = 0.0572 * Math.Abs(E86) + 0.0105 * Math.Abs(E85) : If thisval > maxval Then maxval = thisval
-        If F86 < 0 Then thisval = 0.0572 * Math.Abs(F86) + 0.0105 * Math.Abs(F85) : If thisval > maxval Then maxval = thisval
-        If G86 < 0 Then thisval = 0.0572 * Math.Abs(G86) + 0.0105 * Math.Abs(G85) : If thisval > maxval Then maxval = thisval
-        If H86 < 0 Then thisval = 0.0572 * Math.Abs(H86) + 0.0105 * Math.Abs(H85) : If thisval > maxval Then maxval = thisval
-        If I86 < 0 Then thisval = 0.0572 * Math.Abs(I86) + 0.0105 * Math.Abs(I85) : If thisval > maxval Then maxval = thisval
+        If E86 < 0 Then thisval = 0.0572 * Math.Abs(E86) + 0.0105 * Math.Abs(E85) : E133 = thisval : If thisval > maxval Then maxval = thisval
+        If F86 < 0 Then thisval = 0.0572 * Math.Abs(F86) + 0.0105 * Math.Abs(F85) : F133 = thisval : If thisval > maxval Then maxval = thisval
+        If G86 < 0 Then thisval = 0.0572 * Math.Abs(G86) + 0.0105 * Math.Abs(G85) : G133 = thisval : If thisval > maxval Then maxval = thisval
+        If H86 < 0 Then thisval = 0.0572 * Math.Abs(H86) + 0.0105 * Math.Abs(H85) : H133 = thisval : If thisval > maxval Then maxval = thisval
+        If I86 < 0 Then thisval = 0.0572 * Math.Abs(I86) + 0.0105 * Math.Abs(I85) : I133 = thisval : If thisval > maxval Then maxval = thisval
 
-        If E88 < 0 Then thisval = 0.1072 * Math.Abs(E88) + 0.0089 * Math.Abs(E87) : If thisval > maxval Then maxval = thisval
-        If F88 < 0 Then thisval = 0.1072 * Math.Abs(F88) + 0.0089 * Math.Abs(F87) : If thisval > maxval Then maxval = thisval
-        If G88 < 0 Then thisval = 0.1072 * Math.Abs(G88) + 0.0089 * Math.Abs(G87) : If thisval > maxval Then maxval = thisval
-        If H88 < 0 Then thisval = 0.1072 * Math.Abs(H88) + 0.0089 * Math.Abs(H87) : If thisval > maxval Then maxval = thisval
-        If I88 < 0 Then thisval = 0.1072 * Math.Abs(I88) + 0.0089 * Math.Abs(I87) : If thisval > maxval Then maxval = thisval
+        If E88 < 0 Then thisval = 0.1072 * Math.Abs(E88) + 0.0089 * Math.Abs(E87) : E134 = thisval : If thisval > maxval Then maxval = thisval
+        If F88 < 0 Then thisval = 0.1072 * Math.Abs(F88) + 0.0089 * Math.Abs(F87) : F134 = thisval : If thisval > maxval Then maxval = thisval
+        If G88 < 0 Then thisval = 0.1072 * Math.Abs(G88) + 0.0089 * Math.Abs(G87) : G134 = thisval : If thisval > maxval Then maxval = thisval
+        If H88 < 0 Then thisval = 0.1072 * Math.Abs(H88) + 0.0089 * Math.Abs(H87) : H134 = thisval : If thisval > maxval Then maxval = thisval
+        If I88 < 0 Then thisval = 0.1072 * Math.Abs(I88) + 0.0089 * Math.Abs(I87) : I134 = thisval : If thisval > maxval Then maxval = thisval
 
-        If E88 < 0 Then thisval = 0.0572 * Math.Abs(E88) + 0.0105 * Math.Abs(E87) : If thisval > maxval Then maxval = thisval
-        If F88 < 0 Then thisval = 0.0572 * Math.Abs(F88) + 0.0105 * Math.Abs(F87) : If thisval > maxval Then maxval = thisval
-        If G88 < 0 Then thisval = 0.0572 * Math.Abs(G88) + 0.0105 * Math.Abs(G87) : If thisval > maxval Then maxval = thisval
-        If H88 < 0 Then thisval = 0.0572 * Math.Abs(H88) + 0.0105 * Math.Abs(H87) : If thisval > maxval Then maxval = thisval
-        If I88 < 0 Then thisval = 0.0572 * Math.Abs(I88) + 0.0105 * Math.Abs(I87) : If thisval > maxval Then maxval = thisval
+        If E88 < 0 Then thisval = 0.0572 * Math.Abs(E88) + 0.0105 * Math.Abs(E87) : E135 = thisval : If thisval > maxval Then maxval = thisval
+        If F88 < 0 Then thisval = 0.0572 * Math.Abs(F88) + 0.0105 * Math.Abs(F87) : F135 = thisval : If thisval > maxval Then maxval = thisval
+        If G88 < 0 Then thisval = 0.0572 * Math.Abs(G88) + 0.0105 * Math.Abs(G87) : G135 = thisval : If thisval > maxval Then maxval = thisval
+        If H88 < 0 Then thisval = 0.0572 * Math.Abs(H88) + 0.0105 * Math.Abs(H87) : H135 = thisval : If thisval > maxval Then maxval = thisval
+        If I88 < 0 Then thisval = 0.0572 * Math.Abs(I88) + 0.0105 * Math.Abs(I87) : I135 = thisval : If thisval > maxval Then maxval = thisval
 
-        If F90 < 0 Then thisval = 0.1072 * Math.Abs(F90) + 0.0089 * Math.Abs(F89) : If thisval > maxval Then maxval = thisval
-        If G90 < 0 Then thisval = 0.1072 * Math.Abs(G90) + 0.0089 * Math.Abs(G89) : If thisval > maxval Then maxval = thisval
-        If H90 < 0 Then thisval = 0.1072 * Math.Abs(H90) + 0.0089 * Math.Abs(H89) : If thisval > maxval Then maxval = thisval
-        If I90 < 0 Then thisval = 0.1072 * Math.Abs(I90) + 0.0089 * Math.Abs(I89) : If thisval > maxval Then maxval = thisval
+        If F90 < 0 Then thisval = 0.1072 * Math.Abs(F90) + 0.0089 * Math.Abs(F89) : F136 = thisval : If thisval > maxval Then maxval = thisval
+        If G90 < 0 Then thisval = 0.1072 * Math.Abs(G90) + 0.0089 * Math.Abs(G89) : G136 = thisval : If thisval > maxval Then maxval = thisval
+        If H90 < 0 Then thisval = 0.1072 * Math.Abs(H90) + 0.0089 * Math.Abs(H89) : H136 = thisval : If thisval > maxval Then maxval = thisval
+        If I90 < 0 Then thisval = 0.1072 * Math.Abs(I90) + 0.0089 * Math.Abs(I89) : I136 = thisval : If thisval > maxval Then maxval = thisval
 
-        If F90 < 0 Then thisval = 0.0572 * Math.Abs(F90) + 0.0105 * Math.Abs(F89) : If thisval > maxval Then maxval = thisval
-        If G90 < 0 Then thisval = 0.0572 * Math.Abs(G90) + 0.0105 * Math.Abs(G89) : If thisval > maxval Then maxval = thisval
-        If H90 < 0 Then thisval = 0.0572 * Math.Abs(H90) + 0.0105 * Math.Abs(H89) : If thisval > maxval Then maxval = thisval
-        If I90 < 0 Then thisval = 0.0572 * Math.Abs(I90) + 0.0105 * Math.Abs(I89) : If thisval > maxval Then maxval = thisval
+        If F90 < 0 Then thisval = 0.0572 * Math.Abs(F90) + 0.0105 * Math.Abs(F89) : F137 = thisval : If thisval > maxval Then maxval = thisval
+        If G90 < 0 Then thisval = 0.0572 * Math.Abs(G90) + 0.0105 * Math.Abs(G89) : G137 = thisval : If thisval > maxval Then maxval = thisval
+        If H90 < 0 Then thisval = 0.0572 * Math.Abs(H90) + 0.0105 * Math.Abs(H89) : H137 = thisval : If thisval > maxval Then maxval = thisval
+        If I90 < 0 Then thisval = 0.0572 * Math.Abs(I90) + 0.0105 * Math.Abs(I89) : I137 = thisval : If thisval > maxval Then maxval = thisval
 
-        If F92 < 0 Then thisval = 0.1072 * Math.Abs(F92) + 0.0089 * Math.Abs(F91) : If thisval > maxval Then maxval = thisval
-        If G92 < 0 Then thisval = 0.1072 * Math.Abs(G92) + 0.0089 * Math.Abs(G91) : If thisval > maxval Then maxval = thisval
-        If H92 < 0 Then thisval = 0.1072 * Math.Abs(H92) + 0.0089 * Math.Abs(H91) : If thisval > maxval Then maxval = thisval
-        If I92 < 0 Then thisval = 0.1072 * Math.Abs(I92) + 0.0089 * Math.Abs(I91) : If thisval > maxval Then maxval = thisval
+        If F92 < 0 Then thisval = 0.1072 * Math.Abs(F92) + 0.0089 * Math.Abs(F91) : F138 = thisval : If thisval > maxval Then maxval = thisval
+        If G92 < 0 Then thisval = 0.1072 * Math.Abs(G92) + 0.0089 * Math.Abs(G91) : G138 = thisval : If thisval > maxval Then maxval = thisval
+        If H92 < 0 Then thisval = 0.1072 * Math.Abs(H92) + 0.0089 * Math.Abs(H91) : H138 = thisval : If thisval > maxval Then maxval = thisval
+        If I92 < 0 Then thisval = 0.1072 * Math.Abs(I92) + 0.0089 * Math.Abs(I91) : I138 = thisval : If thisval > maxval Then maxval = thisval
 
-        If F92 < 0 Then thisval = 0.0572 * Math.Abs(F92) + 0.0105 * Math.Abs(F91) : If thisval > maxval Then maxval = thisval
-        If G92 < 0 Then thisval = 0.0572 * Math.Abs(G92) + 0.0105 * Math.Abs(G91) : If thisval > maxval Then maxval = thisval
-        If H92 < 0 Then thisval = 0.0572 * Math.Abs(H92) + 0.0105 * Math.Abs(H91) : If thisval > maxval Then maxval = thisval
-        If I92 < 0 Then thisval = 0.0572 * Math.Abs(I92) + 0.0105 * Math.Abs(I91) : If thisval > maxval Then maxval = thisval
+        If F92 < 0 Then thisval = 0.0572 * Math.Abs(F92) + 0.0105 * Math.Abs(F91) : F139 = thisval : If thisval > maxval Then maxval = thisval
+        If G92 < 0 Then thisval = 0.0572 * Math.Abs(G92) + 0.0105 * Math.Abs(G91) : G139 = thisval : If thisval > maxval Then maxval = thisval
+        If H92 < 0 Then thisval = 0.0572 * Math.Abs(H92) + 0.0105 * Math.Abs(H91) : H139 = thisval : If thisval > maxval Then maxval = thisval
+        If I92 < 0 Then thisval = 0.0572 * Math.Abs(I92) + 0.0105 * Math.Abs(I91) : I139 = thisval : If thisval > maxval Then maxval = thisval
 
-        If F94 < 0 Then thisval = 0.1072 * Math.Abs(F94) + 0.0089 * Math.Abs(F93) : If thisval > maxval Then maxval = thisval
-        If G94 < 0 Then thisval = 0.1072 * Math.Abs(G94) + 0.0089 * Math.Abs(G93) : If thisval > maxval Then maxval = thisval
-        If H94 < 0 Then thisval = 0.1072 * Math.Abs(H94) + 0.0089 * Math.Abs(H93) : If thisval > maxval Then maxval = thisval
-        If I94 < 0 Then thisval = 0.1072 * Math.Abs(I94) + 0.0089 * Math.Abs(I93) : If thisval > maxval Then maxval = thisval
+        If F94 < 0 Then thisval = 0.1072 * Math.Abs(F94) + 0.0089 * Math.Abs(F93) : F140 = thisval : If thisval > maxval Then maxval = thisval
+        If G94 < 0 Then thisval = 0.1072 * Math.Abs(G94) + 0.0089 * Math.Abs(G93) : G140 = thisval : If thisval > maxval Then maxval = thisval
+        If H94 < 0 Then thisval = 0.1072 * Math.Abs(H94) + 0.0089 * Math.Abs(H93) : H140 = thisval : If thisval > maxval Then maxval = thisval
+        If I94 < 0 Then thisval = 0.1072 * Math.Abs(I94) + 0.0089 * Math.Abs(I93) : I140 = thisval : If thisval > maxval Then maxval = thisval
 
-        If F94 < 0 Then thisval = 0.0572 * Math.Abs(F94) + 0.0105 * Math.Abs(F93) : If thisval > maxval Then maxval = thisval
-        If G94 < 0 Then thisval = 0.0572 * Math.Abs(G94) + 0.0105 * Math.Abs(G93) : If thisval > maxval Then maxval = thisval
-        If H94 < 0 Then thisval = 0.0572 * Math.Abs(H94) + 0.0105 * Math.Abs(H93) : If thisval > maxval Then maxval = thisval
-        If I94 < 0 Then thisval = 0.0572 * Math.Abs(I94) + 0.0105 * Math.Abs(I93) : If thisval > maxval Then maxval = thisval
+        If F94 < 0 Then thisval = 0.0572 * Math.Abs(F94) + 0.0105 * Math.Abs(F93) : F141 = thisval : If thisval > maxval Then maxval = thisval
+        If G94 < 0 Then thisval = 0.0572 * Math.Abs(G94) + 0.0105 * Math.Abs(G93) : G141 = thisval : If thisval > maxval Then maxval = thisval
+        If H94 < 0 Then thisval = 0.0572 * Math.Abs(H94) + 0.0105 * Math.Abs(H93) : H141 = thisval : If thisval > maxval Then maxval = thisval
+        If I94 < 0 Then thisval = 0.0572 * Math.Abs(I94) + 0.0105 * Math.Abs(I93) : I141 = thisval : If thisval > maxval Then maxval = thisval
 
-        If G96 < 0 Then thisval = 0.1072 * Math.Abs(G96) + 0.0089 * Math.Abs(G95) : If thisval > maxval Then maxval = thisval
-        If H96 < 0 Then thisval = 0.1072 * Math.Abs(H96) + 0.0089 * Math.Abs(H95) : If thisval > maxval Then maxval = thisval
-        If I96 < 0 Then thisval = 0.1072 * Math.Abs(I96) + 0.0089 * Math.Abs(I95) : If thisval > maxval Then maxval = thisval
+        If G96 < 0 Then thisval = 0.1072 * Math.Abs(G96) + 0.0089 * Math.Abs(G95) : G142 = thisval : If thisval > maxval Then maxval = thisval
+        If H96 < 0 Then thisval = 0.1072 * Math.Abs(H96) + 0.0089 * Math.Abs(H95) : H142 = thisval : If thisval > maxval Then maxval = thisval
+        If I96 < 0 Then thisval = 0.1072 * Math.Abs(I96) + 0.0089 * Math.Abs(I95) : I142 = thisval : If thisval > maxval Then maxval = thisval
 
-        If G96 < 0 Then thisval = 0.0572 * Math.Abs(G96) + 0.0105 * Math.Abs(G95) : If thisval > maxval Then maxval = thisval
-        If H96 < 0 Then thisval = 0.0572 * Math.Abs(H96) + 0.0105 * Math.Abs(H95) : If thisval > maxval Then maxval = thisval
-        If I96 < 0 Then thisval = 0.0572 * Math.Abs(I96) + 0.0105 * Math.Abs(I95) : If thisval > maxval Then maxval = thisval
+        If G96 < 0 Then thisval = 0.0572 * Math.Abs(G96) + 0.0105 * Math.Abs(G95) : G143 = thisval : If thisval > maxval Then maxval = thisval
+        If H96 < 0 Then thisval = 0.0572 * Math.Abs(H96) + 0.0105 * Math.Abs(H95) : H143 = thisval : If thisval > maxval Then maxval = thisval
+        If I96 < 0 Then thisval = 0.0572 * Math.Abs(I96) + 0.0105 * Math.Abs(I95) : I143 = thisval : If thisval > maxval Then maxval = thisval
 
-        If G98 < 0 Then thisval = 0.1072 * Math.Abs(G98) + 0.0089 * Math.Abs(G97) : If thisval > maxval Then maxval = thisval
-        If H98 < 0 Then thisval = 0.1072 * Math.Abs(H98) + 0.0089 * Math.Abs(H97) : If thisval > maxval Then maxval = thisval
-        If I98 < 0 Then thisval = 0.1072 * Math.Abs(I98) + 0.0089 * Math.Abs(I97) : If thisval > maxval Then maxval = thisval
+        If G98 < 0 Then thisval = 0.1072 * Math.Abs(G98) + 0.0089 * Math.Abs(G97) : G144 = thisval : If thisval > maxval Then maxval = thisval
+        If H98 < 0 Then thisval = 0.1072 * Math.Abs(H98) + 0.0089 * Math.Abs(H97) : H144 = thisval : If thisval > maxval Then maxval = thisval
+        If I98 < 0 Then thisval = 0.1072 * Math.Abs(I98) + 0.0089 * Math.Abs(I97) : I144 = thisval : If thisval > maxval Then maxval = thisval
 
-        If G98 < 0 Then thisval = 0.0572 * Math.Abs(G98) + 0.0105 * Math.Abs(G97) : If thisval > maxval Then maxval = thisval
-        If H98 < 0 Then thisval = 0.0572 * Math.Abs(H98) + 0.0105 * Math.Abs(H97) : If thisval > maxval Then maxval = thisval
-        If I98 < 0 Then thisval = 0.0572 * Math.Abs(I98) + 0.0105 * Math.Abs(I97) : If thisval > maxval Then maxval = thisval
+        If G98 < 0 Then thisval = 0.0572 * Math.Abs(G98) + 0.0105 * Math.Abs(G97) : G145 = thisval : If thisval > maxval Then maxval = thisval
+        If H98 < 0 Then thisval = 0.0572 * Math.Abs(H98) + 0.0105 * Math.Abs(H97) : H145 = thisval : If thisval > maxval Then maxval = thisval
+        If I98 < 0 Then thisval = 0.0572 * Math.Abs(I98) + 0.0105 * Math.Abs(I97) : I145 = thisval : If thisval > maxval Then maxval = thisval
 
-        If G100 < 0 Then thisval = 0.1072 * Math.Abs(G100) + 0.0089 * Math.Abs(G99) : If thisval > maxval Then maxval = thisval
-        If H100 < 0 Then thisval = 0.1072 * Math.Abs(H100) + 0.0089 * Math.Abs(H99) : If thisval > maxval Then maxval = thisval
-        If I100 < 0 Then thisval = 0.1072 * Math.Abs(I100) + 0.0089 * Math.Abs(I99) : If thisval > maxval Then maxval = thisval
+        If G100 < 0 Then thisval = 0.1072 * Math.Abs(G100) + 0.0089 * Math.Abs(G99) : G146 = thisval : If thisval > maxval Then maxval = thisval
+        If H100 < 0 Then thisval = 0.1072 * Math.Abs(H100) + 0.0089 * Math.Abs(H99) : H146 = thisval : If thisval > maxval Then maxval = thisval
+        If I100 < 0 Then thisval = 0.1072 * Math.Abs(I100) + 0.0089 * Math.Abs(I99) : I146 = thisval : If thisval > maxval Then maxval = thisval
 
-        If G100 < 0 Then thisval = 0.0572 * Math.Abs(G100) + 0.0105 * Math.Abs(G99) : If thisval > maxval Then maxval = thisval
-        If H100 < 0 Then thisval = 0.0572 * Math.Abs(H100) + 0.0105 * Math.Abs(H99) : If thisval > maxval Then maxval = thisval
-        If I100 < 0 Then thisval = 0.0572 * Math.Abs(I100) + 0.0105 * Math.Abs(I99) : If thisval > maxval Then maxval = thisval
+        If G100 < 0 Then thisval = 0.0572 * Math.Abs(G100) + 0.0105 * Math.Abs(G99) : G147 = thisval : If thisval > maxval Then maxval = thisval
+        If H100 < 0 Then thisval = 0.0572 * Math.Abs(H100) + 0.0105 * Math.Abs(H99) : H147 = thisval : If thisval > maxval Then maxval = thisval
+        If I100 < 0 Then thisval = 0.0572 * Math.Abs(I100) + 0.0105 * Math.Abs(I99) : I147 = thisval : If thisval > maxval Then maxval = thisval
 
-        If G102 < 0 Then thisval = 0.1072 * Math.Abs(G102) + 0.0089 * Math.Abs(G101) : If thisval > maxval Then maxval = thisval
-        If H102 < 0 Then thisval = 0.1072 * Math.Abs(H102) + 0.0089 * Math.Abs(H101) : If thisval > maxval Then maxval = thisval
-        If I102 < 0 Then thisval = 0.1072 * Math.Abs(I102) + 0.0089 * Math.Abs(I101) : If thisval > maxval Then maxval = thisval
+        If G102 < 0 Then thisval = 0.1072 * Math.Abs(G102) + 0.0089 * Math.Abs(G101) : G148 = thisval : If thisval > maxval Then maxval = thisval
+        If H102 < 0 Then thisval = 0.1072 * Math.Abs(H102) + 0.0089 * Math.Abs(H101) : H148 = thisval : If thisval > maxval Then maxval = thisval
+        If I102 < 0 Then thisval = 0.1072 * Math.Abs(I102) + 0.0089 * Math.Abs(I101) : I148 = thisval : If thisval > maxval Then maxval = thisval
 
-        If G102 < 0 Then thisval = 0.0572 * Math.Abs(G102) + 0.0105 * Math.Abs(G101) : If thisval > maxval Then maxval = thisval
-        If H102 < 0 Then thisval = 0.0572 * Math.Abs(H102) + 0.0105 * Math.Abs(H101) : If thisval > maxval Then maxval = thisval
-        If I102 < 0 Then thisval = 0.0572 * Math.Abs(I102) + 0.0105 * Math.Abs(I101) : If thisval > maxval Then maxval = thisval
+        If G102 < 0 Then thisval = 0.0572 * Math.Abs(G102) + 0.0105 * Math.Abs(G101) : G149 = thisval : If thisval > maxval Then maxval = thisval
+        If H102 < 0 Then thisval = 0.0572 * Math.Abs(H102) + 0.0105 * Math.Abs(H101) : H149 = thisval : If thisval > maxval Then maxval = thisval
+        If I102 < 0 Then thisval = 0.0572 * Math.Abs(I102) + 0.0105 * Math.Abs(I101) : I149 = thisval : If thisval > maxval Then maxval = thisval
 
-        If G104 < 0 Then thisval = 0.1072 * Math.Abs(G104) + 0.0089 * Math.Abs(G103) : If thisval > maxval Then maxval = thisval
-        If H104 < 0 Then thisval = 0.1072 * Math.Abs(H104) + 0.0089 * Math.Abs(H103) : If thisval > maxval Then maxval = thisval
-        If I104 < 0 Then thisval = 0.1072 * Math.Abs(I104) + 0.0089 * Math.Abs(I103) : If thisval > maxval Then maxval = thisval
+        If G104 < 0 Then thisval = 0.1072 * Math.Abs(G104) + 0.0089 * Math.Abs(G103) : G150 = thisval : If thisval > maxval Then maxval = thisval
+        If H104 < 0 Then thisval = 0.1072 * Math.Abs(H104) + 0.0089 * Math.Abs(H103) : H150 = thisval : If thisval > maxval Then maxval = thisval
+        If I104 < 0 Then thisval = 0.1072 * Math.Abs(I104) + 0.0089 * Math.Abs(I103) : I150 = thisval : If thisval > maxval Then maxval = thisval
 
-        If G104 < 0 Then thisval = 0.0572 * Math.Abs(G104) + 0.0105 * Math.Abs(G103) : If thisval > maxval Then maxval = thisval
-        If H104 < 0 Then thisval = 0.0572 * Math.Abs(H104) + 0.0105 * Math.Abs(H103) : If thisval > maxval Then maxval = thisval
-        If I104 < 0 Then thisval = 0.0572 * Math.Abs(I104) + 0.0105 * Math.Abs(I103) : If thisval > maxval Then maxval = thisval
+        If G104 < 0 Then thisval = 0.0572 * Math.Abs(G104) + 0.0105 * Math.Abs(G103) : G151 = thisval : If thisval > maxval Then maxval = thisval
+        If H104 < 0 Then thisval = 0.0572 * Math.Abs(H104) + 0.0105 * Math.Abs(H103) : H151 = thisval : If thisval > maxval Then maxval = thisval
+        If I104 < 0 Then thisval = 0.0572 * Math.Abs(I104) + 0.0105 * Math.Abs(I103) : I151 = thisval : If thisval > maxval Then maxval = thisval
         I152 = maxval
 
         'C154 = "8.0x4.0C12"
         C154 = 10
         maxval = 0
-        If E86 < 0 Then thisval = 0.0597 * Math.Abs(E86) + 0.0071 * Math.Abs(E85) : If thisval > maxval Then maxval = thisval
-        If F86 < 0 Then thisval = 0.0597 * Math.Abs(F86) + 0.0071 * Math.Abs(F85) : If thisval > maxval Then maxval = thisval
-        If G86 < 0 Then thisval = 0.0597 * Math.Abs(G86) + 0.0071 * Math.Abs(G85) : If thisval > maxval Then maxval = thisval
-        If H86 < 0 Then thisval = 0.0597 * Math.Abs(H86) + 0.0071 * Math.Abs(H85) : If thisval > maxval Then maxval = thisval
-        If I86 < 0 Then thisval = 0.0597 * Math.Abs(I86) + 0.0071 * Math.Abs(I85) : If thisval > maxval Then maxval = thisval
+        If E86 < 0 Then thisval = 0.0597 * Math.Abs(E86) + 0.0071 * Math.Abs(E85) : E154 = thisval : If thisval > maxval Then maxval = thisval
+        If F86 < 0 Then thisval = 0.0597 * Math.Abs(F86) + 0.0071 * Math.Abs(F85) : F154 = thisval : If thisval > maxval Then maxval = thisval
+        If G86 < 0 Then thisval = 0.0597 * Math.Abs(G86) + 0.0071 * Math.Abs(G85) : G154 = thisval : If thisval > maxval Then maxval = thisval
+        If H86 < 0 Then thisval = 0.0597 * Math.Abs(H86) + 0.0071 * Math.Abs(H85) : H154 = thisval : If thisval > maxval Then maxval = thisval
+        If I86 < 0 Then thisval = 0.0597 * Math.Abs(I86) + 0.0071 * Math.Abs(I85) : I154 = thisval : If thisval > maxval Then maxval = thisval
 
-        If E86 < 0 Then thisval = 0.0265 * Math.Abs(E86) + 0.0083 * Math.Abs(E85) : If thisval > maxval Then maxval = thisval
-        If F86 < 0 Then thisval = 0.0265 * Math.Abs(F86) + 0.0083 * Math.Abs(F85) : If thisval > maxval Then maxval = thisval
-        If G86 < 0 Then thisval = 0.0265 * Math.Abs(G86) + 0.0083 * Math.Abs(G85) : If thisval > maxval Then maxval = thisval
-        If H86 < 0 Then thisval = 0.0265 * Math.Abs(H86) + 0.0083 * Math.Abs(H85) : If thisval > maxval Then maxval = thisval
-        If I86 < 0 Then thisval = 0.0265 * Math.Abs(I86) + 0.0083 * Math.Abs(I85) : If thisval > maxval Then maxval = thisval
+        If E86 < 0 Then thisval = 0.0265 * Math.Abs(E86) + 0.0083 * Math.Abs(E85) : E155 = thisval : If thisval > maxval Then maxval = thisval
+        If F86 < 0 Then thisval = 0.0265 * Math.Abs(F86) + 0.0083 * Math.Abs(F85) : F155 = thisval : If thisval > maxval Then maxval = thisval
+        If G86 < 0 Then thisval = 0.0265 * Math.Abs(G86) + 0.0083 * Math.Abs(G85) : G155 = thisval : If thisval > maxval Then maxval = thisval
+        If H86 < 0 Then thisval = 0.0265 * Math.Abs(H86) + 0.0083 * Math.Abs(H85) : H155 = thisval : If thisval > maxval Then maxval = thisval
+        If I86 < 0 Then thisval = 0.0265 * Math.Abs(I86) + 0.0083 * Math.Abs(I85) : I155 = thisval : If thisval > maxval Then maxval = thisval
 
-        If E88 < 0 Then thisval = 0.0597 * Math.Abs(E88) + 0.0071 * Math.Abs(E87) : If thisval > maxval Then maxval = thisval
-        If F88 < 0 Then thisval = 0.0597 * Math.Abs(F88) + 0.0071 * Math.Abs(F87) : If thisval > maxval Then maxval = thisval
-        If G88 < 0 Then thisval = 0.0597 * Math.Abs(G88) + 0.0071 * Math.Abs(G87) : If thisval > maxval Then maxval = thisval
-        If H88 < 0 Then thisval = 0.0597 * Math.Abs(H88) + 0.0071 * Math.Abs(H87) : If thisval > maxval Then maxval = thisval
-        If I88 < 0 Then thisval = 0.0597 * Math.Abs(I88) + 0.0071 * Math.Abs(I87) : If thisval > maxval Then maxval = thisval
+        If E88 < 0 Then thisval = 0.0597 * Math.Abs(E88) + 0.0071 * Math.Abs(E87) : E156 = thisval : If thisval > maxval Then maxval = thisval
+        If F88 < 0 Then thisval = 0.0597 * Math.Abs(F88) + 0.0071 * Math.Abs(F87) : F156 = thisval : If thisval > maxval Then maxval = thisval
+        If G88 < 0 Then thisval = 0.0597 * Math.Abs(G88) + 0.0071 * Math.Abs(G87) : G156 = thisval : If thisval > maxval Then maxval = thisval
+        If H88 < 0 Then thisval = 0.0597 * Math.Abs(H88) + 0.0071 * Math.Abs(H87) : H156 = thisval : If thisval > maxval Then maxval = thisval
+        If I88 < 0 Then thisval = 0.0597 * Math.Abs(I88) + 0.0071 * Math.Abs(I87) : I156 = thisval : If thisval > maxval Then maxval = thisval
 
-        If E88 < 0 Then thisval = 0.0265 * Math.Abs(E88) + 0.0083 * Math.Abs(E87) : If thisval > maxval Then maxval = thisval
-        If F88 < 0 Then thisval = 0.0265 * Math.Abs(F88) + 0.0083 * Math.Abs(F87) : If thisval > maxval Then maxval = thisval
-        If G88 < 0 Then thisval = 0.0265 * Math.Abs(G88) + 0.0083 * Math.Abs(G87) : If thisval > maxval Then maxval = thisval
-        If H88 < 0 Then thisval = 0.0265 * Math.Abs(H88) + 0.0083 * Math.Abs(H87) : If thisval > maxval Then maxval = thisval
-        If I88 < 0 Then thisval = 0.0265 * Math.Abs(I88) + 0.0083 * Math.Abs(I87) : If thisval > maxval Then maxval = thisval
+        If E88 < 0 Then thisval = 0.0265 * Math.Abs(E88) + 0.0083 * Math.Abs(E87) : E157 = thisval : If thisval > maxval Then maxval = thisval
+        If F88 < 0 Then thisval = 0.0265 * Math.Abs(F88) + 0.0083 * Math.Abs(F87) : F157 = thisval : If thisval > maxval Then maxval = thisval
+        If G88 < 0 Then thisval = 0.0265 * Math.Abs(G88) + 0.0083 * Math.Abs(G87) : G157 = thisval : If thisval > maxval Then maxval = thisval
+        If H88 < 0 Then thisval = 0.0265 * Math.Abs(H88) + 0.0083 * Math.Abs(H87) : H157 = thisval : If thisval > maxval Then maxval = thisval
+        If I88 < 0 Then thisval = 0.0265 * Math.Abs(I88) + 0.0083 * Math.Abs(I87) : I157 = thisval : If thisval > maxval Then maxval = thisval
 
-        If F90 < 0 Then thisval = 0.0597 * Math.Abs(F90) + 0.0071 * Math.Abs(F89) : If thisval > maxval Then maxval = thisval
-        If G90 < 0 Then thisval = 0.0597 * Math.Abs(G90) + 0.0071 * Math.Abs(G89) : If thisval > maxval Then maxval = thisval
-        If H90 < 0 Then thisval = 0.0597 * Math.Abs(H90) + 0.0071 * Math.Abs(H89) : If thisval > maxval Then maxval = thisval
-        If I90 < 0 Then thisval = 0.0597 * Math.Abs(I90) + 0.0071 * Math.Abs(I89) : If thisval > maxval Then maxval = thisval
+        If F90 < 0 Then thisval = 0.0597 * Math.Abs(F90) + 0.0071 * Math.Abs(F89) : F158 = thisval : If thisval > maxval Then maxval = thisval
+        If G90 < 0 Then thisval = 0.0597 * Math.Abs(G90) + 0.0071 * Math.Abs(G89) : G158 = thisval : If thisval > maxval Then maxval = thisval
+        If H90 < 0 Then thisval = 0.0597 * Math.Abs(H90) + 0.0071 * Math.Abs(H89) : H158 = thisval : If thisval > maxval Then maxval = thisval
+        If I90 < 0 Then thisval = 0.0597 * Math.Abs(I90) + 0.0071 * Math.Abs(I89) : I158 = thisval : If thisval > maxval Then maxval = thisval
 
-        If F90 < 0 Then thisval = 0.0265 * Math.Abs(F90) + 0.0083 * Math.Abs(F89) : If thisval > maxval Then maxval = thisval
-        If G90 < 0 Then thisval = 0.0265 * Math.Abs(G90) + 0.0083 * Math.Abs(G89) : If thisval > maxval Then maxval = thisval
-        If H90 < 0 Then thisval = 0.0265 * Math.Abs(H90) + 0.0083 * Math.Abs(H89) : If thisval > maxval Then maxval = thisval
-        If I90 < 0 Then thisval = 0.0265 * Math.Abs(I90) + 0.0083 * Math.Abs(I89) : If thisval > maxval Then maxval = thisval
+        If F90 < 0 Then thisval = 0.0265 * Math.Abs(F90) + 0.0083 * Math.Abs(F89) : F159 = thisval : If thisval > maxval Then maxval = thisval
+        If G90 < 0 Then thisval = 0.0265 * Math.Abs(G90) + 0.0083 * Math.Abs(G89) : G159 = thisval : If thisval > maxval Then maxval = thisval
+        If H90 < 0 Then thisval = 0.0265 * Math.Abs(H90) + 0.0083 * Math.Abs(H89) : H159 = thisval : If thisval > maxval Then maxval = thisval
+        If I90 < 0 Then thisval = 0.0265 * Math.Abs(I90) + 0.0083 * Math.Abs(I89) : I159 = thisval : If thisval > maxval Then maxval = thisval
 
-        If F92 < 0 Then thisval = 0.0597 * Math.Abs(F92) + 0.0071 * Math.Abs(F91) : If thisval > maxval Then maxval = thisval
-        If G92 < 0 Then thisval = 0.0597 * Math.Abs(G92) + 0.0071 * Math.Abs(G91) : If thisval > maxval Then maxval = thisval
-        If H92 < 0 Then thisval = 0.0597 * Math.Abs(H92) + 0.0071 * Math.Abs(H91) : If thisval > maxval Then maxval = thisval
-        If I92 < 0 Then thisval = 0.0597 * Math.Abs(I92) + 0.0071 * Math.Abs(I91) : If thisval > maxval Then maxval = thisval
+        If F92 < 0 Then thisval = 0.0597 * Math.Abs(F92) + 0.0071 * Math.Abs(F91) : F160 = thisval : If thisval > maxval Then maxval = thisval
+        If G92 < 0 Then thisval = 0.0597 * Math.Abs(G92) + 0.0071 * Math.Abs(G91) : G160 = thisval : If thisval > maxval Then maxval = thisval
+        If H92 < 0 Then thisval = 0.0597 * Math.Abs(H92) + 0.0071 * Math.Abs(H91) : H160 = thisval : If thisval > maxval Then maxval = thisval
+        If I92 < 0 Then thisval = 0.0597 * Math.Abs(I92) + 0.0071 * Math.Abs(I91) : I160 = thisval : If thisval > maxval Then maxval = thisval
 
-        If F92 < 0 Then thisval = 0.0265 * Math.Abs(F92) + 0.0083 * Math.Abs(F91) : If thisval > maxval Then maxval = thisval
-        If G92 < 0 Then thisval = 0.0265 * Math.Abs(G92) + 0.0083 * Math.Abs(G91) : If thisval > maxval Then maxval = thisval
-        If H92 < 0 Then thisval = 0.0265 * Math.Abs(H92) + 0.0083 * Math.Abs(H91) : If thisval > maxval Then maxval = thisval
-        If I92 < 0 Then thisval = 0.0265 * Math.Abs(I92) + 0.0083 * Math.Abs(I91) : If thisval > maxval Then maxval = thisval
+        If F92 < 0 Then thisval = 0.0265 * Math.Abs(F92) + 0.0083 * Math.Abs(F91) : F161 = thisval : If thisval > maxval Then maxval = thisval
+        If G92 < 0 Then thisval = 0.0265 * Math.Abs(G92) + 0.0083 * Math.Abs(G91) : G161 = thisval : If thisval > maxval Then maxval = thisval
+        If H92 < 0 Then thisval = 0.0265 * Math.Abs(H92) + 0.0083 * Math.Abs(H91) : H161 = thisval : If thisval > maxval Then maxval = thisval
+        If I92 < 0 Then thisval = 0.0265 * Math.Abs(I92) + 0.0083 * Math.Abs(I91) : I161 = thisval : If thisval > maxval Then maxval = thisval
 
-        If F94 < 0 Then thisval = 0.0597 * Math.Abs(F94) + 0.0071 * Math.Abs(F93) : If thisval > maxval Then maxval = thisval
-        If G94 < 0 Then thisval = 0.0597 * Math.Abs(G94) + 0.0071 * Math.Abs(G93) : If thisval > maxval Then maxval = thisval
-        If H94 < 0 Then thisval = 0.0597 * Math.Abs(H94) + 0.0071 * Math.Abs(H93) : If thisval > maxval Then maxval = thisval
-        If I94 < 0 Then thisval = 0.0597 * Math.Abs(I94) + 0.0071 * Math.Abs(I93) : If thisval > maxval Then maxval = thisval
+        If F94 < 0 Then thisval = 0.0597 * Math.Abs(F94) + 0.0071 * Math.Abs(F93) : F162 = thisval : If thisval > maxval Then maxval = thisval
+        If G94 < 0 Then thisval = 0.0597 * Math.Abs(G94) + 0.0071 * Math.Abs(G93) : G162 = thisval : If thisval > maxval Then maxval = thisval
+        If H94 < 0 Then thisval = 0.0597 * Math.Abs(H94) + 0.0071 * Math.Abs(H93) : H162 = thisval : If thisval > maxval Then maxval = thisval
+        If I94 < 0 Then thisval = 0.0597 * Math.Abs(I94) + 0.0071 * Math.Abs(I93) : I162 = thisval : If thisval > maxval Then maxval = thisval
 
-        If F94 < 0 Then thisval = 0.0265 * Math.Abs(F94) + 0.0083 * Math.Abs(F93) : If thisval > maxval Then maxval = thisval
-        If G94 < 0 Then thisval = 0.0265 * Math.Abs(G94) + 0.0083 * Math.Abs(G93) : If thisval > maxval Then maxval = thisval
-        If H94 < 0 Then thisval = 0.0265 * Math.Abs(H94) + 0.0083 * Math.Abs(H93) : If thisval > maxval Then maxval = thisval
-        If I94 < 0 Then thisval = 0.0265 * Math.Abs(I94) + 0.0083 * Math.Abs(I93) : If thisval > maxval Then maxval = thisval
+        If F94 < 0 Then thisval = 0.0265 * Math.Abs(F94) + 0.0083 * Math.Abs(F93) : F163 = thisval : If thisval > maxval Then maxval = thisval
+        If G94 < 0 Then thisval = 0.0265 * Math.Abs(G94) + 0.0083 * Math.Abs(G93) : G163 = thisval : If thisval > maxval Then maxval = thisval
+        If H94 < 0 Then thisval = 0.0265 * Math.Abs(H94) + 0.0083 * Math.Abs(H93) : H163 = thisval : If thisval > maxval Then maxval = thisval
+        If I94 < 0 Then thisval = 0.0265 * Math.Abs(I94) + 0.0083 * Math.Abs(I93) : I163 = thisval : If thisval > maxval Then maxval = thisval
 
-        If G96 < 0 Then thisval = 0.0597 * Math.Abs(G96) + 0.0071 * Math.Abs(G95) : If thisval > maxval Then maxval = thisval
-        If H96 < 0 Then thisval = 0.0597 * Math.Abs(H96) + 0.0071 * Math.Abs(H95) : If thisval > maxval Then maxval = thisval
-        If I96 < 0 Then thisval = 0.0597 * Math.Abs(I96) + 0.0071 * Math.Abs(I95) : If thisval > maxval Then maxval = thisval
+        If G96 < 0 Then thisval = 0.0597 * Math.Abs(G96) + 0.0071 * Math.Abs(G95) : G164 = thisval : If thisval > maxval Then maxval = thisval
+        If H96 < 0 Then thisval = 0.0597 * Math.Abs(H96) + 0.0071 * Math.Abs(H95) : H164 = thisval : If thisval > maxval Then maxval = thisval
+        If I96 < 0 Then thisval = 0.0597 * Math.Abs(I96) + 0.0071 * Math.Abs(I95) : I164 = thisval : If thisval > maxval Then maxval = thisval
 
-        If G96 < 0 Then thisval = 0.0265 * Math.Abs(G96) + 0.0083 * Math.Abs(G95) : If thisval > maxval Then maxval = thisval
-        If H96 < 0 Then thisval = 0.0265 * Math.Abs(H96) + 0.0083 * Math.Abs(H95) : If thisval > maxval Then maxval = thisval
-        If I96 < 0 Then thisval = 0.0265 * Math.Abs(I96) + 0.0083 * Math.Abs(I95) : If thisval > maxval Then maxval = thisval
+        If G96 < 0 Then thisval = 0.0265 * Math.Abs(G96) + 0.0083 * Math.Abs(G95) : G165 = thisval : If thisval > maxval Then maxval = thisval
+        If H96 < 0 Then thisval = 0.0265 * Math.Abs(H96) + 0.0083 * Math.Abs(H95) : H165 = thisval : If thisval > maxval Then maxval = thisval
+        If I96 < 0 Then thisval = 0.0265 * Math.Abs(I96) + 0.0083 * Math.Abs(I95) : I165 = thisval : If thisval > maxval Then maxval = thisval
 
-        If G98 < 0 Then thisval = 0.0597 * Math.Abs(G98) + 0.0071 * Math.Abs(G97) : If thisval > maxval Then maxval = thisval
-        If H98 < 0 Then thisval = 0.0597 * Math.Abs(H98) + 0.0071 * Math.Abs(H97) : If thisval > maxval Then maxval = thisval
-        If I98 < 0 Then thisval = 0.0597 * Math.Abs(I98) + 0.0071 * Math.Abs(I97) : If thisval > maxval Then maxval = thisval
+        If G98 < 0 Then thisval = 0.0597 * Math.Abs(G98) + 0.0071 * Math.Abs(G97) : G166 = thisval If thisval > maxval Then maxval = thisval
+        If H98 < 0 Then thisval = 0.0597 * Math.Abs(H98) + 0.0071 * Math.Abs(H97) : H166 = thisval If thisval > maxval Then maxval = thisval
+        If I98 < 0 Then thisval = 0.0597 * Math.Abs(I98) + 0.0071 * Math.Abs(I97) : I166 = thisval If thisval > maxval Then maxval = thisval
 
-        If G98 < 0 Then thisval = 0.0265 * Math.Abs(G98) + 0.0083 * Math.Abs(G97) : If thisval > maxval Then maxval = thisval
-        If H98 < 0 Then thisval = 0.0265 * Math.Abs(H98) + 0.0083 * Math.Abs(H97) : If thisval > maxval Then maxval = thisval
-        If I98 < 0 Then thisval = 0.0265 * Math.Abs(I98) + 0.0083 * Math.Abs(I97) : If thisval > maxval Then maxval = thisval
+        If G98 < 0 Then thisval = 0.0265 * Math.Abs(G98) + 0.0083 * Math.Abs(G97) : G167 = thisval If thisval > maxval Then maxval = thisval
+        If H98 < 0 Then thisval = 0.0265 * Math.Abs(H98) + 0.0083 * Math.Abs(H97) : H167 = thisval If thisval > maxval Then maxval = thisval
+        If I98 < 0 Then thisval = 0.0265 * Math.Abs(I98) + 0.0083 * Math.Abs(I97) : I167 = thisval If thisval > maxval Then maxval = thisval
 
-        If G100 < 0 Then thisval = 0.0597 * Math.Abs(G100) + 0.0071 * Math.Abs(G99) : If thisval > maxval Then maxval = thisval
-        If H100 < 0 Then thisval = 0.0597 * Math.Abs(H100) + 0.0071 * Math.Abs(H99) : If thisval > maxval Then maxval = thisval
-        If I100 < 0 Then thisval = 0.0597 * Math.Abs(I100) + 0.0071 * Math.Abs(I99) : If thisval > maxval Then maxval = thisval
+        If G100 < 0 Then thisval = 0.0597 * Math.Abs(G100) + 0.0071 * Math.Abs(G99) : G168 = thisval : If thisval > maxval Then maxval = thisval
+        If H100 < 0 Then thisval = 0.0597 * Math.Abs(H100) + 0.0071 * Math.Abs(H99) : H168 = thisval : If thisval > maxval Then maxval = thisval
+        If I100 < 0 Then thisval = 0.0597 * Math.Abs(I100) + 0.0071 * Math.Abs(I99) : I168 = thisval : If thisval > maxval Then maxval = thisval
 
-        If G100 < 0 Then thisval = 0.0265 * Math.Abs(G100) + 0.0083 * Math.Abs(G99) : If thisval > maxval Then maxval = thisval
-        If H100 < 0 Then thisval = 0.0265 * Math.Abs(H100) + 0.0083 * Math.Abs(H99) : If thisval > maxval Then maxval = thisval
-        If I100 < 0 Then thisval = 0.0265 * Math.Abs(I100) + 0.0083 * Math.Abs(I99) : If thisval > maxval Then maxval = thisval
+        If G100 < 0 Then thisval = 0.0265 * Math.Abs(G100) + 0.0083 * Math.Abs(G99) : G169 = thisval : If thisval > maxval Then maxval = thisval
+        If H100 < 0 Then thisval = 0.0265 * Math.Abs(H100) + 0.0083 * Math.Abs(H99) : H169 = thisval : If thisval > maxval Then maxval = thisval
+        If I100 < 0 Then thisval = 0.0265 * Math.Abs(I100) + 0.0083 * Math.Abs(I99) : I169 = thisval : If thisval > maxval Then maxval = thisval
 
-        If G102 < 0 Then thisval = 0.0597 * Math.Abs(G102) + 0.0071 * Math.Abs(G101) : If thisval > maxval Then maxval = thisval
-        If H102 < 0 Then thisval = 0.0597 * Math.Abs(H102) + 0.0071 * Math.Abs(H101) : If thisval > maxval Then maxval = thisval
-        If I102 < 0 Then thisval = 0.0597 * Math.Abs(I102) + 0.0071 * Math.Abs(I101) : If thisval > maxval Then maxval = thisval
+        If G102 < 0 Then thisval = 0.0597 * Math.Abs(G102) + 0.0071 * Math.Abs(G101) : G170 = thisval : If thisval > maxval Then maxval = thisval
+        If H102 < 0 Then thisval = 0.0597 * Math.Abs(H102) + 0.0071 * Math.Abs(H101) : H170 = thisval : If thisval > maxval Then maxval = thisval
+        If I102 < 0 Then thisval = 0.0597 * Math.Abs(I102) + 0.0071 * Math.Abs(I101) : I170 = thisval : If thisval > maxval Then maxval = thisval
 
-        If G102 < 0 Then thisval = 0.0265 * Math.Abs(G102) + 0.0083 * Math.Abs(G101) : If thisval > maxval Then maxval = thisval
-        If H102 < 0 Then thisval = 0.0265 * Math.Abs(H102) + 0.0083 * Math.Abs(H101) : If thisval > maxval Then maxval = thisval
-        If I102 < 0 Then thisval = 0.0265 * Math.Abs(I102) + 0.0083 * Math.Abs(I101) : If thisval > maxval Then maxval = thisval
+        If G102 < 0 Then thisval = 0.0265 * Math.Abs(G102) + 0.0083 * Math.Abs(G101) : G171 = thisval : If thisval > maxval Then maxval = thisval
+        If H102 < 0 Then thisval = 0.0265 * Math.Abs(H102) + 0.0083 * Math.Abs(H101) : H171 = thisval : If thisval > maxval Then maxval = thisval
+        If I102 < 0 Then thisval = 0.0265 * Math.Abs(I102) + 0.0083 * Math.Abs(I101) : I171 = thisval : If thisval > maxval Then maxval = thisval
 
-        If G104 < 0 Then thisval = 0.0597 * Math.Abs(G104) + 0.0071 * Math.Abs(G103) : If thisval > maxval Then maxval = thisval
-        If H104 < 0 Then thisval = 0.0597 * Math.Abs(H104) + 0.0071 * Math.Abs(H103) : If thisval > maxval Then maxval = thisval
-        If I104 < 0 Then thisval = 0.0597 * Math.Abs(I104) + 0.0071 * Math.Abs(I103) : If thisval > maxval Then maxval = thisval
+        If G104 < 0 Then thisval = 0.0597 * Math.Abs(G104) + 0.0071 * Math.Abs(G103) : G172 = thisval : If thisval > maxval Then maxval = thisval
+        If H104 < 0 Then thisval = 0.0597 * Math.Abs(H104) + 0.0071 * Math.Abs(H103) : H172 = thisval : If thisval > maxval Then maxval = thisval
+        If I104 < 0 Then thisval = 0.0597 * Math.Abs(I104) + 0.0071 * Math.Abs(I103) : I172 = thisval : If thisval > maxval Then maxval = thisval
 
-        If G104 < 0 Then thisval = 0.0265 * Math.Abs(G104) + 0.0083 * Math.Abs(G103) : If thisval > maxval Then maxval = thisval
-        If H104 < 0 Then thisval = 0.0265 * Math.Abs(H104) + 0.0083 * Math.Abs(H103) : If thisval > maxval Then maxval = thisval
-        If I104 < 0 Then thisval = 0.0265 * Math.Abs(I104) + 0.0083 * Math.Abs(I103) : If thisval > maxval Then maxval = thisval
+        If G104 < 0 Then thisval = 0.0265 * Math.Abs(G104) + 0.0083 * Math.Abs(G103) : G173 = thisval : If thisval > maxval Then maxval = thisval
+        If H104 < 0 Then thisval = 0.0265 * Math.Abs(H104) + 0.0083 * Math.Abs(H103) : H173 = thisval : If thisval > maxval Then maxval = thisval
+        If I104 < 0 Then thisval = 0.0265 * Math.Abs(I104) + 0.0083 * Math.Abs(I103) : I173 = thisval : If thisval > maxval Then maxval = thisval
         I174 = maxval
 
         'C176 = "12.0x4.0C12"
         C176 = 15
         maxval = 0
 
-        If E86 < 0 Then thisval = 0.0515 * Math.Abs(E86) + 0.0046 * Math.Abs(E85) : If thisval > maxval Then maxval = thisval
-        If F86 < 0 Then thisval = 0.0515 * Math.Abs(F86) + 0.0046 * Math.Abs(F85) : If thisval > maxval Then maxval = thisval
-        If G86 < 0 Then thisval = 0.0515 * Math.Abs(G86) + 0.0046 * Math.Abs(G85) : If thisval > maxval Then maxval = thisval
-        If H86 < 0 Then thisval = 0.0515 * Math.Abs(H86) + 0.0046 * Math.Abs(H85) : If thisval > maxval Then maxval = thisval
-        If I86 < 0 Then thisval = 0.0515 * Math.Abs(I86) + 0.0046 * Math.Abs(I85) : If thisval > maxval Then maxval = thisval
+        If E86 < 0 Then thisval = 0.0515 * Math.Abs(E86) + 0.0046 * Math.Abs(E85) : E176 = thisval : If thisval > maxval Then maxval = thisval
+        If F86 < 0 Then thisval = 0.0515 * Math.Abs(F86) + 0.0046 * Math.Abs(F85) : F176 = thisval : If thisval > maxval Then maxval = thisval
+        If G86 < 0 Then thisval = 0.0515 * Math.Abs(G86) + 0.0046 * Math.Abs(G85) : G176 = thisval : If thisval > maxval Then maxval = thisval
+        If H86 < 0 Then thisval = 0.0515 * Math.Abs(H86) + 0.0046 * Math.Abs(H85) : H176 = thisval : If thisval > maxval Then maxval = thisval
+        If I86 < 0 Then thisval = 0.0515 * Math.Abs(I86) + 0.0046 * Math.Abs(I85) : I176 = thisval : If thisval > maxval Then maxval = thisval
 
-        If E86 < 0 Then thisval = 0.0281 * Math.Abs(E86) + 0.0054 * Math.Abs(E85) : If thisval > maxval Then maxval = thisval
-        If F86 < 0 Then thisval = 0.0281 * Math.Abs(F86) + 0.0054 * Math.Abs(F85) : If thisval > maxval Then maxval = thisval
-        If G86 < 0 Then thisval = 0.0281 * Math.Abs(G86) + 0.0054 * Math.Abs(G85) : If thisval > maxval Then maxval = thisval
-        If H86 < 0 Then thisval = 0.0281 * Math.Abs(H86) + 0.0054 * Math.Abs(H85) : If thisval > maxval Then maxval = thisval
-        If I86 < 0 Then thisval = 0.0281 * Math.Abs(I86) + 0.0054 * Math.Abs(I85) : If thisval > maxval Then maxval = thisval
+        If E86 < 0 Then thisval = 0.0281 * Math.Abs(E86) + 0.0054 * Math.Abs(E85) : E177 = thisval : If thisval > maxval Then maxval = thisval
+        If F86 < 0 Then thisval = 0.0281 * Math.Abs(F86) + 0.0054 * Math.Abs(F85) : F177 = thisval : If thisval > maxval Then maxval = thisval
+        If G86 < 0 Then thisval = 0.0281 * Math.Abs(G86) + 0.0054 * Math.Abs(G85) : G177 = thisval : If thisval > maxval Then maxval = thisval
+        If H86 < 0 Then thisval = 0.0281 * Math.Abs(H86) + 0.0054 * Math.Abs(H85) : H177 = thisval : If thisval > maxval Then maxval = thisval
+        If I86 < 0 Then thisval = 0.0281 * Math.Abs(I86) + 0.0054 * Math.Abs(I85) : I177 = thisval : If thisval > maxval Then maxval = thisval
 
-        If E88 < 0 Then thisval = 0.0515 * Math.Abs(E88) + 0.0046 * Math.Abs(E87) : If thisval > maxval Then maxval = thisval
-        If F88 < 0 Then thisval = 0.0515 * Math.Abs(F88) + 0.0046 * Math.Abs(F87) : If thisval > maxval Then maxval = thisval
-        If G88 < 0 Then thisval = 0.0515 * Math.Abs(G88) + 0.0046 * Math.Abs(G87) : If thisval > maxval Then maxval = thisval
-        If H88 < 0 Then thisval = 0.0515 * Math.Abs(H88) + 0.0046 * Math.Abs(H87) : If thisval > maxval Then maxval = thisval
-        If I88 < 0 Then thisval = 0.0515 * Math.Abs(I88) + 0.0046 * Math.Abs(I87) : If thisval > maxval Then maxval = thisval
+        If E88 < 0 Then thisval = 0.0515 * Math.Abs(E88) + 0.0046 * Math.Abs(E87) : E178 = thisval : If thisval > maxval Then maxval = thisval
+        If F88 < 0 Then thisval = 0.0515 * Math.Abs(F88) + 0.0046 * Math.Abs(F87) : F178 = thisval : If thisval > maxval Then maxval = thisval
+        If G88 < 0 Then thisval = 0.0515 * Math.Abs(G88) + 0.0046 * Math.Abs(G87) : G178 = thisval : If thisval > maxval Then maxval = thisval
+        If H88 < 0 Then thisval = 0.0515 * Math.Abs(H88) + 0.0046 * Math.Abs(H87) : H178 = thisval : If thisval > maxval Then maxval = thisval
+        If I88 < 0 Then thisval = 0.0515 * Math.Abs(I88) + 0.0046 * Math.Abs(I87) : I178 = thisval : If thisval > maxval Then maxval = thisval
 
-        If E88 < 0 Then thisval = 0.0281 * Math.Abs(E88) + 0.0054 * Math.Abs(E87) : If thisval > maxval Then maxval = thisval
-        If F88 < 0 Then thisval = 0.0281 * Math.Abs(F88) + 0.0054 * Math.Abs(F87) : If thisval > maxval Then maxval = thisval
-        If G88 < 0 Then thisval = 0.0281 * Math.Abs(G88) + 0.0054 * Math.Abs(G87) : If thisval > maxval Then maxval = thisval
-        If H88 < 0 Then thisval = 0.0281 * Math.Abs(H88) + 0.0054 * Math.Abs(H87) : If thisval > maxval Then maxval = thisval
-        If I88 < 0 Then thisval = 0.0281 * Math.Abs(I88) + 0.0054 * Math.Abs(I87) : If thisval > maxval Then maxval = thisval
+        If E88 < 0 Then thisval = 0.0281 * Math.Abs(E88) + 0.0054 * Math.Abs(E87) : E179 = thisval : If thisval > maxval Then maxval = thisval
+        If F88 < 0 Then thisval = 0.0281 * Math.Abs(F88) + 0.0054 * Math.Abs(F87) : F179 = thisval : If thisval > maxval Then maxval = thisval
+        If G88 < 0 Then thisval = 0.0281 * Math.Abs(G88) + 0.0054 * Math.Abs(G87) : G179 = thisval : If thisval > maxval Then maxval = thisval
+        If H88 < 0 Then thisval = 0.0281 * Math.Abs(H88) + 0.0054 * Math.Abs(H87) : H179 = thisval : If thisval > maxval Then maxval = thisval
+        If I88 < 0 Then thisval = 0.0281 * Math.Abs(I88) + 0.0054 * Math.Abs(I87) : I179 = thisval : If thisval > maxval Then maxval = thisval
 
-        If F90 < 0 Then thisval = 0.0515 * Math.Abs(F90) + 0.0046 * Math.Abs(F89) : If thisval > maxval Then maxval = thisval
-        If G90 < 0 Then thisval = 0.0515 * Math.Abs(G90) + 0.0046 * Math.Abs(G89) : If thisval > maxval Then maxval = thisval
-        If H90 < 0 Then thisval = 0.0515 * Math.Abs(H90) + 0.0046 * Math.Abs(H89) : If thisval > maxval Then maxval = thisval
-        If I90 < 0 Then thisval = 0.0515 * Math.Abs(I90) + 0.0046 * Math.Abs(I89) : If thisval > maxval Then maxval = thisval
+        If F90 < 0 Then thisval = 0.0515 * Math.Abs(F90) + 0.0046 * Math.Abs(F89) : F180 = thisval : If thisval > maxval Then maxval = thisval
+        If G90 < 0 Then thisval = 0.0515 * Math.Abs(G90) + 0.0046 * Math.Abs(G89) : G180 = thisval : If thisval > maxval Then maxval = thisval
+        If H90 < 0 Then thisval = 0.0515 * Math.Abs(H90) + 0.0046 * Math.Abs(H89) : H180 = thisval : If thisval > maxval Then maxval = thisval
+        If I90 < 0 Then thisval = 0.0515 * Math.Abs(I90) + 0.0046 * Math.Abs(I89) : I180 = thisval : If thisval > maxval Then maxval = thisval
 
-        If F90 < 0 Then thisval = 0.0281 * Math.Abs(F90) + 0.0054 * Math.Abs(F89) : If thisval > maxval Then maxval = thisval
-        If G90 < 0 Then thisval = 0.0281 * Math.Abs(G90) + 0.0054 * Math.Abs(G89) : If thisval > maxval Then maxval = thisval
-        If H90 < 0 Then thisval = 0.0281 * Math.Abs(H90) + 0.0054 * Math.Abs(H89) : If thisval > maxval Then maxval = thisval
-        If I90 < 0 Then thisval = 0.0281 * Math.Abs(I90) + 0.0054 * Math.Abs(I89) : If thisval > maxval Then maxval = thisval
+        If F90 < 0 Then thisval = 0.0281 * Math.Abs(F90) + 0.0054 * Math.Abs(F89) : F181 = thisval : If thisval > maxval Then maxval = thisval
+        If G90 < 0 Then thisval = 0.0281 * Math.Abs(G90) + 0.0054 * Math.Abs(G89) : G181 = thisval : If thisval > maxval Then maxval = thisval
+        If H90 < 0 Then thisval = 0.0281 * Math.Abs(H90) + 0.0054 * Math.Abs(H89) : H181 = thisval : If thisval > maxval Then maxval = thisval
+        If I90 < 0 Then thisval = 0.0281 * Math.Abs(I90) + 0.0054 * Math.Abs(I89) : I181 = thisval : If thisval > maxval Then maxval = thisval
 
-        If F92 < 0 Then thisval = 0.0515 * Math.Abs(F92) + 0.0046 * Math.Abs(F91) : If thisval > maxval Then maxval = thisval
-        If G92 < 0 Then thisval = 0.0515 * Math.Abs(G92) + 0.0046 * Math.Abs(G91) : If thisval > maxval Then maxval = thisval
-        If H92 < 0 Then thisval = 0.0515 * Math.Abs(H92) + 0.0046 * Math.Abs(H91) : If thisval > maxval Then maxval = thisval
-        If I92 < 0 Then thisval = 0.0515 * Math.Abs(I92) + 0.0046 * Math.Abs(I91) : If thisval > maxval Then maxval = thisval
+        If F92 < 0 Then thisval = 0.0515 * Math.Abs(F92) + 0.0046 * Math.Abs(F91) : F182 = thisval : If thisval > maxval Then maxval = thisval
+        If G92 < 0 Then thisval = 0.0515 * Math.Abs(G92) + 0.0046 * Math.Abs(G91) : G182 = thisval : If thisval > maxval Then maxval = thisval
+        If H92 < 0 Then thisval = 0.0515 * Math.Abs(H92) + 0.0046 * Math.Abs(H91) : H182 = thisval : If thisval > maxval Then maxval = thisval
+        If I92 < 0 Then thisval = 0.0515 * Math.Abs(I92) + 0.0046 * Math.Abs(I91) : I182 = thisval : If thisval > maxval Then maxval = thisval
 
-        If F92 < 0 Then thisval = 0.0281 * Math.Abs(F92) + 0.0054 * Math.Abs(F91) : If thisval > maxval Then maxval = thisval
-        If G92 < 0 Then thisval = 0.0281 * Math.Abs(G92) + 0.0054 * Math.Abs(G91) : If thisval > maxval Then maxval = thisval
-        If H92 < 0 Then thisval = 0.0281 * Math.Abs(H92) + 0.0054 * Math.Abs(H91) : If thisval > maxval Then maxval = thisval
-        If I92 < 0 Then thisval = 0.0281 * Math.Abs(I92) + 0.0054 * Math.Abs(I91) : If thisval > maxval Then maxval = thisval
+        If F92 < 0 Then thisval = 0.0281 * Math.Abs(F92) + 0.0054 * Math.Abs(F91) : F183 = thisval : If thisval > maxval Then maxval = thisval
+        If G92 < 0 Then thisval = 0.0281 * Math.Abs(G92) + 0.0054 * Math.Abs(G91) : G183 = thisval : If thisval > maxval Then maxval = thisval
+        If H92 < 0 Then thisval = 0.0281 * Math.Abs(H92) + 0.0054 * Math.Abs(H91) : H183 = thisval : If thisval > maxval Then maxval = thisval
+        If I92 < 0 Then thisval = 0.0281 * Math.Abs(I92) + 0.0054 * Math.Abs(I91) : I183 = thisval : If thisval > maxval Then maxval = thisval
 
-        If F94 < 0 Then thisval = 0.0515 * Math.Abs(F94) + 0.0046 * Math.Abs(F93) : If thisval > maxval Then maxval = thisval
-        If G94 < 0 Then thisval = 0.0515 * Math.Abs(G94) + 0.0046 * Math.Abs(G93) : If thisval > maxval Then maxval = thisval
-        If H94 < 0 Then thisval = 0.0515 * Math.Abs(H94) + 0.0046 * Math.Abs(H93) : If thisval > maxval Then maxval = thisval
-        If I94 < 0 Then thisval = 0.0515 * Math.Abs(I94) + 0.0046 * Math.Abs(I93) : If thisval > maxval Then maxval = thisval
+        If F94 < 0 Then thisval = 0.0515 * Math.Abs(F94) + 0.0046 * Math.Abs(F93) : F184 = thisval : If thisval > maxval Then maxval = thisval
+        If G94 < 0 Then thisval = 0.0515 * Math.Abs(G94) + 0.0046 * Math.Abs(G93) : G184 = thisval : If thisval > maxval Then maxval = thisval
+        If H94 < 0 Then thisval = 0.0515 * Math.Abs(H94) + 0.0046 * Math.Abs(H93) : H184 = thisval : If thisval > maxval Then maxval = thisval
+        If I94 < 0 Then thisval = 0.0515 * Math.Abs(I94) + 0.0046 * Math.Abs(I93) : I184 = thisval : If thisval > maxval Then maxval = thisval
 
-        If F94 < 0 Then thisval = 0.0281 * Math.Abs(F94) + 0.0054 * Math.Abs(F93) : If thisval > maxval Then maxval = thisval
-        If G94 < 0 Then thisval = 0.0281 * Math.Abs(G94) + 0.0054 * Math.Abs(G93) : If thisval > maxval Then maxval = thisval
-        If H94 < 0 Then thisval = 0.0281 * Math.Abs(H94) + 0.0054 * Math.Abs(H93) : If thisval > maxval Then maxval = thisval
-        If I94 < 0 Then thisval = 0.0281 * Math.Abs(I94) + 0.0054 * Math.Abs(I93) : If thisval > maxval Then maxval = thisval
+        If F94 < 0 Then thisval = 0.0281 * Math.Abs(F94) + 0.0054 * Math.Abs(F93) : F185 = thisval : If thisval > maxval Then maxval = thisval
+        If G94 < 0 Then thisval = 0.0281 * Math.Abs(G94) + 0.0054 * Math.Abs(G93) : G185 = thisval : If thisval > maxval Then maxval = thisval
+        If H94 < 0 Then thisval = 0.0281 * Math.Abs(H94) + 0.0054 * Math.Abs(H93) : H185 = thisval : If thisval > maxval Then maxval = thisval
+        If I94 < 0 Then thisval = 0.0281 * Math.Abs(I94) + 0.0054 * Math.Abs(I93) : I185 = thisval : If thisval > maxval Then maxval = thisval
 
-        If G96 < 0 Then thisval = 0.0515 * Math.Abs(G96) + 0.0046 * Math.Abs(G95) : If thisval > maxval Then maxval = thisval
-        If H96 < 0 Then thisval = 0.0515 * Math.Abs(H96) + 0.0046 * Math.Abs(H95) : If thisval > maxval Then maxval = thisval
-        If I96 < 0 Then thisval = 0.0515 * Math.Abs(I96) + 0.0046 * Math.Abs(I95) : If thisval > maxval Then maxval = thisval
+        If G96 < 0 Then thisval = 0.0515 * Math.Abs(G96) + 0.0046 * Math.Abs(G95) : G186 = thisval : If thisval > maxval Then maxval = thisval
+        If H96 < 0 Then thisval = 0.0515 * Math.Abs(H96) + 0.0046 * Math.Abs(H95) : H186 = thisval : If thisval > maxval Then maxval = thisval
+        If I96 < 0 Then thisval = 0.0515 * Math.Abs(I96) + 0.0046 * Math.Abs(I95) : I186 = thisval : If thisval > maxval Then maxval = thisval
 
-        If G96 < 0 Then thisval = 0.0281 * Math.Abs(G96) + 0.0054 * Math.Abs(G95) : If thisval > maxval Then maxval = thisval
-        If H96 < 0 Then thisval = 0.0281 * Math.Abs(H96) + 0.0054 * Math.Abs(H95) : If thisval > maxval Then maxval = thisval
-        If I96 < 0 Then thisval = 0.0281 * Math.Abs(I96) + 0.0054 * Math.Abs(I95) : If thisval > maxval Then maxval = thisval
+        If G96 < 0 Then thisval = 0.0281 * Math.Abs(G96) + 0.0054 * Math.Abs(G95) : G187 = thisval : If thisval > maxval Then maxval = thisval
+        If H96 < 0 Then thisval = 0.0281 * Math.Abs(H96) + 0.0054 * Math.Abs(H95) : H187 = thisval : If thisval > maxval Then maxval = thisval
+        If I96 < 0 Then thisval = 0.0281 * Math.Abs(I96) + 0.0054 * Math.Abs(I95) : I187 = thisval : If thisval > maxval Then maxval = thisval
 
-        If G98 < 0 Then thisval = 0.0515 * Math.Abs(G98) + 0.0046 * Math.Abs(G97) : If thisval > maxval Then maxval = thisval
-        If H98 < 0 Then thisval = 0.0515 * Math.Abs(H98) + 0.0046 * Math.Abs(H97) : If thisval > maxval Then maxval = thisval
-        If I98 < 0 Then thisval = 0.0515 * Math.Abs(I98) + 0.0046 * Math.Abs(I97) : If thisval > maxval Then maxval = thisval
+        If G98 < 0 Then thisval = 0.0515 * Math.Abs(G98) + 0.0046 * Math.Abs(G97) : G188 = thisval : If thisval > maxval Then maxval = thisval
+        If H98 < 0 Then thisval = 0.0515 * Math.Abs(H98) + 0.0046 * Math.Abs(H97) : H188 = thisval : If thisval > maxval Then maxval = thisval
+        If I98 < 0 Then thisval = 0.0515 * Math.Abs(I98) + 0.0046 * Math.Abs(I97) : I188 = thisval : If thisval > maxval Then maxval = thisval
 
-        If G98 < 0 Then thisval = 0.0281 * Math.Abs(G98) + 0.0054 * Math.Abs(G97) : If thisval > maxval Then maxval = thisval
-        If H98 < 0 Then thisval = 0.0281 * Math.Abs(H98) + 0.0054 * Math.Abs(H97) : If thisval > maxval Then maxval = thisval
-        If I98 < 0 Then thisval = 0.0281 * Math.Abs(I98) + 0.0054 * Math.Abs(I97) : If thisval > maxval Then maxval = thisval
+        If G98 < 0 Then thisval = 0.0281 * Math.Abs(G98) + 0.0054 * Math.Abs(G97) : G189 = thisval : If thisval > maxval Then maxval = thisval
+        If H98 < 0 Then thisval = 0.0281 * Math.Abs(H98) + 0.0054 * Math.Abs(H97) : H189 = thisval : If thisval > maxval Then maxval = thisval
+        If I98 < 0 Then thisval = 0.0281 * Math.Abs(I98) + 0.0054 * Math.Abs(I97) : I189 = thisval : If thisval > maxval Then maxval = thisval
 
-        If G100 < 0 Then thisval = 0.0515 * Math.Abs(G100) + 0.0046 * Math.Abs(G99) : If thisval > maxval Then maxval = thisval
-        If H100 < 0 Then thisval = 0.0515 * Math.Abs(H100) + 0.0046 * Math.Abs(H99) : If thisval > maxval Then maxval = thisval
-        If I100 < 0 Then thisval = 0.0515 * Math.Abs(I100) + 0.0046 * Math.Abs(I99) : If thisval > maxval Then maxval = thisval
+        If G100 < 0 Then thisval = 0.0515 * Math.Abs(G100) + 0.0046 * Math.Abs(G99) : G190 = thisval : If thisval > maxval Then maxval = thisval
+        If H100 < 0 Then thisval = 0.0515 * Math.Abs(H100) + 0.0046 * Math.Abs(H99) : H190 = thisval : If thisval > maxval Then maxval = thisval
+        If I100 < 0 Then thisval = 0.0515 * Math.Abs(I100) + 0.0046 * Math.Abs(I99) : I190 = thisval : If thisval > maxval Then maxval = thisval
 
-        If G100 < 0 Then thisval = 0.0281 * Math.Abs(G100) + 0.0054 * Math.Abs(G99) : If thisval > maxval Then maxval = thisval
-        If H100 < 0 Then thisval = 0.0281 * Math.Abs(H100) + 0.0054 * Math.Abs(H99) : If thisval > maxval Then maxval = thisval
-        If I100 < 0 Then thisval = 0.0281 * Math.Abs(I100) + 0.0054 * Math.Abs(I99) : If thisval > maxval Then maxval = thisval
+        If G100 < 0 Then thisval = 0.0281 * Math.Abs(G100) + 0.0054 * Math.Abs(G99) : G191 = thisval : If thisval > maxval Then maxval = thisval
+        If H100 < 0 Then thisval = 0.0281 * Math.Abs(H100) + 0.0054 * Math.Abs(H99) : H191 = thisval : If thisval > maxval Then maxval = thisval
+        If I100 < 0 Then thisval = 0.0281 * Math.Abs(I100) + 0.0054 * Math.Abs(I99) : I191 = thisval : If thisval > maxval Then maxval = thisval
 
-        If G102 < 0 Then thisval = 0.0515 * Math.Abs(G102) + 0.0046 * Math.Abs(G101) : If thisval > maxval Then maxval = thisval
-        If H102 < 0 Then thisval = 0.0515 * Math.Abs(H102) + 0.0046 * Math.Abs(H101) : If thisval > maxval Then maxval = thisval
-        If I102 < 0 Then thisval = 0.0515 * Math.Abs(I102) + 0.0046 * Math.Abs(I101) : If thisval > maxval Then maxval = thisval
+        If G102 < 0 Then thisval = 0.0515 * Math.Abs(G102) + 0.0046 * Math.Abs(G101) : G192 = thisval : If thisval > maxval Then maxval = thisval
+        If H102 < 0 Then thisval = 0.0515 * Math.Abs(H102) + 0.0046 * Math.Abs(H101) : H192 = thisval : If thisval > maxval Then maxval = thisval
+        If I102 < 0 Then thisval = 0.0515 * Math.Abs(I102) + 0.0046 * Math.Abs(I101) : I192 = thisval : If thisval > maxval Then maxval = thisval
 
-        If G102 < 0 Then thisval = 0.0281 * Math.Abs(G102) + 0.0054 * Math.Abs(G101) : If thisval > maxval Then maxval = thisval
-        If H102 < 0 Then thisval = 0.0281 * Math.Abs(H102) + 0.0054 * Math.Abs(H101) : If thisval > maxval Then maxval = thisval
-        If I102 < 0 Then thisval = 0.0281 * Math.Abs(I102) + 0.0054 * Math.Abs(I101) : If thisval > maxval Then maxval = thisval
+        If G102 < 0 Then thisval = 0.0281 * Math.Abs(G102) + 0.0054 * Math.Abs(G101) : G193 = thisval : If thisval > maxval Then maxval = thisval
+        If H102 < 0 Then thisval = 0.0281 * Math.Abs(H102) + 0.0054 * Math.Abs(H101) : H193 = thisval : If thisval > maxval Then maxval = thisval
+        If I102 < 0 Then thisval = 0.0281 * Math.Abs(I102) + 0.0054 * Math.Abs(I101) : I193 = thisval : If thisval > maxval Then maxval = thisval
 
-        If G104 < 0 Then thisval = 0.0515 * Math.Abs(G104) + 0.0046 * Math.Abs(G103) : If thisval > maxval Then maxval = thisval
-        If H104 < 0 Then thisval = 0.0515 * Math.Abs(H104) + 0.0046 * Math.Abs(H103) : If thisval > maxval Then maxval = thisval
-        If I104 < 0 Then thisval = 0.0515 * Math.Abs(I104) + 0.0046 * Math.Abs(I103) : If thisval > maxval Then maxval = thisval
+        If G104 < 0 Then thisval = 0.0515 * Math.Abs(G104) + 0.0046 * Math.Abs(G103) : G194 = thisval : If thisval > maxval Then maxval = thisval
+        If H104 < 0 Then thisval = 0.0515 * Math.Abs(H104) + 0.0046 * Math.Abs(H103) : H194 = thisval : If thisval > maxval Then maxval = thisval
+        If I104 < 0 Then thisval = 0.0515 * Math.Abs(I104) + 0.0046 * Math.Abs(I103) : I194 = thisval : If thisval > maxval Then maxval = thisval
 
-        If G104 < 0 Then thisval = 0.0281 * Math.Abs(G104) + 0.0054 * Math.Abs(G103) : If thisval > maxval Then maxval = thisval
-        If H104 < 0 Then thisval = 0.0281 * Math.Abs(H104) + 0.0054 * Math.Abs(H103) : If thisval > maxval Then maxval = thisval
-        If I104 < 0 Then thisval = 0.0281 * Math.Abs(I104) + 0.0054 * Math.Abs(I103) : If thisval > maxval Then maxval = thisval
+        If G104 < 0 Then thisval = 0.0281 * Math.Abs(G104) + 0.0054 * Math.Abs(G103) : G195 = thisval : If thisval > maxval Then maxval = thisval
+        If H104 < 0 Then thisval = 0.0281 * Math.Abs(H104) + 0.0054 * Math.Abs(H103) : H195 = thisval : If thisval > maxval Then maxval = thisval
+        If I104 < 0 Then thisval = 0.0281 * Math.Abs(I104) + 0.0054 * Math.Abs(I103) : I195 = thisval : If thisval > maxval Then maxval = thisval
         I196 = maxval
 
         'If OutputCalcs Then Print #1, "xxxxX"
@@ -629,113 +626,134 @@ Module Module1
         '* Check of 12.0x4.0C12 apex brace  solution (Max. brace length = 13 ft):
         '1) check apex brace saftey:
         mv = 100000
-        tv = 0.8 * E86 : If tv < mv Then mv = tv
-        tv = 0.8 * F86 : If tv < mv Then mv = tv
-        tv = 0.8 * G86 : If tv < mv Then mv = tv
-        tv = 0.8 * H86 : If tv < mv Then mv = tv
-        tv = 0.8 * I86 : If tv < mv Then mv = tv
-        tv = 0.8 * E88 : If tv < mv Then mv = tv
-        tv = 0.8 * F88 : If tv < mv Then mv = tv
-        tv = 0.8 * G88 : If tv < mv Then mv = tv
-        tv = 0.8 * H88 : If tv < mv Then mv = tv
-        tv = 0.8 * I88 : If tv < mv Then mv = tv
-        tv = 0.8 * F90 : If tv < mv Then mv = tv
-        tv = 0.8 * G90 : If tv < mv Then mv = tv
-        tv = 0.8 * H90 : If tv < mv Then mv = tv
-        tv = 0.8 * I90 : If tv < mv Then mv = tv
-        tv = 0.8 * F92 : If tv < mv Then mv = tv
-        tv = 0.8 * G92 : If tv < mv Then mv = tv
-        tv = 0.8 * H92 : If tv < mv Then mv = tv
-        tv = 0.8 * I92 : If tv < mv Then mv = tv
-        tv = 0.8 * F94 : If tv < mv Then mv = tv
-        tv = 0.8 * G94 : If tv < mv Then mv = tv
-        tv = 0.8 * H94 : If tv < mv Then mv = tv
-        tv = 0.8 * I94 : If tv < mv Then mv = tv
-        tv = 0.8 * G96 : If tv < mv Then mv = tv
-        tv = 0.8 * H96 : If tv < mv Then mv = tv
-        tv = 0.8 * I96 : If tv < mv Then mv = tv
-        tv = 0.8 * G98 : If tv < mv Then mv = tv
-        tv = 0.8 * H98 : If tv < mv Then mv = tv
-        tv = 0.8 * I98 : If tv < mv Then mv = tv
-        tv = 0.8 * G100 : If tv < mv Then mv = tv
-        tv = 0.8 * H100 : If tv < mv Then mv = tv
-        tv = 0.8 * I100 : If tv < mv Then mv = tv
-        tv = 0.8 * G102 : If tv < mv Then mv = tv
-        tv = 0.8 * H102 : If tv < mv Then mv = tv
-        tv = 0.8 * I102 : If tv < mv Then mv = tv
-        tv = 0.8 * G104 : If tv < mv Then mv = tv
-        tv = 0.8 * H104 : If tv < mv Then mv = tv
-        tv = 0.8 * I104 : If tv < mv Then mv = tv
+        tv = 0
+        tv = 0.8 * E86 : E209 = tv : If tv < mv Then mv = tv
+        tv = 0.8 * F86 : F209 = tv : If tv < mv Then mv = tv
+        tv = 0.8 * G86 : G209 = tv : If tv < mv Then mv = tv
+        tv = 0.8 * H86 : H209 = tv : If tv < mv Then mv = tv
+        tv = 0.8 * I86 : I209 = tv : If tv < mv Then mv = tv
+
+        tv = 0.8 * E88 : E210 = tv : If tv < mv Then mv = tv
+        tv = 0.8 * F88 : F210 = tv : If tv < mv Then mv = tv
+        tv = 0.8 * G88 : G210 = tv : If tv < mv Then mv = tv
+        tv = 0.8 * H88 : H210 = tv : If tv < mv Then mv = tv
+        tv = 0.8 * I88 : I210 = tv : If tv < mv Then mv = tv
+
+        tv = 0.8 * F90 : F211 = tv : If tv < mv Then mv = tv
+        tv = 0.8 * G90 : G211 = tv : If tv < mv Then mv = tv
+        tv = 0.8 * H90 : H211 = tv : If tv < mv Then mv = tv
+        tv = 0.8 * I90 : I211 = tv : If tv < mv Then mv = tv
+
+        tv = 0.8 * F92 : F212 = tv : If tv < mv Then mv = tv
+        tv = 0.8 * G92 : G212 = tv : If tv < mv Then mv = tv
+        tv = 0.8 * H92 : H212 = tv : If tv < mv Then mv = tv
+        tv = 0.8 * I92 : I212 = tv : If tv < mv Then mv = tv
+
+        tv = 0.8 * F94 : F213 = tv : If tv < mv Then mv = tv
+        tv = 0.8 * G94 : G213 = tv : If tv < mv Then mv = tv
+        tv = 0.8 * H94 : H213 = tv : If tv < mv Then mv = tv
+        tv = 0.8 * I94 : I213 = tv : If tv < mv Then mv = tv
+
+        tv = 0.8 * G96 : G214 = tv : If tv < mv Then mv = tv
+        tv = 0.8 * H96 : H214 = tv : If tv < mv Then mv = tv
+        tv = 0.8 * I96 : I214 = tv : If tv < mv Then mv = tv
+
+        tv = 0.8 * G98 : G215 = tv : If tv < mv Then mv = tv
+        tv = 0.8 * H98 : H215 = tv : If tv < mv Then mv = tv
+        tv = 0.8 * I98 : I215 = tv : If tv < mv Then mv = tv
+
+        tv = 0.8 * G100 : G216 = tv : If tv < mv Then mv = tv
+        tv = 0.8 * H100 : H216 = tv : If tv < mv Then mv = tv
+        tv = 0.8 * I100 : I216 = tv : If tv < mv Then mv = tv
+
+        tv = 0.8 * G102 : G217 = tv : If tv < mv Then mv = tv
+        tv = 0.8 * H102 : H217 = tv : If tv < mv Then mv = tv
+        tv = 0.8 * I102 : I217 = tv : If tv < mv Then mv = tv
+
+        tv = 0.8 * G104 : G218 = tv : If tv < mv Then mv = tv
+        tv = 0.8 * H104 : H218 = tv : If tv < mv Then mv = tv
+        tv = 0.8 * I104 : I218 = tv : If tv < mv Then mv = tv
         F220 = Math.Abs(mv)
         If F220 <= 16.86 Then F222 = "Apex brace is safe" Else F222 = "Apex brace not available"
         'see F220
 
         '2) check sagging moment sections:
-        E229 = 0.43 * E85 : G229 = 0.012 * (0.43 * I18 + 0.81 * I32) : H229 = 0.012 * (0.43 * I18 + 0.81 * 0.75 * I32 + 0.43 * 0.75 * I24)
-        E230 = 1.22 * E86 : G230 = 0.001 * (1.22 * M18 + 1.2 * M32) : H230 = 0.001 * (1.22 * M18 + 1.2 * 0.75 * M32 + 1.22 * 0.75 * M24)
-        F231 = 0.012 * (0.43 * I20 + 0.73 * I67) : G231 = 0.012 * (0.43 * I20 + 1.46 * I34) : H231 = 0.012 * (0.43 * I20 + 1.46 * 0.75 * I34 + 0.43 * 0.75 * I26) : I231 = 0.012 * (0.43 * I20 + 0.75 * 1.46 * I34 + 0.73 * 0.75 * I67)
-        F232 = 0.001 * (1.22 * M18 + 0.87 * M67) : G232 = 0.001 * (1.22 * M18 + 1.2 * M34) : H232 = 0.001 * (1.22 * M18 + 1.2 * 0.75 * M34 + 1.22 * 0.75 * M24) : I232 = 0.001 * (1.22 * M18 + 1.2 * 0.75 * M34 + 0.87 * 0.75 * M67)
-        F233 = 0.43 * F91 : G233 = 0.012 * (0.43 * I18 + 1.8 * I40) : H233 = 0.012 * (0.43 * I18 + 1.8 * 0.75 * I40 + 0.43 * 0.75 * I24)
-        F234 = 1.22 * F92 : G234 = 0.001 * (1.22 * M18 + 1.2 * M40) : H234 = 0.001 * (1.22 * M18 + 1.2 * 0.75 * M40 + 1.22 * 0.75 * M24)
-        G235 = 0.012 * (0.43 * I20 + 0.8 * I42) : H235 = 0.012 * (0.43 * I20 + 0.8 * 0.75 * I42 + 0.43 * 0.75 * I26) : I235 = 0.012 * (0.43 * I20 + 0.8 * 0.75 * I42 + 0.73 * 0.75 * I67)
-        G236 = 0.001 * (1.22 * M18 + 1.2 * M42) : H236 = 0.001 * (1.22 * M18 + 1.2 * 0.75 * M42 + 1.22 * 0.75 * M24) : I236 = 0.001 * (1.22 * M18 + 1.2 * 0.75 * M42 + 0.87 * 0.75 * M67)
-        G237 = 0.43 * G97 : H237 = 0.43 * H97 : I237 = 0.43 * I97
-        G238 = 1.22 * G98 : H238 = 1.22 * H98 : I238 = 1.22 * I98
-        G239 = 0.43 * G101 : H239 = 0.43 * H101 : I239 = 0.43 * I101
-        G240 = 1.22 * G102 : H240 = 1.22 * H102 : I240 = 1.22 * I102
+        E229 = 0.6 * E85 : G229 = 0.012 * (0.6 * I18 + 0.75 * I32) : H229 = 0.012 * (0.6 * I18 + 0.75 * 0.75 * I32 + 0.6 * 0.75 * I24)
+
+        E230 = 1.1 * E86 : G230 = 0.001 * (1.1 * M18 + 1.1 * M32) : H230 = 0.001 * (1.1 * M18 + 1.1 * 0.75 * M32 + 1.1 * 0.75 * M24)
+
+        F231 = 0.012 * (0.6 * I20 + 0.75 * I67) : G231 = 0.012 * (0.6 * I20 + 6.87 * I34) : H231 = 0.012 * (0.6 * I20 + 6.87 * 0.75 * I34 + 0.6 * 0.75 * I26) : I231 = 0.012 * (0.6 * I20 + 0.75 * 6.87 * I34 + 0.73 * 0.75 * I67)
+
+        F232 = 0.001 * (1.1 * M18 + 0.37 * M67) : G232 = 0.001 * (1.1 * M18 + 1.1 * M34) : H232 = 0.001 * (1.1 * M18 + 1.1 * 0.75 * M34 + 1.1 * 0.75 * M24) : I232 = 0.001 * (1.1 * M18 + 1.1 * 0.75 * M34 + 0.37 * 0.75 * M67)
+
+        F233 = 0.6 * F91 : G233 = 0.012 * (0.6 * I18 + 2.5 * I40) : H233 = 0.012 * (0.6 * I18 + 2.5 * 0.75 * I40 + 0.6 * 0.75 * I24)
+
+        F234 = 1.1 * F92 : G234 = 0.001 * (1.1 * M18 + 1.1 * M40) : H234 = 0.001 * (1.1 * M18 + 1.1 * 0.75 * M40 + 1.1 * 0.75 * M24)
+
+        G235 = 0.012 * (0.6 * I20 + 0.8 * I42) : H235 = 0.012 * (0.6 * I20 + 0.8 * 0.75 * I42 + 0.6 * 0.75 * I26) : I235 = 0.012 * (0.6 * I20 + 0.8 * 0.75 * I42 + 0.73 * 0.75 * I67)
+
+        G236 = 0.001 * (1.1 * M18 + 1.1 * M42) : H236 = 0.001 * (1.1 * M18 + 1.1 * 0.75 * M42 + 1.1 * 0.75 * M24) : I236 = 0.001 * (1.1 * M18 + 1.1 * 0.75 * M42 + 0.37 * 0.75 * M67)
+
+        G237 = 0.6 * G97 : H237 = 0.6 * H97 : I237 = 0.6 * I97
+
+        G238 = 1.1 * G98 : H238 = 1.1 * H98 : I238 = 1.1 * I98
+
+        G239 = 0.6 * G101 : H239 = 0.6 * H101 : I239 = 0.6 * I101
+
+        G240 = 1.1 * G102 : H240 = 1.1 * H102 : I240 = 1.1 * I102
 
 
         '12.0x4.0C12 S.R.
         mv = 0
-        If E230 < 0 Then tv = 0.038 * Math.Abs(E230) + 0.0046 * Math.Abs(E229) : If tv > mv Then mv = tv
-        If G230 < 0 Then tv = 0.038 * Math.Abs(G230) + 0.0046 * Math.Abs(G229) : If tv > mv Then mv = tv
-        If H230 < 0 Then tv = 0.038 * Math.Abs(H230) + 0.0046 * Math.Abs(H229) : If tv > mv Then mv = tv
+        If E230 < 0 Then tv = 0.038 * Math.Abs(E230) + 0.0046 * Math.Abs(E229) : E244 = tv : If tv > mv Then mv = tv
+        If G230 < 0 Then tv = 0.038 * Math.Abs(G230) + 0.0046 * Math.Abs(G229) : G244 = tv : If tv > mv Then mv = tv
+        If H230 < 0 Then tv = 0.038 * Math.Abs(H230) + 0.0046 * Math.Abs(H229) : H244 = tv : If tv > mv Then mv = tv
 
-        If E230 < 0 Then tv = 0.0281 * Math.Abs(E230) + 0.0054 * Math.Abs(E229) : If tv > mv Then mv = tv
-        If G230 < 0 Then tv = 0.0281 * Math.Abs(G230) + 0.0054 * Math.Abs(G229) : If tv > mv Then mv = tv
-        If H230 < 0 Then tv = 0.0281 * Math.Abs(H230) + 0.0054 * Math.Abs(H229) : If tv > mv Then mv = tv
+        If E230 < 0 Then tv = 0.0281 * Math.Abs(E230) + 0.0054 * Math.Abs(E229) : E245 = tv : If tv > mv Then mv = tv
+        If G230 < 0 Then tv = 0.0281 * Math.Abs(G230) + 0.0054 * Math.Abs(G229) : G245 = tv : If tv > mv Then mv = tv
+        If H230 < 0 Then tv = 0.0281 * Math.Abs(H230) + 0.0054 * Math.Abs(H229) : H245 = tv : If tv > mv Then mv = tv
 
-        If F232 < 0 Then tv = 0.038 * Math.Abs(F232) + 0.0046 * Math.Abs(F231) : If tv > mv Then mv = tv
-        If G232 < 0 Then tv = 0.038 * Math.Abs(G232) + 0.0046 * Math.Abs(G231) : If tv > mv Then mv = tv
-        If H232 < 0 Then tv = 0.038 * Math.Abs(H232) + 0.0046 * Math.Abs(H231) : If tv > mv Then mv = tv
-        If I232 < 0 Then tv = 0.038 * Math.Abs(I232) + 0.0046 * Math.Abs(I231) : If tv > mv Then mv = tv
+        If F232 < 0 Then tv = 0.038 * Math.Abs(F232) + 0.0046 * Math.Abs(F231) : F246 = tv : If tv > mv Then mv = tv
+        If G232 < 0 Then tv = 0.038 * Math.Abs(G232) + 0.0046 * Math.Abs(G231) : G246 = tv : If tv > mv Then mv = tv
+        If H232 < 0 Then tv = 0.038 * Math.Abs(H232) + 0.0046 * Math.Abs(H231) : H246 = tv : If tv > mv Then mv = tv
+        If I232 < 0 Then tv = 0.038 * Math.Abs(I232) + 0.0046 * Math.Abs(I231) : I246 = tv : If tv > mv Then mv = tv
 
-        If F232 < 0 Then tv = 0.0281 * Math.Abs(F232) + 0.0054 * Math.Abs(F231) : If tv > mv Then mv = tv
-        If G232 < 0 Then tv = 0.0281 * Math.Abs(G232) + 0.0054 * Math.Abs(G231) : If tv > mv Then mv = tv
-        If H232 < 0 Then tv = 0.0281 * Math.Abs(H232) + 0.0054 * Math.Abs(H231) : If tv > mv Then mv = tv
-        If I232 < 0 Then tv = 0.0281 * Math.Abs(I232) + 0.0054 * Math.Abs(I231) : If tv > mv Then mv = tv
+        If F232 < 0 Then tv = 0.0281 * Math.Abs(F232) + 0.0054 * Math.Abs(F231) : F247 = tv : If tv > mv Then mv = tv
+        If G232 < 0 Then tv = 0.0281 * Math.Abs(G232) + 0.0054 * Math.Abs(G231) : G247 = tv : If tv > mv Then mv = tv
+        If H232 < 0 Then tv = 0.0281 * Math.Abs(H232) + 0.0054 * Math.Abs(H231) : H247 = tv : If tv > mv Then mv = tv
+        If I232 < 0 Then tv = 0.0281 * Math.Abs(I232) + 0.0054 * Math.Abs(I231) : I247 = tv : If tv > mv Then mv = tv
 
-        If F234 < 0 Then tv = 0.038 * Math.Abs(F234) + 0.0046 * Math.Abs(F233) : If tv > mv Then mv = tv
-        If G234 < 0 Then tv = 0.038 * Math.Abs(G234) + 0.0046 * Math.Abs(G233) : If tv > mv Then mv = tv
-        If H234 < 0 Then tv = 0.038 * Math.Abs(H234) + 0.0046 * Math.Abs(H233) : If tv > mv Then mv = tv
+        If F234 < 0 Then tv = 0.038 * Math.Abs(F234) + 0.0046 * Math.Abs(F233) : F248 = tv : If tv > mv Then mv = tv
+        If G234 < 0 Then tv = 0.038 * Math.Abs(G234) + 0.0046 * Math.Abs(G233) : G248 = tv : If tv > mv Then mv = tv
+        If H234 < 0 Then tv = 0.038 * Math.Abs(H234) + 0.0046 * Math.Abs(H233) : H248 = tv : If tv > mv Then mv = tv
 
-        If F234 < 0 Then tv = 0.0281 * Math.Abs(F234) + 0.0054 * Math.Abs(F233) : If tv > mv Then mv = tv
-        If G234 < 0 Then tv = 0.0281 * Math.Abs(G234) + 0.0054 * Math.Abs(G233) : If tv > mv Then mv = tv
-        If H234 < 0 Then tv = 0.0281 * Math.Abs(H234) + 0.0054 * Math.Abs(H233) : If tv > mv Then mv = tv
+        If F234 < 0 Then tv = 0.0281 * Math.Abs(F234) + 0.0054 * Math.Abs(F233) : F249 = tv : If tv > mv Then mv = tv
+        If G234 < 0 Then tv = 0.0281 * Math.Abs(G234) + 0.0054 * Math.Abs(G233) : G249 = tv : If tv > mv Then mv = tv
+        If H234 < 0 Then tv = 0.0281 * Math.Abs(H234) + 0.0054 * Math.Abs(H233) : H249 = tv : If tv > mv Then mv = tv
 
-        If G236 < 0 Then tv = 0.038 * Math.Abs(G236) + 0.0046 * Math.Abs(G235) : If tv > mv Then mv = tv
-        If H236 < 0 Then tv = 0.038 * Math.Abs(H236) + 0.0046 * Math.Abs(H235) : If tv > mv Then mv = tv
-        If I236 < 0 Then tv = 0.038 * Math.Abs(I236) + 0.0046 * Math.Abs(I235) : If tv > mv Then mv = tv
+        If G236 < 0 Then tv = 0.038 * Math.Abs(G236) + 0.0046 * Math.Abs(G235) : G250 = tv : If tv > mv Then mv = tv
+        If H236 < 0 Then tv = 0.038 * Math.Abs(H236) + 0.0046 * Math.Abs(H235) : H250 = tv : If tv > mv Then mv = tv
+        If I236 < 0 Then tv = 0.038 * Math.Abs(I236) + 0.0046 * Math.Abs(I235) : I250 = tv : If tv > mv Then mv = tv
 
-        If G236 < 0 Then tv = 0.0281 * Math.Abs(G236) + 0.0054 * Math.Abs(G235) : If tv > mv Then mv = tv
-        If H236 < 0 Then tv = 0.0281 * Math.Abs(H236) + 0.0054 * Math.Abs(H235) : If tv > mv Then mv = tv
-        If I236 < 0 Then tv = 0.0281 * Math.Abs(I236) + 0.0054 * Math.Abs(I235) : If tv > mv Then mv = tv
+        If G236 < 0 Then tv = 0.0281 * Math.Abs(G236) + 0.0054 * Math.Abs(G235) : G251 = tv : If tv > mv Then mv = tv
+        If H236 < 0 Then tv = 0.0281 * Math.Abs(H236) + 0.0054 * Math.Abs(H235) : H251 = tv : If tv > mv Then mv = tv
+        If I236 < 0 Then tv = 0.0281 * Math.Abs(I236) + 0.0054 * Math.Abs(I235) : I251 = tv : If tv > mv Then mv = tv
 
-        If G238 < 0 Then tv = 0.038 * Math.Abs(G238) + 0.0046 * Math.Abs(G237) : If tv > mv Then mv = tv
-        If H238 < 0 Then tv = 0.038 * Math.Abs(H238) + 0.0046 * Math.Abs(H237) : If tv > mv Then mv = tv
-        If I238 < 0 Then tv = 0.038 * Math.Abs(I238) + 0.0046 * Math.Abs(I237) : If tv > mv Then mv = tv
+        If G238 < 0 Then tv = 0.038 * Math.Abs(G238) + 0.0046 * Math.Abs(G237) : G252 = tv : If tv > mv Then mv = tv
+        If H238 < 0 Then tv = 0.038 * Math.Abs(H238) + 0.0046 * Math.Abs(H237) : H252 = tv : If tv > mv Then mv = tv
+        If I238 < 0 Then tv = 0.038 * Math.Abs(I238) + 0.0046 * Math.Abs(I237) : I252 = tv : If tv > mv Then mv = tv
 
-        If G238 < 0 Then tv = 0.0281 * Math.Abs(G238) + 0.0054 * Math.Abs(G237) : If tv > mv Then mv = tv
-        If H238 < 0 Then tv = 0.0281 * Math.Abs(H238) + 0.0054 * Math.Abs(H237) : If tv > mv Then mv = tv
-        If I238 < 0 Then tv = 0.0281 * Math.Abs(I238) + 0.0054 * Math.Abs(I237) : If tv > mv Then mv = tv
+        If G238 < 0 Then tv = 0.0281 * Math.Abs(G238) + 0.0054 * Math.Abs(G237) : G253 = tv : If tv > mv Then mv = tv
+        If H238 < 0 Then tv = 0.0281 * Math.Abs(H238) + 0.0054 * Math.Abs(H237) : H253 = tv : If tv > mv Then mv = tv
+        If I238 < 0 Then tv = 0.0281 * Math.Abs(I238) + 0.0054 * Math.Abs(I237) : I253 = tv : If tv > mv Then mv = tv
 
-        If G240 < 0 Then tv = 0.038 * Math.Abs(G240) + 0.0046 * Math.Abs(G239) : If tv > mv Then mv = tv
-        If H240 < 0 Then tv = 0.038 * Math.Abs(H240) + 0.0046 * Math.Abs(H239) : If tv > mv Then mv = tv
-        If I240 < 0 Then tv = 0.038 * Math.Abs(I240) + 0.0046 * Math.Abs(I239) : If tv > mv Then mv = tv
+        If G240 < 0 Then tv = 0.038 * Math.Abs(G240) + 0.0046 * Math.Abs(G239) : G254 = tv : If tv > mv Then mv = tv
+        If H240 < 0 Then tv = 0.038 * Math.Abs(H240) + 0.0046 * Math.Abs(H239) : H254 = tv : If tv > mv Then mv = tv
+        If I240 < 0 Then tv = 0.038 * Math.Abs(I240) + 0.0046 * Math.Abs(I239) : I254 = tv : If tv > mv Then mv = tv
 
-        If G240 < 0 Then tv = 0.0281 * Math.Abs(G240) + 0.0054 * Math.Abs(G239) : If tv > mv Then mv = tv
-        If H240 < 0 Then tv = 0.0281 * Math.Abs(H240) + 0.0054 * Math.Abs(H239) : If tv > mv Then mv = tv
-        If I240 < 0 Then tv = 0.0281 * Math.Abs(I240) + 0.0054 * Math.Abs(I239) : If tv > mv Then mv = tv
+        If G240 < 0 Then tv = 0.0281 * Math.Abs(G240) + 0.0054 * Math.Abs(G239) : G255 = tv : If tv > mv Then mv = tv
+        If H240 < 0 Then tv = 0.0281 * Math.Abs(H240) + 0.0054 * Math.Abs(H239) : H255 = tv : If tv > mv Then mv = tv
+        If I240 < 0 Then tv = 0.0281 * Math.Abs(I240) + 0.0054 * Math.Abs(I239) : I255 = tv : If tv > mv Then mv = tv
         I256 = mv
         If I256 <= 1.04 Then f258 = "Rafter Safe" Else f258 = "Rafter Unsafe"
         'RAFTER Profile
@@ -904,10 +922,8 @@ EOFUSFindGableRafter:
     Sub USWindPressureGable_30()
         'If OutputCalcs Then Print #1, "USA Gable wind prewgbure calculation"
         'If OutputCalcs Then Print #1, "Basic Wind Speed selected =  " & Region
-        Console.WriteLine("Enter SPAN:")
-        SPAN = Console.ReadLine()
-        Console.WriteLine("EnterNomBayWidth:")
-        NomBayWidth = Console.ReadLine()
+        SPAN = 35
+        NomBayWidth = 20
 
         wgbE9 = SPAN
         wgbE10 = NomBayWidth
@@ -1187,10 +1203,8 @@ EOFUSFindGableRafter:
 
     Sub USSnowLoadGable_30()
         'AddNotification "No US Gable snow load yet"
-        Console.WriteLine("Enter SPAN:")
-        SPAN = Console.ReadLine()
-        Console.WriteLine("EnterNomBayWidth:")
-        NomBayWidth = Console.ReadLine()
+        SPAN = 35
+        NomBayWidth = 20
 
         sgbE9 = SPAN 'B1 =
         sgbE10 = NomBayWidth 'L =
@@ -1307,7 +1321,7 @@ EOFUSFindGableRafter:
         sgbG84 = sgbG80 * sgbU67
         sgbF86 = sgbF84 + sgbF85 + sgbG84 + sgbG85
         sgbK86 = 0.5 * sgbF86 / SPAN * 1000
-        span1 = Math.Max(sgbK87, Math.Max(sgbK84, Math.Max(sgbK76, sgbK73))) 'Max. Vl. presgb on rafter support =
+        span1 = Math.Max(sgbK87, Math.Max(sgbK84, Math.Max(sgbK76, sgbK73))) 'NOT USED 'Max. Vl. presgb on rafter support =
         span0 = Math.Max(sgbK86, Math.Max(sgbK83, Math.Max(sgbK75, sgbK72)))
 
     End Sub

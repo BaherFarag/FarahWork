@@ -1,114 +1,124 @@
-Sub USSnowLoadGable()
-    AddNotification "No US Gable snow load yet"
-    sgbE10 = SPAN 'B1 =
-    sgbE11 = BayWidth 'L =
-    sgbE12 = WallHeight  'Eave (container) height =
-    sgbE13 = sgbE11 + 0.5 * Span * TAN(0.5235987756) 
-    sgbE14 = heightOA 'Apex height =
+ Sub USSnowLoadGable_30()
+        'AddNotification "No US Gable snow load yet"
+        SPAN = 35
+        NomBayWidth = 20
 
-    sgbE16 = "I" 'Building Risk Category:
-    sgbE17 = SnowLoad  'Ground Snow load (Pg) in psf
-    sgbE18 = Min((0.13 * sgbE17 + 14), 30) 'Density of snow (g)
-    sgbE19 = TerrainIdx 'Exposure Category (Terrain Type):
-    sgbE20 = "Fully Exposed" 'Exposure condition [Table 7-2] :
-    'Exposure factor (Ce) [Table 7-2] :
-    Select Case TerrainIdx
-      Case 0   'exposure B
-        Select Case sgbE20
-            Case "Fully Exposed": sgbE21 = 0.9
-            Case "Partially Exposed": sgbE21 = 1
-            Case "Sheltered": sgbE21 = 1.2
-        End Select
-      Case 1   'exposure C
-        Select Case sgbE20
-            Case "Fully Exposed": sgbE21 = 0.9
-            Case "Partially Exposed": sgbE21 = 1
-            Case "Sheltered": sgbE21 = 1.1
-        End Select
-      Case 2   'exposure D
-        Select Case sgbE20
-            Case "Fully Exposed": sgbE21 = 0.8
-            Case "Partially Exposed": sgbE21 = 0.9
-            Case "Sheltered": sgbE21 = 1
-        End Select
-      Case Else
-        'see "Terrain Value " & TerrainIdx & " out of range"
-        Select Case sgbE20
-            Case "Fully Exposed": sgbE21 = 0.8
-            Case "Partially Exposed": sgbE21 = 0.9
-            Case "Sheltered": sgbE21 = 1
-        End Select
-    End Select    'terrain value
-    sgbE22 = "Unheated Structure" 'Thermal condition [Table 7-3] :
-    sgbE23 = 1.2 'Thermal factor (Ct) [Table 7-3] :
-    'Importance factor (Is) [Table 1.5-2] :   =VLOOKUP(E17,T24:U27,2)
-    Select Case sgbE16
-        Case "I": sgbE24 = 0.8
-        Case "II": sgbE24 = 1
-        Case "III": sgbE24 = 1.1
-        Case Else: sgbE24 = 1.2
-    End Select
+        sgbE9 = SPAN 'B1 =
+        sgbE10 = NomBayWidth 'L =
+        sgbE11 = 8.5
+        sgbE12 = 3.88  'Eave (container) height =
+        sgbE13 = sgbE11 + 0.5 * SPAN * Math.Tan(0.5235987756)
+        'sgbE14 = heightOA 'Apex height =
 
-    sgbE30 = sgbE24 * sgbE17   'Min. load for low slope roofs [Sect 7.3.4] (Pfmin) :
-    sgbE31 = 0.7 * sgbE21 * sgbE23 * sgbE24 * sgbE17 'Flat roof snow load [Sect 7.3.4] (Pf) :
-    'Cold roof Snow factor (Ct>1.0)
-    sgbE33 = "Slippery"  'Roof surface type
-    sgbE34 = "Ventilated" 'Ventilation
-    sgbE35 = 0.73 'Roof slope factor [Fig 7-2c (dashed line)] (Cs):
-    sgbE37 = sgbE35 * sgbE31 'Balanced sloped snow load (Ps):
-    sgbE38 = 1.732   'Slope of roof = 1/tan(10?) :
-    sgbE40 = 0.3 * sgbE37 'Unbalanced Load(ps)(windward):
-    sgbE41 = sgbE37 'Unbalanced Load(ps)(leeward):
-    sgbE42 = SPAN / 2 'Length of eave to ridge for drift height:
-    sgbE43 = 0.43 * ((Max(sgbE42, 20)) ^ 0.333) * ((sgbE17 + 10) ^ 0.25) - 1.5 'Drift Height(hdr):
-    sgbE45 = sgbE43 * sgbE18 / Sqr(sgbE38) 'rectangular surcharge(leeward):
-    sgbE46 = Min(2.667 * sgbE43 * Sqr(sgbE38), 0.5 * SPAN) 'Length of rectangular surcharge :
-    '-Roof load case 1 - Snow @ Wind 0? - Unbalanced
-    sgbF51 = sgbE40
-    sgbF52 = sgbE45 + sgbE37
-    sgbF56 = sgbE37
-    sgbF57 = sgbE37
-    
-    sgbG51 = sgbE12 * sgbF51
-    sgbG52 = sgbE13 * sgbF52
-    '-Roof load case 2 - Snow @ Wind 90? - Balanced
-    sgbG56 = sgbE12 * sgbF56
-    sgbG57 = sgbE12 * sgbF57
-    '*Snow Vertical presgb on eave supports:
-    
-    '-Roof load case 1 - Snow @ Wind 0? - Unbalanced
-    sgbE66 = 0.5 * (SPAN) * sgbE10 / Cos(0.5235987756) 'Zones 2 & 3 surface area =
-    sgbU67 = 0.25 * SPAN
-    'Zone#2
-    sgbF69 = sgbE66 * sgbF51 / 1000
-    sgbF70 = sgbF69 * sgbU67
-    'Zone#3
-    sgbG69 = sgbE66 * sgbF52 / 1000
-    sgbG70 = sgbG69 * (SPAN - sgbU67)
-    
-    sgbF72 = sgbE70 + sgbH71
-    sgbK73 = sgbF69 * (SPAN - sgbU67)
-    sgbK72 = 0.5 * sgbF72 / SPAN * 1000
-    
-    sgbG73 = sgbG69 * sgbU67
-    sgbF75 = sgbE73 + sgbH74
-    sgbK75 = 0.5 * sgbF75 / SPAN * 1000
-    
-    '-Roof load case 2 - Snow @ Wind 90? - Balanced
-    'Zone#2
-    sgbF80 = sgbE66 * sgbF56 / 1000
-    sgbF81 = sgbF80 * sgbU67
-    'Zone#3
-    sgbG80 = sgbE66 * sgbF57 / 1000
-    sgbG81 = G80 * (SPAN - sgbU67)
-    sgbF83 = sgbF81 + sgbF82 + sgbG81 + sgbG82
-    sgbK83 = 0.5 * sgbF83 / SPAN * 1000
-    sgbF84 = sgbF80 * (SPAN - sgbU67)
-    sgbG84 = sgbG80 * sgbU67
-    sgbF86 = sgbF84 + sgbF85 + sgbG84 + sgbG85
-    sgbK86 = 0.5 * sgbF86 / SPAN * 1000
-    span1 = Max(sgbK87, sgbK84, sgbK76, sgbK73) 'Max. Vl. presgb on rafter support =
-    span0 = Max(sgbK86, sgbK83, sgbK75, sgbK72)
-    
-End Sub
+        sgbE16 = "I" 'Building Risk Category:
+        sgbE17 = 20  'Ground Snow load (Pg) in psf
+        sgbE18 = Math.Min((0.13 * sgbE17 + 14), 30) 'Density of snow (g)
+        sgbE19 = "B" 'Exposure Category (Terrain Type):
+        sgbE20 = "Fully Exposed" 'Exposure condition [Table 7-2] :
+        'Exposure factor (Ce) [Table 7-2] :
+        sgbE21 = 0
+        Select Case sgbE19
+            Case "B"   'exposure B
+                Select Case sgbE20
+                    Case "Fully Exposed" : sgbE21 = 0.9
+                    Case "Partially Exposed" : sgbE21 = 1
+                    Case "Sheltered" : sgbE21 = 1.2
+                End Select
+            Case "C"   'exposure C
+                Select Case sgbE20
+                    Case "Fully Exposed" : sgbE21 = 0.9
+                    Case "Partially Exposed" : sgbE21 = 1
+                    Case "Sheltered" : sgbE21 = 1.1
+                End Select
+            Case "D"   'exposure D
+                Select Case sgbE20
+                    Case "Fully Exposed" : sgbE21 = 0.8
+                    Case "Partially Exposed" : sgbE21 = 0.9
+                    Case "Sheltered" : sgbE21 = 1
+                End Select
+            Case Else
+                'see "Terrain Value " & TerrainIdx & " out of range"
+                Select Case sgbE20
+                    Case "Fully Exposed" : sgbE21 = 0.8
+                    Case "Partially Exposed" : sgbE21 = 0.9
+                    Case "Sheltered" : sgbE21 = 1
+                End Select
+        End Select    'terrain value
+        sgbE22 = "Unheated Structure" 'Thermal condition [Table 7-3] :
+        sgbE23 = 1.2 'Thermal factor (Ct) [Table 7-3] :
+        'Importance factor (Is) [Table 1.5-2] :   =VLOOKUP(E17,T24:U27,2)
+        Select Case sgbE16
+            Case "I" : sgbE24 = 0.8
+            Case "II" : sgbE24 = 1
+            Case "III" : sgbE24 = 1.1
+            Case Else : sgbE24 = 1.2
+        End Select
 
+        sgbE30 = sgbE24 * sgbE17 : sgbE30 = 0 'Cancelled   'Min. load for low slope roofs [Sect 7.3.4] (Pfmin) :
+        sgbE31 = 0.7 * sgbE21 * sgbE23 * sgbE24 * sgbE17 'Flat roof snow load [Sect 7.3.4] (Pf) :
+        'Cold roof Snow factor (Ct>1.0)
+        sgbE33 = "Slippery"  'Roof surface type
+        sgbE34 = "Ventilated" 'Ventilation
+        sgbE35 = 0.73 'Roof slope factor [Fig 7-2c (dashed line)] (Cs):
+        sgbE37 = sgbE35 * sgbE31 'Balanced sloped snow load (Ps):
+        sgbE38 = 1.732   'Slope of roof = 1/tan(10?) :
+        sgbE40 = 0.3 * sgbE37 'Unbalanced Load(ps)(windward):
+        sgbE41 = sgbE37 : Snow_GableE41 = sgbE41 'Unbalanced Load(ps)(leeward):
+        sgbE42 = SPAN / 2 'Length of eave to ridge for drift height:
+        sgbE43 = 0.43 * ((Math.Max(sgbE42, 20)) ^ 0.333) * ((sgbE17 + 10) ^ 0.25) - 1.5 'Drift Height(hdr):
+        sgbE45 = sgbE43 * sgbE18 / Math.Sqrt(sgbE38) : Snow_GableE45 = sgbE45  'rectangular surcharge(leeward):
+        sgbE46 = Math.Min(2.667 * sgbE43 * Math.Sqrt(sgbE38), 0.5 * SPAN) : Snow_GableE46 = sgbE46 'Length of rectangular surcharge :
+        '-Roof load case 1 - Snow @ Wind 0? - Unbalanced
+        sgbF51 = sgbE40 : Snow_GableF51 = sgbF51
+        sgbF52 = sgbE45 + sgbE37
+        sgbF56 = sgbE37 : Snow_GableF56 = sgbF56
+        sgbF57 = sgbE37 : Snow_GableF57 = sgbF57
+
+
+        sgbG51 = sgbE12 * sgbF51
+        sgbG52 = sgbE12 * sgbF52
+        '-Roof load case 2 - Snow @ Wind 90? - Balanced
+        sgbG56 = sgbE12 * sgbF56
+        sgbG57 = sgbE12 * sgbF57
+        '*Snow Vertical presgb on eave supports:
+
+        '-Roof load case 1 - Snow @ Wind 0? - Unbalanced
+        sgbE66 = 0.5 * (SPAN) * sgbE10 / Math.Cos(0.5235987756) 'Zones 2 & 3 surface area =
+        sgbU67 = 0.25 * SPAN
+        'Zone#2
+        sgbF69 = sgbE66 * sgbF51 / 1000
+        sgbF70 = sgbF69 * sgbU67
+        'Zone#3
+        sgbG69 = sgbE66 * sgbF52 / 1000
+        sgbG70 = sgbG69 * (SPAN - sgbU67)
+
+        sgbF72 = sgbF70 + sgbG70
+        sgbK73 = sgbF69 * (SPAN - sgbU67) ' Not Found in Sheet
+        sgbK72 = 0.5 * sgbF72 / SPAN * 1000 : Snow_GableK72 = sgbK72
+
+        sgbG73 = sgbG69 * sgbU67
+        sgbF73 = sgbF69 * (SPAN - sgbU67)
+        sgbF75 = sgbF73 + sgbG73
+        sgbK75 = 0.5 * sgbF75 / SPAN * 1000 : Snow_GableK75 = sgbK75
+
+        '-Roof load case 2 - Snow @ Wind 90? - Balanced
+        'Zone#2
+        sgbF80 = sgbE66 * sgbF56 / 1000
+        sgbF81 = sgbF80 * sgbU67
+        'Zone#3
+        sgbF82 = 0
+        sgbG82 = 0
+        sgbF85 = 0
+        sgbG85 = 0
+        sgbG80 = sgbE66 * sgbF57 / 1000
+        sgbG81 = sgbG80 * (SPAN - sgbU67)
+        sgbF83 = sgbF81 + sgbF82 + sgbG81 + sgbG82
+        sgbK83 = 0.5 * sgbF83 / SPAN * 1000
+        sgbF84 = sgbF80 * (SPAN - sgbU67)
+        sgbG84 = sgbG80 * sgbU67
+        sgbF86 = sgbF84 + sgbF85 + sgbG84 + sgbG85
+        sgbK86 = 0.5 * sgbF86 / SPAN * 1000
+        span1 = Math.Max(sgbK87, Math.Max(sgbK84, Math.Max(sgbK76, sgbK73))) 'NOT USED 'Max. Vl. presgb on rafter support =
+        span0 = Math.Max(sgbK86, Math.Max(sgbK83, Math.Max(sgbK75, sgbK72)))
+
+    End Sub

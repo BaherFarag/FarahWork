@@ -1,66 +1,70 @@
-Sub USWindPressureGable()
-        If OutputCalcs Then Print #1, "USA Gable wind prewgbure calculation"
-        If OutputCalcs Then Print #1, "Basic Wind Speed selected =  " & Region
+ Sub USWindPressureGable_30()
+        'If OutputCalcs Then Print #1, "USA Gable wind prewgbure calculation"
+        'If OutputCalcs Then Print #1, "Basic Wind Speed selected =  " & Region
+        SPAN = 35
+        NomBayWidth = 20
+
         wgbE9 = SPAN
-        wgbE10 = BayWidth
-        wgbE11 = WallHeight
-        wgbE12 = PurlinSpacing
-        wgbE13 = wgbE11 + 0.5 * wgbE9 * Tan(0.5235987756)
+        wgbE10 = NomBayWidth
+        wgbE11 = 8.5
+        wgbE12 = 3.88
+        wgbE13 = wgbE11 + 0.5 * wgbE9 * Math.Tan(0.5235987756)
         'see "wgbE13=" & wgbE13 & " V heightoa=" & heightOA
-        wgbE17 = Val(Region)
-        If OutputCalcs Then Print #1, "Exposure Category selected =  " & TerCatDescr(TerrainIdx)
-        If OutputCalcs Then Print #1, "Directionality Factor (Kd) = 0.85"
+        wgbE17 = 110
+        'If OutputCalcs Then Print #1, "Exposure Category selected =  " & TerCatDescr(TerrainIdx)
+        'If OutputCalcs Then Print #1, "Directionality Factor (Kd) = 0.85"
         wgbE18 = 0.85 'Directionality Factor (Kd)
-        If OutputCalcs Then Print #1, "Risk Factor selected =  " & ImportanceDescr(ImportanceIndex)
-        If OutputCalcs Then Print #1, "Topographic factor (Kzt) =1 "
+        wgbE19 = "B"
+        'If OutputCalcs Then Print #1, "Risk Factor selected =  " & ImportanceDescr(ImportanceIndex)
+        'If OutputCalcs Then Print #1, "Topographic factor (Kzt) =1 "
         wgbE20 = 1
-        wgbE23 = (WallHeight+wgbE13) * 0.6 * 0.5
-        Select Case TerrainIdx
-          Case 0   'exposure B
-            wgbU21 = 0.3
-            wgbV21 = 320
-            wgbW21 = 0.333333
-            wgbX21 = 30
-            wgbY21 = 7
-            wgbZ21 = 1200
-          Case 1   'exposure C
-            wgbU21 = 0.2
-            wgbV21 = 500
-            wgbW21 = 0.2
-            wgbX21 = 15
-            wgbY21 = 9.5
-            wgbZ21 = 900
-          Case 2   'exposure D
-            wgbU21 = 0.15
-            wgbV21 = 650
-            wgbW21 = 0.125
-            wgbX21 = 7
-            wgbY21 = 11.5
-            wgbZ21 = 700
-          Case Else
-            ' "Terrain Value " & TerrainIdx & " out of range"
-            wgbU21 = 0.15
-            wgbV21 = 650
-            wgbW21 = 0.125
-            wgbX21 = 7
-            wgbY21 = 11.5
-            wgbZ21 = 700
+        wgbE23 = (wgbE11 + wgbE13) * 0.6 * 0.5
+
+        Select Case wgbE19
+            Case "B"   'exposure B
+                wgbU21 = 0.3
+                wgbV21 = 320
+                wgbW21 = 0.333333
+                wgbX21 = 30
+                wgbY21 = 7
+                wgbZ21 = 1200
+            Case "C"   'exposure C
+                wgbU21 = 0.2
+                wgbV21 = 500
+                wgbW21 = 0.2
+                wgbX21 = 15
+                wgbY21 = 9.5
+                wgbZ21 = 900
+            Case "D"   'exposure D
+                wgbU21 = 0.15
+                wgbV21 = 650
+                wgbW21 = 0.125
+                wgbX21 = 7
+                wgbY21 = 11.5
+                wgbZ21 = 700
+            Case Else
+                ' "Terrain Value " & TerrainIdx & " out of range"
+                wgbU21 = 0.15
+                wgbV21 = 650
+                wgbW21 = 0.125
+                wgbX21 = 7
+                wgbY21 = 11.5
+                wgbZ21 = 700
         End Select    'terrain value
-        
         If wgbE23 > wgbX21 Then wgbT24 = wgbE23 Else wgbT24 = wgbX21
-        
+
         wgbE24 = wgbV21 * ((wgbT24 / 33) ^ (wgbW21))
-        wgbE25 = Sqr(1 / (1 + 0.63 * (((wgbE10 + wgbE11) / wgbE24) ^ 0.63)))
+        wgbE25 = Math.Sqrt(1 / (1 + 0.63 * (((wgbE10 + wgbE11) / wgbE24) ^ 0.63)))
         wgbE26 = wgbU21 * ((33 / wgbE23) ^ (1 / 6))
         wgbE27 = 3.4
         wgbE28 = 3.4
         wgbE30 = 0.925 * (1 + 1.7 * wgbE28 * wgbE26 * wgbE25) / (1 + 1.7 * wgbE27 * wgbE26)
-        
+
         'Awgbumed
         'Enclosure clawgbification :  Open structure
         'Wind flow   Clear
         'Internal prewgbure coeffecient (CGpi) =  0.00
-    
+
         wgbE38 = 0.5 * (wgbE11 + wgbE13)
         wgbE39 = 2.01 * ((15 / wgbZ21) ^ (2 / wgbY21))
         wgbE40 = 2.01 * ((wgbE38 / wgbZ21) ^ (2 / wgbY21))
@@ -69,57 +73,62 @@ Sub USWindPressureGable()
         Else
             wgbE41 = wgbE40
         End If
-            
-            'Velocity Prewgbure (qh):
+
+        'Velocity Prewgbure (qh):
         wgbE44 = 0.00256 * wgbE41 * wgbE20 * wgbE18 * (wgbE17 ^ 2)
-            '=0.00256    *  E41   *   E20  *  E18     *(E17^2)
-            'qh = 0.00256*Kz*Kzt*Kd*(V^2) =
+        '=0.00256    *  E41   *   E20  *  E18     *(E17^2)
+        'qh = 0.00256*Kz*Kzt*Kd*(V^2) =
         Wu = wgbE44
         WindPrewgbure = Wu   'Ultimate Dynamic Wind Prewgbure
         ' "Windprewgbure = " & WindPrewgbure
-        
+
         'Purlin load
         'Roof load case 1 - Wind 0? - Case A
         wgbE33 = "CLEAR"
+        wgbG50 = 0
+        wgbG51 = 0
         Select Case wgbE33
             Case "CLEAR"
-                wgbG50 = 1.1     'Zone 2 for 30deg pitch only !
-                wgbG51 = -0.333  'Zone 3 for 30deg pitch only !
+                wgbG50 = 1.3     'Zone 2 for 30deg pitch only !
+                wgbG51 = 0.3  'Zone 3 for 30deg pitch only !
             Case "OBSTRUCTED"
-                wgbG50 = -1.467  'Zone 2 for 30deg pitch only !
-                wgbG51 = -1      'Zone 3 for 30deg pitch only !
+                wgbG50 = -0.7  'Zone 2 for 30deg pitch only !
+                wgbG51 = -0.7      'Zone 3 for 30deg pitch only !
         End Select
         wgbF50 = wgbE38
         wgbF51 = wgbE38
         wgbH50 = wgbE44
         wgbH51 = wgbE44
-        wgbI50 = wgbG50 * wgbH50 * wgbE30: Wind_GableI50 = wgbI50
+        wgbI50 = wgbG50 * wgbH50 * wgbE30 : Wind_GableI50 = wgbI50
         '=$G$50*$H$50*$E$30
-        wgbI51 = wgbG51 * wgbH51 * wgbE30: Wind_GableI51 = wgbI51
+        wgbI51 = wgbG51 * wgbH51 * wgbE30 : Wind_GableI51 = wgbI51
         wgbJ50 = wgbE12 * wgbI50
         wgbJ51 = wgbE12 * wgbI51
-        
+
         ' "Purlin load (lb/ft') = " & wgbJ50
         'multiply this by length of purlin ie baywidth to get equally distributed load per purlin
-        
+
         '-Roof load case 2 - Wind 0? - Case B
+        wgbG55 = 0
+        wgbG56 = 0
         Select Case wgbE33
             Case "CLEAR"
-                wgbG55 = 0.167   'Zone 2 for 10deg pitch only !
-                wgbG56 = -1.167  'Zone 3 for 10deg pitch only !
+                wgbG55 = -0.1   'Zone 2 for 10deg pitch only !
+                wgbG56 = -0.9  'Zone 3 for 10deg pitch only !
             Case "OBSTRUCTED"
-                wgbG55 = -0.8    'Zone 2 for 10deg pitch only !
-                wgbG56 = -1.667  'Zone 3 for 10deg pitch only !
+                wgbG55 = -0.2    'Zone 2 for 10deg pitch only !
+                wgbG56 = -1.1  'Zone 3 for 10deg pitch only !
         End Select
         wgbF55 = wgbE38
         wgbF56 = wgbE38
         wgbH55 = wgbE44
         wgbH56 = wgbE44
-        wgbI55 = wgbG55 * wgbH55 * wgbE30: Wind_GableI55 = wgbI55
-        wgbI56 = wgbG56 * wgbH56 * wgbE30: Wind_GableI56 = wgbI56
+        wgbI55 = wgbG55 * wgbH55 * wgbE30 : Wind_GableI55 = wgbI55
+        wgbI56 = wgbG56 * wgbH56 * wgbE30 : Wind_GableI56 = wgbI56
         wgbJ55 = wgbE12 * wgbI55
         wgbJ56 = wgbE12 * wgbI56
-        
+        wgbG60 = 0
+        wgbG61 = 0
         '-Roof load case 3 - Wind 90? - Case A
         Select Case wgbE33
             Case "CLEAR"
@@ -133,12 +142,14 @@ Sub USWindPressureGable()
         wgbF61 = wgbE38
         wgbH60 = wgbE44
         wgbH61 = wgbE44
-        wgbI60 = wgbG60 * wgbH60 * wgbE30: Wind_GableI60 = wgbI60
-        wgbI61 = wgbG61 * wgbH61 * wgbE30: Wind_GableI61 = wgbI61
+        wgbI60 = wgbG60 * wgbH60 * wgbE30 : Wind_GableI60 = wgbI60
+        wgbI61 = wgbG61 * wgbH61 * wgbE30 : Wind_GableI61 = wgbI61
         wgbJ60 = wgbE12 * wgbI60
         wgbJ61 = wgbE12 * wgbI61
-        
+
         '-Roof load case 4 - Wind 90? - Case B
+        wgbG65 = 0
+        wgbG66 = 0
         Select Case wgbE33
             Case "CLEAR"
                 wgbG65 = 0.8
@@ -151,119 +162,119 @@ Sub USWindPressureGable()
         wgbF66 = wgbE38
         wgbH65 = wgbE44
         wgbH66 = wgbE44
-        wgbI65 = wgbG65 * wgbH65 * wgbE30: Wind_GableI65 = wgbI65
+        wgbI65 = wgbG65 * wgbH65 * wgbE30 : Wind_GableI65 = wgbI65
         '      =$G$65 * $H$65 * $E$30
         wgbI66 = wgbG66 * wgbH66 * wgbE30
         wgbJ65 = wgbE12 * wgbI65
         wgbJ66 = wgbE12 * wgbI66
-        
-        
+
+
         'Uplift for footings
-        wgbE75 = 0.5 * wgbE9 * wgbE10 / Cos(0.5235987756) 'Zones 2 & 3 surface area
-        
+        wgbE75 = 0.5 * wgbE9 * wgbE10 / Math.Cos(0.5235987756) 'Zones 2 & 3 surface area
+
+
         wgbU73 = 0.5 * (wgbE13 - wgbE11)
         wgbU75 = 0.25 * (wgbE9)
-        
-         '-Roof load case 1 - Wind 0? - Case A
-         'zone 2 and 3
+
+        '-Roof load case 1 - Wind 0? - Case A
+        'zone 2 and 3
         wgbF78 = wgbE75 * wgbI50 / 1000 'Total Net force (Kips) Zone 2
         wgbG78 = wgbE75 * wgbI51 / 1000 'Total Net force (Kips) Zone 3
-        wgbF79 = wgbF78 * Cos(30 * Pi / 180) * wgbU75    'Moment @ axis A (kips.ft) [Vl. forces] Zone 2
-        wgbG79 = wgbG78 * Cos(30 * Pi / 180) * (wgbE9 - wgbU75) 'Moment @ axis A (kips.ft) [Vl. forces] Zone 3
-        wgbF80 = wgbF78 * Sin(30 * Pi / 180) * wgbU73 '[Hz. forces] Zone 2
-        wgbG80 = -wgbG78 * Sin(30 * Pi / 180) * wgbU73 '[Hz. forces] Zone 3
+        wgbF79 = wgbF78 * Math.Cos(30 * Math.PI / 180) * wgbU75    'Moment @ axis A (kips.ft) [Vl. forces] Zone 2
+        wgbG79 = wgbG78 * Math.Cos(30 * Math.PI / 180) * (wgbE9 - wgbU75) 'Moment @ axis A (kips.ft) [Vl. forces] Zone 3
+        wgbF80 = wgbF78 * Math.Sin(30 * Math.PI / 180) * wgbU73 '[Hz. forces] Zone 2
+        wgbG80 = -wgbG78 * Math.Sin(30 * Math.PI / 180) * wgbU73 '[Hz. forces] Zone 3
         wgbF81 = wgbF79 + wgbG79 + wgbF80 + wgbG80
-        wgbF82 = wgbF78 * Cos(30 * Pi / 180) * (wgbE9 - wgbU75) 'Moment @ axis B (kips.ft)        [Vl. forces]
-        wgbG82 = wgbG78 * Cos(30 * Pi / 180) * wgbU75
-        wgbF83 = -wgbF78 * Sin(30 * Pi / 180) * wgbU73 '[Hz. forces]
-        wgbG83 = wgbG78 * Sin(30 * Pi / 180) * wgbU73
+        wgbF82 = wgbF78 * Math.Cos(30 * Math.PI / 180) * (wgbE9 - wgbU75) 'Moment @ axis B (kips.ft)        [Vl. forces]
+        wgbG82 = wgbG78 * Math.Cos(30 * Math.PI / 180) * wgbU75
+        wgbF83 = -wgbF78 * Math.Sin(30 * Math.PI / 180) * wgbU73 '[Hz. forces]
+        wgbG83 = wgbG78 * Math.Sin(30 * Math.PI / 180) * wgbU73
         wgbF84 = wgbF82 + wgbF83 + wgbG82 + wgbG83
-        wgbK81 = 0.5 * wgbF81 / wgbE9 * 1000: Wind_GableK81 = wgbK81    'RB1
-        wgbK84 = 0.5 * wgbF84 / wgbE9 * 1000: Wind_GableK84 = wgbK84 'RA1
+        wgbK81 = 0.5 * wgbF81 / wgbE9 * 1000 : Wind_GableK81 = wgbK81    'RB1
+        wgbK84 = 0.5 * wgbF84 / wgbE9 * 1000 : Wind_GableK84 = wgbK84 'RA1
         ' "Ra1=" & wgbK84
-        
+
         'Now do all this again for 3 more cases
-        
+
         '-Roof load case 2 - Wind 0? - Case B
-         'zone 2 and 3
+        'zone 2 and 3
         wgbF89 = wgbE75 * wgbI55 / 1000 'Total Net force (Kips) Zone 2
         wgbG89 = wgbE75 * wgbI56 / 1000 'Total Net force (Kips) Zone 3
-        wgbF90 = wgbF89 * Cos(30 * Pi / 180) * wgbU75    'Moment @ axis A (kips.ft) [Vl. forces] Zone 2
-        wgbG90 = wgbG89 * Cos(30 * Pi / 180) * (wgbE9 - wgbU75) 'Moment @ axis A (kips.ft) [Vl. forces] Zone 3
-        wgbF91 = wgbF89 * Sin(30 * Pi / 180) * wgbU73 '[Hz. forces] Zone 2
-        wgbG91 = -wgbG89 * Sin(30 * Pi / 180) * wgbU73 '[Hz. forces] Zone 3
+        wgbF90 = wgbF89 * Math.Cos(30 * Math.PI / 180) * wgbU75    'Moment @ axis A (kips.ft) [Vl. forces] Zone 2
+        wgbG90 = wgbG89 * Math.Cos(30 * Math.PI / 180) * (wgbE9 - wgbU75) 'Moment @ axis A (kips.ft) [Vl. forces] Zone 3
+        wgbF91 = wgbF89 * Math.Sin(30 * Math.PI / 180) * wgbU73 '[Hz. forces] Zone 2
+        wgbG91 = -wgbG89 * Math.Sin(30 * Math.PI / 180) * wgbU73 '[Hz. forces] Zone 3
         wgbF92 = wgbF90 + wgbG90 + wgbF91 + wgbG91
-        wgbF93 = wgbF89 * Cos(30 * Pi / 180) * (wgbE9 - wgbU75) 'Moment @ axis B (kips.ft)        [Vl. forces]
-        wgbG93 = wgbG89 * Cos(30 * Pi / 180) * wgbU75
-        wgbF94 = -wgbF89 * Sin(30 * Pi / 180) * wgbU73 '[Hz. forces]
-        wgbG94 = wgbG89 * Sin(30 * Pi / 180) * wgbU73
+        wgbF93 = wgbF89 * Math.Cos(30 * Math.PI / 180) * (wgbE9 - wgbU75) 'Moment @ axis B (kips.ft)        [Vl. forces]
+        wgbG93 = wgbG89 * Math.Cos(30 * Math.PI / 180) * wgbU75
+        wgbF94 = -wgbF89 * Math.Sin(30 * Math.PI / 180) * wgbU73 '[Hz. forces]
+        wgbG94 = wgbG89 * Math.Sin(30 * Math.PI / 180) * wgbU73
         wgbF95 = wgbF93 + wgbF94 + wgbG93 + wgbG94
-        wgbK92 = 0.5 * wgbF92 / wgbE9 * 1000: Wind_GableK92 = wgbK92 'RB2
-        wgbK95 = 0.5 * wgbF95 / wgbE9 * 1000: Wind_GableK95 = wgbK95 'RA2
+        wgbK92 = 0.5 * wgbF92 / wgbE9 * 1000 : Wind_GableK92 = wgbK92 'RB2
+        wgbK95 = 0.5 * wgbF95 / wgbE9 * 1000 : Wind_GableK95 = wgbK95 'RA2
         ' "Ra2=" & wgbK95
-        
+
         '-Roof load case 3 - Wind 90? - Case A
-         'zone 1-2 and 1-3
-        wgbE101 = 0.25 * wgbE9 * (wgbE11 + wgbE13) / Cos(0.5235987756)            'Zones 1-2 & 1-3 surface area =
-        wgbE103 = 0.5 * wgbE9 * (wgbE10 - 0.5 * ( wgbE11 + wgbE13)) / Cos(0.5235987756)  'Zones 2-2 & 2-3 surface area =
-        
+        'zone 1-2 and 1-3
+        wgbE101 = 0.25 * wgbE9 * (wgbE11 + wgbE13) / Math.Cos(0.5235987756)            'Zones 1-2 & 1-3 surface area =
+        wgbE103 = 0.5 * wgbE9 * (wgbE10 - 0.5 * (wgbE11 + wgbE13)) / Math.Cos(0.5235987756)  'Zones 2-2 & 2-3 surface area =
+
         wgbF106 = wgbE101 * wgbI60 / 1000 'Total Net force (Kips) Zone 1-2
         wgbG106 = wgbE101 * wgbI60 / 1000 'Total Net force (Kips) Zone 1-3
-        wgbF107 = wgbF106 * Cos(30 * Pi / 180) * wgbU75    'Moment @ axis A (kips.ft) [Vl. forces] Zone 1-2
-        wgbG107 = wgbG106 * Cos(30 * Pi / 180) * (wgbE9 - wgbU75) 'Moment @ axis A (kips.ft) [Vl. forces] Zone 1-3
-        wgbF108 = wgbF106 * Sin(30 * Pi / 180) * wgbU73 '[Hz. forces] Zone 1-2
-        wgbG108 = -wgbG106 * Sin(30 * Pi / 180) * wgbU73 '[Hz. forces] Zone 1-3
+        wgbF107 = wgbF106 * Math.Cos(30 * Math.PI / 180) * wgbU75    'Moment @ axis A (kips.ft) [Vl. forces] Zone 1-2
+        wgbG107 = wgbG106 * Math.Cos(30 * Math.PI / 180) * (wgbE9 - wgbU75) 'Moment @ axis A (kips.ft) [Vl. forces] Zone 1-3
+        wgbF108 = wgbF106 * Math.Sin(30 * Math.PI / 180) * wgbU73 '[Hz. forces] Zone 1-2
+        wgbG108 = -wgbG106 * Math.Sin(30 * Math.PI / 180) * wgbU73 '[Hz. forces] Zone 1-3
         wgbF109 = wgbF107 + wgbG107 + wgbF108 + wgbG108
-        
+
         wgbF111 = wgbE103 * wgbI61 / 1000  'Total Net force (Kips)
         wgbG111 = wgbE103 * wgbI61 / 1000
-        wgbF112 = wgbF111 * Cos(30 * Pi / 180) * wgbU75  'Moment @ axis A or B (kips.ft)  [Vl. forces]
-        wgbG112 = wgbG111 * Cos(30 * Pi / 180) * (wgbE9 - wgbU75)
-        wgbF113 = wgbF111 * Sin(30 * Pi / 180) * wgbU73    '[Hz. forces]
-        wgbG113 = -wgbG111 * Sin(30 * Pi / 180) * wgbU73    '[Hz. forces]
+        wgbF112 = wgbF111 * Math.Cos(30 * Math.PI / 180) * wgbU75  'Moment @ axis A or B (kips.ft)  [Vl. forces]
+        wgbG112 = wgbG111 * Math.Cos(30 * Math.PI / 180) * (wgbE9 - wgbU75)
+        wgbF113 = wgbF111 * Math.Sin(30 * Math.PI / 180) * wgbU73    '[Hz. forces]
+        wgbG113 = -wgbG111 * Math.Sin(30 * Math.PI / 180) * wgbU73    '[Hz. forces]
         wgbF114 = wgbF112 + wgbF113 + wgbG112 + wgbG113
         wgbK109 = wgbF109 / wgbE9 'R1 =
         wgbK114 = wgbF114 / wgbE9 'R2 =
         wgbK117 = ((wgbK109 * (wgbE10 - 0.5 * wgbE11)) + (wgbK114 * 0.5 * (wgbE10 - wgbE11))) / wgbE10 * 1000 'R1AB =
         wgbK119 = ((wgbK114 * 0.5 * (wgbE10 + wgbE11) + 0.5 * wgbK109 * wgbE11)) / wgbE10 * 1000            'R2AB =
         ' "R2AB case3=" & wgbK119
-        
+
         '-Roof load case 4 - Wind 90? - Case B
-         'zone 1-2 and 1-3
+        'zone 1-2 and 1-3
         wgbF123 = wgbE101 * wgbI65 / 1000 'Total Net force (Kips) Zone 1-2
         wgbG123 = wgbE101 * wgbI65 / 1000  'Total Net force (Kips) Zone 1-3    '?? Should use I66 ?
-        wgbF124 = wgbF123 * Cos(30 * Pi / 180) * wgbU75    'Moment @ axis A (kips.ft) [Vl. forces] Zone 1-2
-        wgbG124 = wgbG123 * Cos(30 * Pi / 180) * (wgbE9 - wgbU75) 'Moment @ axis A (kips.ft) [Vl. forces] Zone 1-3
-        wgbF125 = wgbF123 * Sin(30 * Pi / 180) * wgbU73 '[Hz. forces] Zone 1-2
-        wgbG125 = -wgbG123 * Sin(30 * Pi / 180) * wgbU73 '[Hz. forces] Zone 1-3
+        wgbF124 = wgbF123 * Math.Cos(30 * Math.PI / 180) * wgbU75    'Moment @ axis A (kips.ft) [Vl. forces] Zone 1-2
+        wgbG124 = wgbG123 * Math.Cos(30 * Math.PI / 180) * (wgbE9 - wgbU75) 'Moment @ axis A (kips.ft) [Vl. forces] Zone 1-3
+        wgbF125 = wgbF123 * Math.Sin(30 * Math.PI / 180) * wgbU73 '[Hz. forces] Zone 1-2
+        wgbG125 = -wgbG123 * Math.Sin(30 * Math.PI / 180) * wgbU73 '[Hz. forces] Zone 1-3
         wgbF126 = wgbF124 + wgbG124 + wgbF125 + wgbG125
-        
-        wgbF128 = wgbE103 * wgbI61 / 1000  'Total Net force (Kips)
-        wgbG128 = wgbE103 * wgbI61 / 1000
-        wgbF129 = wgbF128 * Cos(30 * Pi / 180) * wgbU75  'Moment @ axis A or B (kips.ft)  [Vl. forces]
-        wgbG129 = wgbG128 * Cos(30 * Pi / 180) * (wgbE9 - wgbU75)
-        wgbF130 = wgbF128 * Sin(30 * Pi / 180) * wgbU73    '[Hz. forces]
-        wgbG130 = wgbG128 * Sin(30 * Pi / 180) * wgbU73    '[Hz. forces]
+
+        wgbF128 = wgbE103 * wgbI66 / 1000  'Total Net force (Kips)
+        wgbG128 = wgbE103 * wgbI66 / 1000
+        wgbF129 = wgbF128 * Math.Cos(30 * Math.PI / 180) * wgbU75  'Moment @ axis A or B (kips.ft)  [Vl. forces]
+        wgbG129 = wgbG128 * Math.Cos(30 * Math.PI / 180) * (wgbE9 - wgbU75)
+        wgbF130 = wgbF128 * Math.Sin(30 * Math.PI / 180) * wgbU73    '[Hz. forces]
+        wgbG130 = -wgbG128 * Math.Sin(30 * Math.PI / 180) * wgbU73    '[Hz. forces]
         wgbF131 = wgbF129 + wgbF130 + wgbG129 + wgbG130
         wgbK126 = wgbF126 / wgbE9 'R1 =
         wgbK131 = wgbF131 / wgbE9 'R2 =
-        wgbK134 = ((wgbK126 * (wgbE10 - 0.5 * wgbE11)) + (wgbK114 * 0.5 * (wgbE10 - wgbE11))) / wgbE10 * 1000 'R1AB =
+        wgbK134 = ((wgbK126 * (wgbE10 - 0.5 * wgbE11)) + (wgbK131 * 0.5 * (wgbE10 - wgbE11))) / wgbE10 * 1000 'R1AB =
         wgbK136 = ((wgbK131 * 0.5 * (wgbE10 + wgbE11) + 0.5 * wgbK126 * wgbE11)) / wgbE10 * 1000            'R2AB =
         ' "R2AB case 4=" & wgbK136
-        
-        wgbE138 = Min(wgbK136, wgbK134, wgbK119, wgbK117, wgbK95, wgbK92, wgbK84, wgbK81)    'Max. Vl. upthrust on rafter support
+
+        wgbE138 = Math.Min(wgbK136, Math.Min(wgbK134, Math.Min(wgbK119, Math.Min(wgbK117, Math.Min(wgbK95, Math.Min(wgbK92, Math.Min(wgbK84, wgbK81)))))))    'Max. Vl. upthrust on rafter support
         UpliftAtCorner = 1 - wgbE138
-               '=MIN(K136     ,K134,   K119,   K117,   K95,   K92,   K84,   K81)
-        wgbE139 = Max(wgbK136, wgbK134, wgbK119, wgbK117, wgbK95, wgbK92, wgbK84, wgbK81)    'Max. Vl. down prewgb on rafter support
+        '=MIN(K136     ,K134,   K119,   K117,   K95,   K92,   K84,   K81)
+        wgbE139 = Math.Max(wgbK136, Math.Max(wgbK134, Math.Max(wgbK119, Math.Max(wgbK117, Math.Max(wgbK95, Math.Max(wgbK92, Math.Max(wgbK84, wgbK81)))))))    'Max. Vl. down prewgb on rafter support
         ' "wgbE138=" & wgbE138
         UpLift = wgbE138
-        If OutputCalcs Then Print #1, "UpLift = WindPrewgbure * 0.9 giving " & UpLift
+        'If OutputCalcs Then Print #1, "UpLift = WindPrewgbure * 0.9 giving " & UpLift
         UpLoad = UpLift - 3    'factor of 3 deducted for weight of roof when used for footings
-        If OutputCalcs Then Print #1, "Upload = UpLift - 3 =" & UpLoad & "  ie factor of 3 deducted for weight of roof when used for footings"
+        'If OutputCalcs Then Print #1, "Upload = UpLift - 3 =" & UpLoad & "  ie factor of 3 deducted for weight of roof when used for footings"
         ColumnRoofTrib = SPAN * BayWidth * 0.25
-        If OutputCalcs Then Print #1, "Column Tributary area =" & ColumnRoofTrib & " as Span x Bay width / 4"
+        'If OutputCalcs Then Print #1, "Column Tributary area =" & ColumnRoofTrib & " as Span x Bay width / 4"
         FootingColumnUpload = UpLoad * ColumnRoofTrib
-        If OutputCalcs Then Print #1, "FootingColumnUpload = Upload * ColumnRoofTrib = " & FootingColumnUpload
+        'If OutputCalcs Then Print #1, "FootingColumnUpload = Upload * ColumnRoofTrib = " & FootingColumnUpload
 
-End Sub
-
+    End Sub
