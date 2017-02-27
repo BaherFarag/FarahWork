@@ -30,11 +30,13 @@ Module Module1
 
 
     End Sub
+
+
     Sub USFindGableRafter_30()
         'On Error GoTo 0
 
         'SetQz
-        SPAN = 35
+        SPAN = 20
         NomBayWidth = 20
         '* Design straining actions:
         '1) Dead loads:
@@ -611,13 +613,13 @@ Module Module1
         '* Preliminary Rafter Profile selection :
         '=IF(I130<=1 then E220=C110,IF(I152<=1,C132,IF(I174<=1,C154,IF(I196<=1.02,C176,"Check braced apex rafter solution"))))
         If I130 <= 1 Then
-            E202 = C110
+            E202 = C110.ToString()
         ElseIf I152 <= 1 Then
-            E202 = C132
+            E202 = C132.ToString()
         ElseIf I174 <= 1 Then
-            E202 = C154
+            E202 = C154.ToString()
         ElseIf I196 <= 1.02 Then
-            E202 = C176
+            E202 = C176.ToString()
         Else
             E202 = "Check braced apex rafter solution"
         End If
@@ -918,11 +920,10 @@ variations:
 
     End Sub
 
-
     Sub USWindPressureGable_30()
         'If OutputCalcs Then Print #1, "USA Gable wind prewgbure calculation"
         'If OutputCalcs Then Print #1, "Basic Wind Speed selected =  " & Region
-        SPAN = 35
+        SPAN = 20
         NomBayWidth = 20
 
         wgbE9 = SPAN
@@ -1203,7 +1204,7 @@ variations:
 
     Sub USSnowLoadGable_30()
         'AddNotification "No US Gable snow load yet"
-        SPAN = 35
+        SPAN = 20
         NomBayWidth = 20
 
         sgbE9 = SPAN 'B1 =

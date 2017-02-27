@@ -1,8 +1,29 @@
- Sub USFindGableRafter_30()
+'Rextester.Program.Main is the entry point for your code. Don't change it.
+'Compiler version 11.0.50709.17929 for Microsoft (R) .NET Framework 4.5
+Option Explicit Off
+Imports System
+Imports System.Collections.Generic
+Imports System.Linq
+Imports System.Text.RegularExpressions
+
+Namespace Rextester
+    Public Module Program
+        Public Sub Main(args() As string)
+            'Your code goes here
+            Console.WriteLine("Hello, world!")
+            USFindGableRafter_30()
+        End Sub
+        
+        
+        
+        
+        
+        
+    Sub USFindGableRafter_30()
         'On Error GoTo 0
 
         'SetQz
-        SPAN = 35
+        SPAN = 20
         NomBayWidth = 20
         '* Design straining actions:
         '1) Dead loads:
@@ -758,131 +779,12 @@
         End If
 
         ' "Rafter is " & E262 & nl & " ie " & FrameMtrl(RafterInVal).Mtrl & nl & "ApexBrace=" & ApexBrace
+        Console.WriteLine(E262)
+        Console.WriteLine(E202)
+        'Close #1
         
-        'EXCEL CALC FINISHED HERE
-
-        'Close #1
-        Results = ""
-
-        If ProfileFound Then
-            FoundPitch = 1
-            FoundSpan = SPAN
-            FoundStubs = False
-            If FoundSpan - SPAN <= 0 Then
-                spanVar = 0
-            Else
-                spanVar = 100 / (SPAN / (FoundSpan - SPAN))
-            End If
-            FoundCap = BCapability
-            If FoundCap < WindSpeedReq And FoundCap >= WindSpeedReqLe5 Then 'using 5% overload
-                capVar = 1 - (WindSpeedReqLe5 / WindSpeedReq)
-                capVar = 100 / (WindSpeedReq / (FoundCap - WindSpeedReq))
-            ElseIf FoundCap - WindSpeedReq <= 0 Then
-                capVar = 0
-            Else
-                capVar = 100 / (WindSpeedReq / (FoundCap - WindSpeedReq))
-            End If
-            'Con.DebugOutput Format$(capVar, "000#.#00")
-
-            HoistedLoadFound = 0 'BHoistedLoad
-
-            'Results = Results & "Span =     " & Tabb & Format$(SPAN, "##0.0#") & Tabb & " >= " & Tabb & BSpan & Tabb & Format$(spanVar, "##0") & "%" & vbCrLf
-            'Results = Results & Tabb & Tabb & "Sought" & Tabb & "  v" & Tabb & "Found" & Tabb & "Variation" & vbCrLf
-            'Results = Results & "WallHeight= " & Tabb & Format$(WallHeight, "##0.0#") & Tabb & " >= " & Tabb & BHeight & Tabb & Format$(heightVar, "##0") & "%" & vbCrLf
-            'Results = Results & "Roof " & Pitchs(RoofStyleIdx).Descr & Tabb & RoofStyleIdx & Tabb & "  = " & Tabb & BPitch & vbCrLf
-            'Results = Results & "Profile Found. " ' & wc & vbCrLf & BldRs.Fields("BDescription").Value
-            'FoundDescription = BDescription
-            'set these values because profile is Found
-            ' "Setting Mullions per end MullionInVal =" & MullionInVal
-            MullionsPerEndIntIn = 0 'BMullions
-            'If MullionsPerEndIntIn < 0 Then MullionsPerEndIntIn = olceil(SPAN / NomBayWidth, 0, "InitMulions")
-            'If MullionsPerEndIntIn > 4 Then MullionsPerEndIntIn = 4
-            '    If OutputCalcs Then Print #1, MullionsPerEndInt & " End-wall mullions of " & MullionInS '& vbCrLf & "Put an overide here !", 16
-
-            'If RafterInVal <= 0 Or RafterInVal > MaxFrameMtrls Then AddNotification "Rafter material is invalid"
-            RafterInVal = 6 ': ValidS = "INVALID": Exit Sub
-            'If OutputCalcs Then Print #1, "Rafter = " & FrameMtrl(RafterInVal).Mtrl & " on line " & rLine
-
-            ColumnInVal = 7 'BColumn
-            MullionInVal = 7 'BMullion
-            KneeBraceInVal = 0 'BKneeBrace
-        Else    'profile not found
-            CertifiedProfile = False
-            FoundSpan = SPAN : spanVar = 100
-            FoundHeight = WallHeight : heightVar = 100
-            FoundStubs = False
-            FoundNomBayWidth = SearchNomBayWidth ': NomBayWidthVar = 0
-            spanVar = 0 : heightVar = 0 : NomBayWidthVar = 0
-            FoundCap = 0 : capVar = 100
-            FoundDescription = "Profile NOT Found * "
-            'set these values to DEFAULTS because profile is NOT Found
-            RafterInVal = 6  'If OutputCalcs Then Print #1, "Rafter = 2 x " & FrameMtrl(RafterInVal).Mtrl
-            MullionInVal = 4  'If OutputCalcs Then Print #1, "Mullion = 1 x " & FrameMtrl(ColumnInVal).Mtrl
-            ApexBraceInVal = 6  'If OutputCalcs Then Print #1, "Apex Brace = 2 x " & FrameMtrl(ApexBraceInVal).Mtrl
-            ApexBracesInt = sideBays * 2
-            HoistedLoadFound = 0
-            ValidS = "INVALID"
-        End If
-
-        'CheckApexBraceOveride
-
-        If CertifiedProfile Then
-            'If OutputCalcs Then Print #1, "Certified profile found"
-        Else
-            'If OutputCalcs Then Print #1, "Profile found is Un Certified"
-        End If
-
-        ApexBraceVal = ApexBraceInVal
-        'CHECKTHIS ApexBraceItm = FrameMtrl(ApexBraceVal).Itm
-        ApexBraceLth = SPAN / 3
-        'CHECKTHIS ApexBraceDescS = itmdescr(ApexBraceItm)
-        ApexBraceS = ""
-        'CHECKTHIS ApexBrace = itmprice(ApexBraceItm)
-        ApexBraceC = 0
-        ApexBraceHeight = UnderApexHeight - ((ApexBraceLth / 2) * vertRiseM)
-
-        Results = Results & FoundDescription & vbCrLf
-        Results = Results & Tabb & Tabb & "Sought" & Tabb & "  v" & Tabb & "Found" & Tabb & "Variation" & vbCrLf & vbCrLf
-        Results = Results & "Span       " & Tabb & Format$(SPAN, "##0.0#") & Tabb & " >= " & Tabb & BSpan & Tabb & Format$(spanVar, "##0") & "%" & vbCrLf
-        'CHECKTHIS Results = Results & "Pitch " & Pitchs(RoofStyleIdx).Descr & Tabb & RoofStyleIdx & Tabb & "  = " & Tabb & BPitch & vbCrLf
-        Results = Results & "Using Stubs " & FoundStubs & vbCrLf
-        Results = Results & "Capability " & Tabb & Format$(WindSpeedReq, "##0.0#") & Tabb & " >= " & Tabb & FoundCap & Tabb & Format$(capVar, "##0") & "%" & vbCrLf
-        ' Results
-        'If OutputCalcs Then Print #1,
-        'If OutputCalcs Then Print #1, "Profile search completed"
-        'If OutputCalcs Then Print #1,
-        'If OutputCalcs Then Print #1, Results
-
-variations:
-        heightVar = 0
-        allVar = spanVar + capVar
-        Msg = "Span " & SPAN & Tabb & FoundSpan & Tabb & spanVar & nl
-        'Msg = Msg & "Height " & WallHeight & Tabb & FoundHeight & Tabb & heightVar & NL
-        Msg = Msg & "Cap " & WindSpeedReq & Tabb & FoundCap & Tabb & capVar & nl
-        Msg = Msg & "All " & allVar
-        If spanVar > 50 Then spanVarColour = RGB(0, 200, 0) Else spanVarColour = RGB(0, spanVar * 5, 0)
-        If heightVar > 50 Then heightVarColour = RGB(0, 200, 0) Else heightVarColour = RGB(0, heightVar * 4, 0)
-        If capVar > 50 Then
-            capVarColour = RGB(200, 0, 0)
-        ElseIf capVar < 0 Then
-            capVarColour = RGB(-capVar * 50, 0, 0)
-        Else
-            capVarColour = RGB(0, capVar * 5, 0)
-        End If
-        If allVar > 100 Then allVarColour = RGB(250, 0, 0) Else allVarColour = RGB(Math.Abs(allVar) * 2, 0, 0)
-        ' Msg
-        '"SpanVar=" & spanVar & vbCrLf & "FoundSpan" & FoundSpan & vbCrLf & "SearchSpan=" & SearchSpan
-
-        'SpanVars set here
-        'If OutputCalcs Then Print #1,
-        'If OutputCalcs Then Print #1, "End of load analysis"
-        'Close #1
-        ' "See ProfileLookup.txt"
-
-        'needs USA version of this
-        'GetFootingDetails FootingType   'this came to Wintrang from USA
-
-        'EOFUSFindGableRafter:
-        'Exit Sub
 
     End Sub
+
+    End Module
+End Namespace
