@@ -11,6 +11,8 @@ Namespace Rextester
     'Farah CHANGE THE VALUES NEEDED FROM HERE
     dim SPAN = 35
     dim    NomBayWidth = 20
+     Dim Purling = 2.5
+    Dim ExpCategory = "C"
     
     
     'LEAVE THOSE FOR INTERNAL DECLERATION
@@ -39,7 +41,7 @@ Namespace Rextester
     
         Public Sub Main(args() As string)
             'Your code goes here
-            Console.WriteLine("Hello, world!")
+            'Console.WriteLine("Hello, world!")
            
 
 USWindPressureGable_30()
@@ -48,21 +50,23 @@ USFindGableRafter_30()
 End Sub
         
         
-          Sub USWindPressureGable_30()
+          
+    Sub USWindPressureGable_30()
         'If OutputCalcs Then Print #1, "USA Gable wind prewgbure calculation"
         'If OutputCalcs Then Print #1, "Basic Wind Speed selected =  " & Region
-        
+
         wgbE9 = SPAN
         wgbE10 = NomBayWidth
         wgbE11 = 8.5
-        wgbE12 = 3.88
+        wgbE12 = Purling
+
         wgbE13 = wgbE11 + 0.5 * wgbE9 * Math.Tan(0.5235987756)
         'see "wgbE13=" & wgbE13 & " V heightoa=" & heightOA
         wgbE17 = 110
         'If OutputCalcs Then Print #1, "Exposure Category selected =  " & TerCatDescr(TerrainIdx)
         'If OutputCalcs Then Print #1, "Directionality Factor (Kd) = 0.85"
         wgbE18 = 0.85 'Directionality Factor (Kd)
-        wgbE19 = "B"
+        wgbE19 = ExpCategory
         'If OutputCalcs Then Print #1, "Risk Factor selected =  " & ImportanceDescr(ImportanceIndex)
         'If OutputCalcs Then Print #1, "Topographic factor (Kzt) =1 "
         wgbE20 = 1
@@ -315,6 +319,7 @@ End Sub
         UpliftAtCorner = 1 - wgbE138
         '=MIN(K136     ,K134,   K119,   K117,   K95,   K92,   K84,   K81)
         wgbE139 = Math.Max(wgbK136, Math.Max(wgbK134, Math.Max(wgbK119, Math.Max(wgbK117, Math.Max(wgbK95, Math.Max(wgbK92, Math.Max(wgbK84, wgbK81)))))))    'Max. Vl. down prewgb on rafter support
+        Console.WriteLine("wgbE139 --> " + wgbE139.ToString())
         ' "wgbE138=" & wgbE138
         UpLift = wgbE138
         'If OutputCalcs Then Print #1, "UpLift = WindPrewgbure * 0.9 giving " & UpLift
@@ -326,22 +331,22 @@ End Sub
         'If OutputCalcs Then Print #1, "FootingColumnUpload = Upload * ColumnRoofTrib = " & FootingColumnUpload
 
     End Sub
-        
-        
-        Sub USSnowLoadGable_30()
+
+
+    Sub USSnowLoadGable_30()
         'AddNotification "No US Gable snow load yet"
-        
+
         sgbE9 = SPAN 'B1 =
         sgbE10 = NomBayWidth 'L =
         sgbE11 = 8.5
-        sgbE12 = 3.88  'Eave (container) height =
+        sgbE12 = Purling  'Eave (container) height =
         sgbE13 = sgbE11 + 0.5 * SPAN * Math.Tan(0.5235987756)
         'sgbE14 = heightOA 'Apex height =
 
         sgbE16 = "I" 'Building Risk Category:
         sgbE17 = 20  'Ground Snow load (Pg) in psf
         sgbE18 = Math.Min((0.13 * sgbE17 + 14), 30) 'Density of snow (g)
-        sgbE19 = "B" 'Exposure Category (Terrain Type):
+        sgbE19 = ExpCategory 'Exposure Category (Terrain Type):
         sgbE20 = "Fully Exposed" 'Exposure condition [Table 7-2] :
         'Exposure factor (Ce) [Table 7-2] :
         sgbE21 = 0
@@ -448,10 +453,10 @@ End Sub
         sgbK86 = 0.5 * sgbF86 / SPAN * 1000
         span1 = Math.Max(sgbK87, Math.Max(sgbK84, Math.Max(sgbK76, sgbK73))) 'NOT USED 'Max. Vl. presgb on rafter support =
         span0 = Math.Max(sgbK86, Math.Max(sgbK83, Math.Max(sgbK75, sgbK72)))
-Console.WriteLine(span0)
+        Console.WriteLine("sgbE90 --> " + span0.ToString())
     End Sub
-        
-        
+
+
     Sub USFindGableRafter_30()
         'On Error GoTo 0
 
@@ -460,7 +465,8 @@ Console.WriteLine(span0)
         '1) Dead loads:
         'Rafter self weight =    7.475   lb/ft'  (Auming 12.0x4.0C12 rafter)
         E12 = 7.475   'this can be read from price file using  = itmweight(FrameMtrl(RafterVal).Itm)
-        E13 = 1.56    'Purlin Equivalent load =    1.56    psf
+        E13 = 6.047 / Purling
+        'Purlin Equivalent load =    1.56    psf
         '=Gable_Gambrel_Purlin_Design!E14/Wind_Gable!E12
         'ie fixed values of 6.047/3.88=1.56
         E14 = 1.14    'PBR Panels unit weight =    1.14    psf   = itmWeight(roofShtItm)
@@ -1210,13 +1216,19 @@ Console.WriteLine(span0)
         End If
 
         ' "Rafter is " & E262 & nl & " ie " & FrameMtrl(RafterInVal).Mtrl & nl & "ApexBrace=" & ApexBrace
-        Console.WriteLine("E262 : "+E262.ToString())
-        Console.WriteLine("I256 : "+I256.ToString())
-        Console.WriteLine("E202 : "+E202.ToString())
+        Console.WriteLine("I130 : " + I130.ToString())
+        Console.WriteLine("I152 : " + I152.ToString())
+        Console.WriteLine("I174 : " + I174.ToString())
+        Console.WriteLine("I196 : " + I196.ToString())
+        Console.WriteLine("E202 : " + E202.ToString())
+        Console.WriteLine("F220 : " + F220.ToString())
+        Console.WriteLine("I256 : " + I256.ToString())
+        Console.WriteLine("E262 : " + E262.ToString())
         'Close #1
-        
+
 
     End Sub
+
 
     End Module
 End Namespace
