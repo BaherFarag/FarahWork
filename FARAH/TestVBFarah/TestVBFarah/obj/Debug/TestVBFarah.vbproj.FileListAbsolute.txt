@@ -15,3 +15,4 @@ C:\D PARTITION\Work\FarahWork\FARAH\TestVBFarah\TestVBFarah\obj\Debug\TestVBFara
 C:\D PARTITION\Work\FarahWork\FARAH\TestVBFarah\TestVBFarah\bin\Debug\TestVBFarah.exe
 C:\D PARTITION\Work\FarahWork\FARAH\TestVBFarah\TestVBFarah\bin\Debug\TestVBFarah.pdb
 C:\D PARTITION\Work\FarahWork\FARAH\TestVBFarah\TestVBFarah\bin\Debug\TestVBFarah.xml
+C:\D PARTITION\Work\FarahWork\FARAH\TestVBFarah\TestVBFarah\obj\Debug\TestVBFarah.vbprojResolveAssemblyReference.cache

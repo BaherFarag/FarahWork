@@ -1,0 +1,47 @@
+Sub USFindGambrelRafter()
+
+        '1) * Roof Slope,q (°) =
+        E52 = 20
+        E58 = 6.047 : Gable_Gambrel_Purlin_DesignE58 = E58
+        E60 = 1.14 : Gable_Gambrel_Purlin_DesignE60 = E60
+        E61 = E60 * Purling
+
+        E65 = 20
+        E66 = E65 * Purling
+
+
+        E71 = Math.Max(Wind_GableI50, Math.Max(Wind_GableI51, Math.Max(Wind_GableI55, Math.Max(Wind_GableI56, Math.Max(Wind_GableI60, Wind_GableI65)))))
+        E72 = Purling * E71
+
+        E74 = Math.Min(Wind_GableI50, Math.Min(Wind_GableI51, Math.Min(Wind_GableI55, Math.Min(Wind_GableI56, Math.Min(Wind_GableI60, Wind_GableI65)))))
+        E75 = Purling * E74
+
+
+        If (Snow_GableE17 = 0) Then
+            E79 = 0
+        Else
+            E79 = Math.Max(Snow_GableF51, Math.Max(Snow_GableF52, Math.Max(Snow_GableF56, Snow_GableF57)))
+        End If
+
+        E80 = Purling * E79
+
+        E84 = (E58 + E61 + E66) * Math.Cos(E52 * Math.PI / 180)
+        E85 = (E58 + E61 + E80) * Math.Cos(E52 * Math.PI / 180)
+        E86 = (E58 + E61) * Math.Cos(E52 * Math.PI / 180) + E72
+        E87 = (E58 + E61) * Math.Cos(E52 * Math.PI / 180) + 0.75 * E72 + 0.75 * (E66 * Math.Cos(E52 * Math.PI / 180))
+        E88 = (E58 + E61) * Math.Cos(E52 * Math.PI / 180) + 0.75 * E72 + 0.75 * (E80 * Math.Cos(E52 * Math.PI / 180))
+        E89 = Math.Abs(0.6 * (E58 + E61) * Math.Cos(E52 * Math.PI / 180) + E75)
+
+        E91 = Math.Max(E84, Math.Max(E85, Math.Max(E86, Math.Max(E87, Math.Max(E88, E89)))))
+
+        If (E91 <= 139.61) Then
+            E93 = "8.0x4.0C14"
+        Else
+            If (E91 > 139.61 And E91 <= 245) Then
+                E93 = "8.0x4.0C12"
+            Else
+                E93 = "NA"
+            End If
+        End If
+
+    End Sub

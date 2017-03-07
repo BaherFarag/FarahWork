@@ -1,19 +1,18 @@
 Sub USSnowLoadGable_30()
         'AddNotification "No US Gable snow load yet"
-        SPAN = 35
-        NomBayWidth = 20
 
         sgbE9 = SPAN 'B1 =
         sgbE10 = NomBayWidth 'L =
-        sgbE11 = 8.5
-        sgbE12 = 3.88  'Eave (container) height =
+        sgbE11 = ContainerHeight
+        sgbE12 = Purling  'Eave (container) height =
         sgbE13 = sgbE11 + 0.5 * SPAN * Math.Tan(0.5235987756)
         'sgbE14 = heightOA 'Apex height =
 
         sgbE16 = "I" 'Building Risk Category:
         sgbE17 = 20  'Ground Snow load (Pg) in psf
+        Snow_GableE17 = sgbE17
         sgbE18 = Math.Min((0.13 * sgbE17 + 14), 30) 'Density of snow (g)
-        sgbE19 = "B" 'Exposure Category (Terrain Type):
+        sgbE19 = ExpCategory 'Exposure Category (Terrain Type):
         sgbE20 = "Fully Exposed" 'Exposure condition [Table 7-2] :
         'Exposure factor (Ce) [Table 7-2] :
         sgbE21 = 0
@@ -70,7 +69,7 @@ Sub USSnowLoadGable_30()
         sgbE46 = Math.Min(2.667 * sgbE43 * Math.Sqrt(sgbE38), 0.5 * SPAN) : Snow_GableE46 = sgbE46 'Length of rectangular surcharge :
         '-Roof load case 1 - Snow @ Wind 0? - Unbalanced
         sgbF51 = sgbE40 : Snow_GableF51 = sgbF51
-        sgbF52 = sgbE45 + sgbE37
+        sgbF52 = sgbE45 + sgbE37 : Snow_GableF52 = sgbF52
         sgbF56 = sgbE37 : Snow_GableF56 = sgbF56
         sgbF57 = sgbE37 : Snow_GableF57 = sgbF57
 
@@ -120,5 +119,5 @@ Sub USSnowLoadGable_30()
         sgbK86 = 0.5 * sgbF86 / SPAN * 1000
         span1 = Math.Max(sgbK87, Math.Max(sgbK84, Math.Max(sgbK76, sgbK73))) 'NOT USED 'Max. Vl. presgb on rafter support =
         span0 = Math.Max(sgbK86, Math.Max(sgbK83, Math.Max(sgbK75, sgbK72)))
-
+        
     End Sub

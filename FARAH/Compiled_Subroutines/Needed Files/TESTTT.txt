@@ -1,6 +1,9 @@
 'Rextester.Program.Main is the entry point for your code. Don't change it.
 'Compiler version 11.0.50709.17929 for Microsoft (R) .NET Framework 4.5
+
 Option Explicit Off
+
+
 Imports System
 Imports System.Collections.Generic
 Imports System.Linq
@@ -8,13 +11,16 @@ Imports System.Text.RegularExpressions
 
 Namespace Rextester
     Public Module Program
-    'Farah CHANGE THE VALUES NEEDED FROM HERE
-    dim SPAN = 35
-    dim    NomBayWidth = 20
-     Dim Purling = 2.5
-    Dim ExpCategory = "C"
-    
-    
+        
+        
+        'Farah CHANGE THE VALUES NEEDED FROM HERE
+    Dim SPAN = 35
+    Dim NomBayWidth = 20
+    Dim ContainerHeight = 8.5
+    Dim Purling = 1.2
+    Dim ExpCategory = "B"
+
+
     'LEAVE THOSE FOR INTERNAL DECLERATION
     Dim Wind_GableI50 = 0
     Dim Wind_GableI51 = 0
@@ -29,7 +35,9 @@ Namespace Rextester
     Dim Wind_GableK95 = 0
 
 
+    Dim Snow_GableE17 = 0
     Dim Snow_GableF51 = 0
+    Dim Snow_GableF52 = 0
     Dim Snow_GableE41 = 0
     Dim Snow_GableE45 = 0
     Dim Snow_GableE46 = 0
@@ -37,27 +45,80 @@ Namespace Rextester
     Dim Snow_GableK72 = 0
     Dim Snow_GableF56 = 0
     Dim Snow_GableF57 = 0
-    
-    
-        Public Sub Main(args() As string)
-            'Your code goes here
-            'Console.WriteLine("Hello, world!")
-           
 
-USWindPressureGable_30()
-USSnowLoadGable_30()
-USFindGableRafter_30()
-End Sub
-        
-        
-          
+    Dim Gable_Gambrel_Purlin_DesignE58 = 0
+    Dim Gable_Gambrel_Purlin_DesignE60 = 0
+
+
+    Public Sub Main(args() As String)
+        'Your code goes here
+        'Console.WriteLine("Hello, world!")
+
+
+        USWindPressureGable_30()
+        USSnowLoadGable_30()
+        USFindGambrelRafter()
+        USFindGableRafter_30()
+    End Sub
+
+    Sub USFindGambrelRafter()
+
+        '1) * Roof Slope,q (°) =
+        E52 = 20
+        E58 = 6.047 : Gable_Gambrel_Purlin_DesignE58 = E58
+        E60 = 1.14 : Gable_Gambrel_Purlin_DesignE60 = E60
+        E61 = E60 * Purling
+
+        E65 = 20
+        E66 = E65 * Purling
+
+
+        E71 = Math.Max(Wind_GableI50, Math.Max(Wind_GableI51, Math.Max(Wind_GableI55, Math.Max(Wind_GableI56, Math.Max(Wind_GableI60, Wind_GableI65)))))
+        E72 = Purling * E71
+
+        E74 = Math.Min(Wind_GableI50, Math.Min(Wind_GableI51, Math.Min(Wind_GableI55, Math.Min(Wind_GableI56, Math.Min(Wind_GableI60, Wind_GableI65)))))
+        E75 = Purling * E74
+
+
+        If (Snow_GableE17 = 0) Then
+            E79 = 0
+        Else
+            E79 = Math.Max(Snow_GableF51, Math.Max(Snow_GableF52, Math.Max(Snow_GableF56, Snow_GableF57)))
+        End If
+
+        E80 = Purling * E79
+
+        E84 = (E58 + E61 + E66) * Math.Cos(E52 * Math.PI / 180)
+        E85 = (E58 + E61 + E80) * Math.Cos(E52 * Math.PI / 180)
+        E86 = (E58 + E61) * Math.Cos(E52 * Math.PI / 180) + E72
+        E87 = (E58 + E61) * Math.Cos(E52 * Math.PI / 180) + 0.75 * E72 + 0.75 * (E66 * Math.Cos(E52 * Math.PI / 180))
+        E88 = (E58 + E61) * Math.Cos(E52 * Math.PI / 180) + 0.75 * E72 + 0.75 * (E80 * Math.Cos(E52 * Math.PI / 180))
+        E89 = Math.Abs(0.6 * (E58 + E61) * Math.Cos(E52 * Math.PI / 180) + E75)
+
+        E91 = Math.Max(E84, Math.Max(E85, Math.Max(E86, Math.Max(E87, Math.Max(E88, E89)))))
+
+        If (E91 <= 139.61) Then
+            E93 = "8.0x4.0C14"
+        Else
+            If (E91 > 139.61 And E91 <= 245) Then
+                E93 = "8.0x4.0C12"
+            Else
+                E93 = "NA"
+            End If
+        End If
+
+
+        Console.WriteLine("E93 in Gabler -->" + E93.ToString())
+    End Sub
+
+
     Sub USWindPressureGable_30()
         'If OutputCalcs Then Print #1, "USA Gable wind prewgbure calculation"
         'If OutputCalcs Then Print #1, "Basic Wind Speed selected =  " & Region
 
         wgbE9 = SPAN
         wgbE10 = NomBayWidth
-        wgbE11 = 8.5
+        wgbE11 = ContainerHeight
         wgbE12 = Purling
 
         wgbE13 = wgbE11 + 0.5 * wgbE9 * Math.Tan(0.5235987756)
@@ -338,13 +399,14 @@ End Sub
 
         sgbE9 = SPAN 'B1 =
         sgbE10 = NomBayWidth 'L =
-        sgbE11 = 8.5
+        sgbE11 = ContainerHeight
         sgbE12 = Purling  'Eave (container) height =
         sgbE13 = sgbE11 + 0.5 * SPAN * Math.Tan(0.5235987756)
         'sgbE14 = heightOA 'Apex height =
 
         sgbE16 = "I" 'Building Risk Category:
         sgbE17 = 20  'Ground Snow load (Pg) in psf
+        Snow_GableE17 = sgbE17
         sgbE18 = Math.Min((0.13 * sgbE17 + 14), 30) 'Density of snow (g)
         sgbE19 = ExpCategory 'Exposure Category (Terrain Type):
         sgbE20 = "Fully Exposed" 'Exposure condition [Table 7-2] :
@@ -403,7 +465,7 @@ End Sub
         sgbE46 = Math.Min(2.667 * sgbE43 * Math.Sqrt(sgbE38), 0.5 * SPAN) : Snow_GableE46 = sgbE46 'Length of rectangular surcharge :
         '-Roof load case 1 - Snow @ Wind 0? - Unbalanced
         sgbF51 = sgbE40 : Snow_GableF51 = sgbF51
-        sgbF52 = sgbE45 + sgbE37
+        sgbF52 = sgbE45 + sgbE37 : Snow_GableF52 = sgbF52
         sgbF56 = sgbE37 : Snow_GableF56 = sgbF56
         sgbF57 = sgbE37 : Snow_GableF57 = sgbF57
 
@@ -465,11 +527,11 @@ End Sub
         '1) Dead loads:
         'Rafter self weight =    7.475   lb/ft'  (Auming 12.0x4.0C12 rafter)
         E12 = 7.475   'this can be read from price file using  = itmweight(FrameMtrl(RafterVal).Itm)
-        E13 = 6.047 / Purling
+        E13 = Gable_Gambrel_Purlin_DesignE58 / Purling
         'Purlin Equivalent load =    1.56    psf
         '=Gable_Gambrel_Purlin_Design!E14/Wind_Gable!E12
         'ie fixed values of 6.047/3.88=1.56
-        E14 = 1.14    'PBR Panels unit weight =    1.14    psf   = itmWeight(roofShtItm)
+        E14 = Gable_Gambrel_Purlin_DesignE60    'PBR Panels unit weight =    1.14    psf   = itmWeight(roofShtItm)
         E16 = E13 + E14   'Total dead load     psf
         E18 = E12 + E16 * (0.5 * NomBayWidth)    'Total rafter dead load =
 
@@ -1228,7 +1290,7 @@ End Sub
 
 
     End Sub
-
-
+        
+        
     End Module
 End Namespace

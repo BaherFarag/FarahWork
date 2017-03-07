@@ -1,20 +1,19 @@
-  Sub USWindPressureGable_30()
+Sub USWindPressureGable_30()
         'If OutputCalcs Then Print #1, "USA Gable wind prewgbure calculation"
         'If OutputCalcs Then Print #1, "Basic Wind Speed selected =  " & Region
-        SPAN = 35
-        NomBayWidth = 20
 
         wgbE9 = SPAN
         wgbE10 = NomBayWidth
-        wgbE11 = 8.5
-        wgbE12 = 3.88
+        wgbE11 = ContainerHeight
+        wgbE12 = Purling
+
         wgbE13 = wgbE11 + 0.5 * wgbE9 * Math.Tan(0.5235987756)
         'see "wgbE13=" & wgbE13 & " V heightoa=" & heightOA
         wgbE17 = 110
         'If OutputCalcs Then Print #1, "Exposure Category selected =  " & TerCatDescr(TerrainIdx)
         'If OutputCalcs Then Print #1, "Directionality Factor (Kd) = 0.85"
         wgbE18 = 0.85 'Directionality Factor (Kd)
-        wgbE19 = "B"
+        wgbE19 = ExpCategory
         'If OutputCalcs Then Print #1, "Risk Factor selected =  " & ImportanceDescr(ImportanceIndex)
         'If OutputCalcs Then Print #1, "Topographic factor (Kzt) =1 "
         wgbE20 = 1
@@ -267,6 +266,7 @@
         UpliftAtCorner = 1 - wgbE138
         '=MIN(K136     ,K134,   K119,   K117,   K95,   K92,   K84,   K81)
         wgbE139 = Math.Max(wgbK136, Math.Max(wgbK134, Math.Max(wgbK119, Math.Max(wgbK117, Math.Max(wgbK95, Math.Max(wgbK92, Math.Max(wgbK84, wgbK81)))))))    'Max. Vl. down prewgb on rafter support
+        Console.WriteLine("wgbE139 --> " + wgbE139.ToString())
         ' "wgbE138=" & wgbE138
         UpLift = wgbE138
         'If OutputCalcs Then Print #1, "UpLift = WindPrewgbure * 0.9 giving " & UpLift
